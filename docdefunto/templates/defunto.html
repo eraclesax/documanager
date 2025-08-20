@@ -1,0 +1,162 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} Scheda Defunto {% endblock title %}
+
+{% block stylesheets %}
+  <style>
+    .blinking {
+      animation: blink 1s ease-in infinite;
+    }
+
+    @keyframes blink {
+      from, to { opacity: 1 }
+      50% { opacity: 0 }
+    }
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+
+    </div>
+  </div>
+</div>
+
+  <div class="container-fluid mt--7">
+    <div class="row">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                <h3 class="mb-0">{{defunto}}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div>
+              <h3 class="border-bottom">
+                Anagrafica
+              </h3>
+              <dl class="row">
+                <dt class="col-sm-3 col-md-2">Nome</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.cognome |default_if_none:""}}&nbsp;{{ defunto.middle_name |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Cognome</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.nome |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Data nascita</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.data_nascita |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Luogo di Nascita</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.comune_residenza |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Codice fiscale</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.via_residenza |default_if_none:""}}
+                </dd>
+              </dl><h3 class="border-bottom">
+                Decesso
+              </h3>
+              <dl class="row">
+                <dt class="col-sm-3 col-md-2">Nome</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.cognome |default_if_none:""}}&nbsp;{{ defunto.middle_name |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Cognome</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.nome |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Data nascita</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.data_nascita |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Luogo di Nascita</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.comune_residenza |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Codice fiscale</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ defunto.via_residenza |default_if_none:""}}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col">
+        <div class="card shadow" id="id_table_container">
+          
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+  <script>
+
+    $(document).ready(function () {
+      // Responsive update_active_responsive_table
+      update_active_responsive_table('{{accesses_table|safe}}');
+    });
+
+    function build_active_responsive_table(){
+      $('#data_table').DataTable({
+          // "responsive": true,
+          "destroy": true,
+          "paging":   true,
+          "pageLength" : 20,
+          // "aaSorting": [[0,"asc"],[3,"des"]], //already sorted in backend
+          "lengthChange": false,
+          "autoWidth": false,
+          "language": {
+            "sEmptyTable":     "Nessun dato presente nella tabella",
+            "sInfo":           "Vista da _START_ a _END_ di _TOTAL_ elementi",
+            "sInfoEmpty":      "Vista da 0 a 0 di 0 elementi",
+            "sInfoFiltered":   "(filtrati da _MAX_ elementi totali)",
+            "sInfoPostFix":    "",
+            "sInfoThousands":  ".",
+            "sLengthMenu":     "Visualizza _MENU_ elementi",
+            "sLoadingRecords": "Caricamento...",
+            "sProcessing":     "Elaborazione...",
+            "sSearch":         "Cerca:",
+            "sZeroRecords":    "La ricerca non ha portato alcun risultato.",
+            "oPaginate": {
+              "sFirst":      "Inizio",
+              "sPrevious":   "Precedente",
+              "sNext":       "Successivo",
+              "sLast":       "Fine"
+            },
+            "oAria": {
+              "sSortAscending":  ": attiva per ordinare la colonna in ordine crescente",
+              "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+            }
+          },
+        });
+    }
+
+    function update_active_responsive_table(table){
+      $("#id_table_container").empty()
+      $("#id_table_container").append(table);
+      build_active_responsive_table();
+    }
+
+  </script>
+{% endblock javascripts %}

@@ -30,7 +30,7 @@
             </div>
           </a>
           <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-            <a href="{% url 'user_profile' %}" class="dropdown-item">
+            <a href="{% url 'index' %}" class="dropdown-item">
               <i class="ni ni-single-02"></i>
               <span>Profilo</span>
             </a>
@@ -39,7 +39,7 @@
               <span>Supporto</span>
             </a>
             <div class="dropdown-divider"></div>
-            <a href="{% url 'logout' %}" class="dropdown-item">
+            <a href="{% url 'index' %}" class="dropdown-item">
               <i class="ni ni-user-run"></i>
               <span>Esci</span>
             </a>
@@ -52,7 +52,7 @@
         <div class="navbar-collapse-header d-md-none">
           <div class="row">
             <div class="col-6 collapse-brand">
-              <a href="{% url 'storico_dash' %}">
+              <a href="{% url 'index' %}">
                 <img src="/static/assets/img/brand/logo-white.png">
               </a>
             </div>
@@ -82,7 +82,7 @@
           {% for item in side_menu %}
             <li class="nav-item">
               {% if item.type == "url" %}
-                <a class="nav-link {% if item.active %}active{% endif %}" href="{% url item.url %}"> 
+                <a class="nav-link {% if item.active %}active{% endif %}" href="{% url 'index' %}"> 
                   <i class="{{ item.icon_classes }}"></i> 
                   {{ item.text }}
                 </a>

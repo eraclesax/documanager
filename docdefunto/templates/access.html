@@ -1,0 +1,120 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} Profile {% endblock title %}
+
+{% block content %}
+
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+
+    </div>
+  </div>
+</div>
+
+  <div class="container-fluid mt--7">
+    <div class="row">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                <h3 class="mb-0">Accesso {{access}} - {{access.access_date}}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div>
+              <h3 class="border-bottom">
+                Anagrafica &nbsp; <a href="{% url 'patient' id=access.patient.id %}">paziente</a>
+              </h3>
+              <dl class="row">
+                <dt class="col-sm-3 col-md-2">Nome</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.patient.first_name |default_if_none:""}}&nbsp;{{ access.patient.middle_name |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Cognome</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.patient.last_name |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Data nascita</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.patient.birth_date |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Sesso</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.patient.gender |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Codice fiscale</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.patient.fiscal_code |default_if_none:""}}
+                </dd>
+              </dl>
+            </div>
+            <div>
+              <h3 class="border-bottom">
+                Dati accesso
+              </h3>
+              <dl class="row">
+                <dt class="col-sm-3 col-md-2">Ospedale</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.hospital |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Totem</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.totem |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Motivo</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.access_reason |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Codice triage</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.triage_code |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Data entrata</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {{ access.access_date |default_if_none:""}}
+                </dd>
+                <dt class="col-sm-3 col-md-2">Data uscita</dt>
+                <dd class="col-sm-9 col-md-4">
+                  {% if access.exit_date %}{{ access.exit_date |default_if_none:""}}{% endif %}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+          
+    {% for result in access.result_set|dictsortreversed:"id" %}
+      <div class="row mt-2">
+        <div class="col-xl-12 order-xl-1">
+          <div class="card bg-secondary shadow">
+            <div class="card-body">
+              <h3 class="border-bottom">
+                Misura {{result.id}}
+              </h3>
+              <dl class="row">
+                {% for index,values in result.get_hresult.items %}
+                  <dt class="col-sm-3 col-md-2">{{ values.name }}</dt>
+                  <dd class="col-sm-9 col-md-4">
+                    {{ values.value }}{% if values.stdev %} &#177; {{ values.stdev }}{% endif %} {{ values.unit }}
+                  </dd>
+                {% endfor %}
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}{% endblock javascripts %}

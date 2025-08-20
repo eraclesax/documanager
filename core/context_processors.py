@@ -16,7 +16,7 @@ def cms_context(request):
 def side_menu_context(current_url_name):
     side_menu = []
     
-    url_name = "home"
+    url_name = "index"
     item = {
         "type":"url",
         "text":"Home",
