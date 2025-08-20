@@ -11,23 +11,28 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+import json
+from envparse import env
+
+from email.policy import default
+
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+## BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6@&(ti2fkhl&g0$ar)&wv=04+@6-lo8%l17@a(-0s4s&rf4oci'
-
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-6@&(ti2fkhl&g0$ar)&wv=04+@6-lo8%l17@a(-0s4s&rf4oci')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-
+DEBUG = env('DEBUG',cast=bool,default=True)
+# SECURITY WARNING: Do not use * in production.
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', os.getenv('ALLOWED_HOST')]
 # Application definition
 
 INSTALLED_APPS = [
@@ -77,7 +82,7 @@ WSGI_APPLICATION = 'documanager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR +'/' +'db.sqlite3',
     }
 }
 
@@ -117,6 +122,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# MEDIA_ROOT = os.path.join(os.path.join(os.path.dirname(__file__),'..','media'))
+# STATIC_ROOT = os.path.join(BASE_DIR,'..','collected_static/')
+# MEDIA_URL = '/media/'
+# STATIC_URL = '/static/'
+# STATICFILES_DIRS = ( os.path.join(BASE_DIR,'static/'),)
+
+# STATICFILES_FINDERS = (
+#    'django.contrib.staticfiles.finders.FileSystemFinder',
+#    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
