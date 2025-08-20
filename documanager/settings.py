@@ -15,7 +15,7 @@ import json
 from pathlib import Path
 from envparse import env
 from dotenv import load_dotenv
-load_dotenv() # Cariva le variabili di ambiente
+load_dotenv('.env') # Cariva le variabili di ambiente
 
 from email.policy import default
 
@@ -35,6 +35,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-6@&(ti2fkhl&g0
 DEBUG = env('DEBUG',cast=bool,default=True)
 # SECURITY WARNING: Do not use * in production.
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', os.environ.get('ALLOWED_HOST')]
+print(ALLOWED_HOSTS)
 # Application definition
 
 INSTALLED_APPS = [
