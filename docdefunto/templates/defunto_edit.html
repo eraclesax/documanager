@@ -1,4 +1,6 @@
-{% extends 'layouts/base.html' %}
+{% extends BASE_TEMPLATE %}
+
+{% block stylesheets %}{% endblock stylesheets %}
 {% load crispy_forms_tags %}
 
 {% block title %}Scheda Defunto{% endblock title %}
@@ -6,11 +8,12 @@
 {% block content %}
 
   <!-- Header -->
-  <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" 
-        style="min-height: 600px; background-image: url(/static/assets/img/theme/medicina-sfondo.jpg); background-size: cover; background-position: center top;">
-    <!-- Mask -->
-    <span class="mask bg-gradient-default opacity-8"></span>
-    <!-- Header container -->
+  <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+
+      </div>
+    </div>
   </div>
 
   <div class="container-fluid mt--7">

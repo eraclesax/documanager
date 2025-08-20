@@ -1,6 +1,6 @@
 {% extends BASE_TEMPLATE %}
 
-{% block title %} Lista defunti {% endblock title %}
+{% block title %} Lista Schede Defunto {% endblock title %}
 
 {% block stylesheets %}{% endblock stylesheets %}
 
@@ -23,7 +23,7 @@
         <div class="col">
           <div class="card shadow">
             <div class="card-header border-0">
-              <h3 class="mb-0">Lista defunti</h3>
+              <h3 class="mb-0">Lista Schede Defunto</h3>
             </div>
             <div class="card-header border-0">
               <a href="{% url 'defunto_new' %}" class="btn btn-success btn-sm" title="Aggiungi una nuova scheda defunto">
@@ -68,11 +68,11 @@
                           <i class="bi bi-eye"></i>
                         </a>
                         <!-- Scarica PDF -->
-                        <button type="submit" class="btn btn-success btn-sm" title="PDF">
+                        <button type="submit" class="btn btn-success btn-sm" title="Scarica PDFs">
                           <i class="bi bi-save"></i>
                         </button>
                         <!-- Stampa -->
-                        <button type="button" class="btn btn-secondary btn-sm" title="Stampa" onclick="window.print()">
+                        <button type="button" class="btn btn-secondary btn-sm" title="Stampe" onclick="window.print()">
                           <i class="bi bi-printer"></i>
                         </button>
                       </td>
