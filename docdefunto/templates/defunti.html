@@ -25,6 +25,11 @@
             <div class="card-header border-0">
               <h3 class="mb-0">Lista defunti</h3>
             </div>
+            <div class="card-header border-0">
+              <a href="{% url 'defunto_new' %}" class="btn btn-success btn-sm" title="Aggiungi una nuova scheda defunto">
+                Aggiungi nuova scheda
+              </a>
+            </div>
             <div class="table-responsive">
               <table id="data_table" class="table align-items-center table-flush">
                 <thead class="thead-light">
@@ -34,6 +39,7 @@
                     <th scope="col">Nome</th>
                     <th scope="col">Data nascita</th>
                     <th scope="col">Data morte</th>
+                    <th scope="col"></th>
                     <th scope="col"></th>
                   </tr>
                 </thead>
@@ -56,7 +62,33 @@
                         <span>{{item.data_ora_morte|date:'d/m/Y'}}</span>
                       </td>
 
-                      <td class="text-right">
+                      <td scope="row">
+                        <!-- Visualizza -->
+                        <a href="{% url 'defunto' id=item.id %}" class="btn btn-info btn-sm" title="Visualizza">
+                          <i class="bi bi-eye"></i>
+                        </a>
+                        <!-- Scarica PDF -->
+                        <button type="submit" class="btn btn-success btn-sm" title="PDF">
+                          <i class="bi bi-save"></i>
+                        </button>
+                        <!-- Stampa -->
+                        <button type="button" class="btn btn-secondary btn-sm" title="Stampa" onclick="window.print()">
+                          <i class="bi bi-printer"></i>
+                        </button>
+                      </td>
+                      <td scope="row">
+                        <!-- Modifica -->
+                        <a href="{% url 'defunto_edit' id=item.id %}" class="btn btn-warning btn-sm" title="Modifica">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <!-- Bottone che apre il modal -->
+                        <button type="button" class="btn btn-danger btn-sm" title="Elimina"
+                                data-toggle="modal" data-target="#deleteModal{{ item.id }}">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+
+                      <!-- <td class="text-right">
                         <div class="dropdown">
                           <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-ellipsis-v"></i>
@@ -64,11 +96,42 @@
                           <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                             <a class="dropdown-item" href="{% url 'defunto' id=item.id %}">Dettaglio</a>
                             <a class="dropdown-item" href="{% url 'defunto_edit' id=item.id %}">Modifica</a>
+                            <a class="dropdown-item" href="" data-toggle="modal" data-target="#deleteModal{{ item.id }}">Elimina</a>
+                            
+                            <a class="dropdown-item" href="{% url 'defunto_edit' id=item.id %}">Stampa/Salva Documenti</a>
                           </div>
                         </div>
-                      </td>
-
+                      </td> -->
                     </tr>
+                    <!-- Modal di conferma eliminazione -->
+                    <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel{{ item.id }}">Conferma Eliminazione</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                          <div class="modal-body">
+                            Sei sicuro di voler eliminare l’anagrafica di <strong>{{ item }}</strong>?
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+
+                            <!-- Form di eliminazione -->
+                            <form method="post" action="{% url 'defunto_delete' item.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Elimina</button>
+                            </form>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
                   {% endfor %}
                 </tbody>
               </table>

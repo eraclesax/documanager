@@ -21,6 +21,9 @@ from django.utils.decorators import method_decorator
 from crispy_forms.utils import render_crispy_form
 from rest_framework.views import APIView
 
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView
+
 
 
 # class RedirectView(View):
@@ -43,7 +46,7 @@ class DefuntiListView(View):
     
     def GET_render(self,request,*args, **kwargs):
         
-        defunti = AnagraficaDefunto.objects.all()
+        defunti = AnagraficaDefunto.objects.all().order_by('-id')
         return render(request, self.template_name, {
             "defunti":defunti,
         })
@@ -125,6 +128,11 @@ class DefuntoEditView(View):
             kwargs["form"] = form
             kwargs["has_error"] = True
             return self.GET_render(request, *args, **kwargs)
+
+class AnagraficaDefuntoDeleteView(DeleteView):
+    model = AnagraficaDefunto
+    template_name = "defunti/defunto_confirm_delete.html"  # non verrà usato con il modal
+    success_url = reverse_lazy("defunti")
 
 # def lista(request):
 #     if request.method == 'POST':

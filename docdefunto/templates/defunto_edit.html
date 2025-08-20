@@ -27,7 +27,7 @@
                 {% endif %}
               </div>
               <div class="col-4 text-right">
-                <input form="data-form" type="submit" class="btn btn-sm btn-primary" value="Salva">
+                <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
               </div>
             </div>
           </div>
@@ -35,6 +35,13 @@
             <form id="data-form" name="data-form" method='post' enctype="multipart/form-data">
               {% crispy form %}
             </form>
+            <div class="row align-items-center">
+              <div class="col-8">
+              </div>
+              <div class="col-4 text-right">
+                <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
+              </div>
+            </div>
           </div>
         </div>
       </div>

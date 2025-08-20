@@ -35,6 +35,55 @@
               <h3 class="mb-0">{{ defunto }}</h3>
             </div>
           </div>
+          <div class="card-header border-0">
+            <!-- Scarica PDF -->
+            <button type="submit" class="btn btn-success btn-sm" title="PDF">
+              Scarica PDF
+            </button>
+            <!-- Stampa -->
+            <button type="button" class="btn btn-secondary btn-sm" title="Stampa" onclick="window.print()">
+              Stampa
+            </button>
+            <!-- Modal di conferma eliminazione -->
+            <div class="modal fade" id="deleteModal{{ defunto.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ defunto.id }}" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ defunto.id }}">Conferma Eliminazione</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body">
+                    Sei sicuro di voler eliminare l’anagrafica di <strong>{{ defunto }}</strong>?
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+
+                    <!-- Form di eliminazione -->
+                    <form method="post" action="{% url 'defunto_delete' defunto.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Elimina</button>
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <!-- Modifica -->
+            <a href="{% url 'defunto_edit' id=defunto.id %}" class="btn btn-warning btn-sm" title="Modifica">
+              Modifica
+            </a>
+            <!-- Bottone che apre il modal -->
+            <button type="button" class="btn btn-danger btn-sm" title="Elimina"
+                    data-toggle="modal" data-target="#deleteModal{{ defunto.id }}">
+              Elimina
+            </button>
+          </div>
+
         </div>
         <div class="card-body">
 
