@@ -4,13 +4,13 @@ from .models import Book
 from django.shortcuts import redirect, render
 from .forms import BookForm
 
-def home(request):
+def lista(request):
     if request.method == 'POST':
         form = BookForm(request.POST)
         if form.is_valid():
             form.save()
     # Redirect to PDF generation after adding a book
-            return redirect('home')  
+            return redirect('lista')  
     else:
         form = BookForm()
     return render(request, 'docdefunto/create_user_profile.html', 
