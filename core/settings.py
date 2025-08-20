@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'fontawesomefree',
     'app',
     'crispy_forms',
+    'crispy_bootstrap4',
     'rest_framework',
     # Custom
     'docdefunto',
@@ -194,6 +195,7 @@ if DEBUG_PERFORMANCE:
 
 ## CRISPY FORM SETTINGS 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 ## MESSAGES 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

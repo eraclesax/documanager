@@ -1,6 +1,7 @@
 asgiref==3.9.1
 certifi==2025.8.3
 charset-normalizer==3.4.3
+crispy-bootstrap4==2025.6
 Django==5.2.5
 django-cors-headers==4.7.0
 django-crispy-forms==2.4
@@ -9,6 +10,7 @@ django-debug-toolbar==6.0.0
 django-ipware==7.0.1
 django-rosetta==0.10.2
 django-silk==5.4.1
+djangorestframework==3.16.1
 envparse==0.2.0
 fontawesomefree==6.6.0
 gprof2dot==2025.4.14

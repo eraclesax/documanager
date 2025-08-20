@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %} Profile {% endblock title %}
+{% block title %}Scheda Defunto{% endblock title %}
 
 {% block content %}
 
@@ -21,9 +21,9 @@
             <div class="row align-items-center">
               <div class="col-8">
                 {% if form.instance %}
-                  <h3 class="mb-0">Modifica ospedale "{{form.instance}}"</h3>
+                  <h3 class="mb-0">Modifica Scheda Defunto "{{form.instance}}"</h3>
                 {% else %}
-                  <h3 class="mb-0">Crea nuovo ospedale</h3>
+                  <h3 class="mb-0">Crea nuova Scheda Defunto</h3>
                 {% endif %}
               </div>
               <div class="col-4 text-right">
