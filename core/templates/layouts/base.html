@@ -88,12 +88,13 @@
   <!-- Interactive tables (not downloaded) -->
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
 
-  {% comment %} <!-- Initialize toast messages -->
+  {% comment %} 
+  <!-- Initialize toast messages -->
   <script>
     $(document).ready(function(){
       $('.toast').toast('show');
     });
-  </script> {% endcomment %}
+  </script> 
   <script>
     function getFormData($form){
       var unindexed_array = $form.serializeArray();
@@ -103,6 +104,13 @@
       });
       return indexed_array;
     }
+  </script>
+  {% endcomment %}
+  <!-- Initialize tooltips -->
+  <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
   </script>
 
   {% block javascripts %}{% endblock javascripts %}
