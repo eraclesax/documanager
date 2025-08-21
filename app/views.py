@@ -17,7 +17,7 @@ def index(request):
     context = {}
     context['segment'] = 'index'
 
-    # html_template = loader.get_template( 'index.html' )
+    # html_template = loader.get_template( 'home.html' )
     return HttpResponseRedirect(reverse('defunti'))
 
 # @login_required(login_url="/login/")
