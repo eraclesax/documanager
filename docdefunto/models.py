@@ -77,10 +77,8 @@ class AnagraficaDefunto(models.Model):
                 "luogo": {"text": "Trieste", "x": 100, "y": 650, "info":{...}},
             }        
         """
-        print(empty_fields)
         for field_name, _ in empty_fields.items():
             empty_fields[field_name]["text"] = str(getattr(self, field_name))
-        print(empty_fields)
         return empty_fields
     
 class Documento(models.Model):
