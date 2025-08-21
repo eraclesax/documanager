@@ -1,8 +1,11 @@
+<!-- Static assets -->
+{% load static %}
+
     <!-- Navbar -->
     <nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark">
       <div class="container px-4">
         {% comment %} <a class="navbar-brand" href="/">
-          <img src="/static/assets/img/brand/logo-white.png" class="navbar-brand-img" alt="...">
+          <img src="{% static 'assets/img/brand/logo-white.png' %}" class="navbar-brand-img" alt="...">
         </a> {% endcomment %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-main" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -13,7 +16,7 @@
             <div class="row">
               <div class="col-6 collapse-brand">
                 <a href="/">
-                  <img src="/static/assets/img/brand/logo-white.png">
+                  <img src="{% static 'assets/img/brand/logo-white.png' %}">
                 </a>
               </div>
               <div class="col-6 collapse-close">

@@ -1,4 +1,7 @@
 
+<!-- Static assets -->
+{% load static %}
+
   <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
     <div class="container-fluid">
       <!-- Toggler -->
@@ -7,7 +10,7 @@
       </button>
       <!-- Brand -->
       <a class="navbar-brand pt-0" href="/">
-        <img src="/static/assets/img/brand/logo-white.png" class="navbar-brand-img" alt="...">
+        <img src="{% static 'assets/img/brand/logo-white.png' %}" class="navbar-brand-img" alt="...">
       </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
@@ -19,12 +22,12 @@
                   {% if request.user.appuser.img %}
                     <img class="rounded-circle" src="{{ request.user.appuser.img.url }}">
                   {% else %}
-                    <img class="rounded-circle" src="/static/default_user_img.jpeg">
+                    <img class="rounded-circle" src="{% static 'default_user_img.jpeg' %}">
                   {% endif %}
                 </span>
               {% else %}
                 <span class="avatar avatar-sm">
-                  <img class="rounded-circle" src="/static/default_user_img.jpeg">
+                  <img class="rounded-circle" src="{% static 'default_user_img.jpeg' %}">
                 </span>
               {% endif %}
             </div>
@@ -53,7 +56,7 @@
           <div class="row">
             <div class="col-6 collapse-brand">
               <a href="{% url 'index' %}">
-                <img src="/static/assets/img/brand/logo-white.png">
+                <img src="{% static 'assets/img/brand/logo-white.png' %}">
               </a>
             </div>
             <div class="col-6 collapse-close">

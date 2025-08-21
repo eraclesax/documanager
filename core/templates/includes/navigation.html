@@ -1,3 +1,5 @@
+<!-- Static assets -->
+{% load static %}
 
 <!-- Navbar -->
 <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
@@ -25,12 +27,12 @@
                 {% if request.user.appuser.img %}
                   <img class="rounded-circle" src="{{ request.user.appuser.img.url }}">
                 {% else %}
-                  <img class="rounded-circle" src="/static/default_user_img.jpeg">
+                  <img class="rounded-circle" src="{% static 'default_user_img.jpeg' %}">
                 {% endif %}
               </span>
             {% else %}
               <span class="avatar avatar-sm">
-                <img class="rounded-circle" src="/static/default_user_img.jpeg">
+                <img class="rounded-circle" src="{% static 'default_user_img.jpeg' %}">
               </span>
             {% endif %}
             <div class="media-body ml-2 d-none d-lg-block">
