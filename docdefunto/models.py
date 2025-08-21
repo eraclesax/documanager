@@ -66,20 +66,21 @@ class AnagraficaDefunto(models.Model):
     def fill_fields(self, empty_fields):
         """Fills fields of the type:
             empty_fields = {
-                "nome": {"x": 100, "y": 700},
-                "data": {"x": 400, "y": 700},
-                "luogo": {"x": 100, "y": 650},
+                "nome": {"x": 100, "y": 700, "info":{...}},
+                "data": {"x": 400, "y": 700, "info":{...}},
+                "luogo": {"x": 100, "y": 650, "info":{...}},
             }
             in fields of the type:
             empty_fields = {
-                "nome": {"text": "Mario Rossi", "x": 100, "y": 700},
-                "data": {"text": "21/08/2025", "x": 400, "y": 700},
-                "luogo": {"text": "Trieste", "x": 100, "y": 650},
+                "nome": {"text": "Mario Rossi", "x": 100, "y": 700, "info":{...}},
+                "data": {"text": "21/08/2025", "x": 400, "y": 700, "info":{...}},
+                "luogo": {"text": "Trieste", "x": 100, "y": 650, "info":{...}},
             }        
         """
-        for field_name, data in empty_fields.items():
+        print(empty_fields)
+        for field_name, _ in empty_fields.items():
             empty_fields[field_name]["text"] = str(getattr(self, field_name))
-        
+        print(empty_fields)
         return empty_fields
     
 class Documento(models.Model):

@@ -1,0 +1,64 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Documenti {% endblock title %}
+
+{% block stylesheets %}
+  <style>
+    .blinking {
+      animation: blink 1s ease-in infinite;
+    }
+
+    @keyframes blink {
+      from, to { opacity: 1 }
+      50% { opacity: 0 }
+    }
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Impostazioni Documento "{{form.instance}}"</h3>
+            </div>
+            <div class="col-4 text-right">
+              <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="data-form" name="data-form" method='post' enctype="multipart/form-data">
+            {% crispy form %}
+          </form>
+          <div class="row align-items-center">
+            <div class="col-8">
+            </div>
+            <div class="col-4 text-right">
+              <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+{% endblock javascripts %}

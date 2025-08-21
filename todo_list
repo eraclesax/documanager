@@ -26,8 +26,7 @@ ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-16-16-183-145.eu-north-1.com
 
 
 
-cd media/riso/
-mkdir TOSHIBA\ EXT
+cd /media/riso/
 sudo mkdir TOSHIBA\ EXT
 ls
 sudo mount -t ntfs-3g /dev/sda1 /media/riso/TOSHIBA\ EXT

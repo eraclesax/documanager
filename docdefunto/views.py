@@ -220,7 +220,50 @@ class GetDocView(View):
     #     response["Content-Disposition"] = f'attachment; filename="{filename}"'
     #     return response
     
+class EditDocConfig(View):
+    """[summary]
 
+    Args:
+        APIView ([type]): [description]
+    """
+    template_name = 'defunto_docs.html'
+    
+    @method_decorator(login_required(login_url="/login/"))
+    def get(self, request, *args, **kwargs):
+        return self.GET_render(request,*args, **kwargs)
+    
+    def GET_render(self,request,*args, **kwargs):
+        def_id = kwargs.get("def_id", None)
+        doc_id = kwargs.get("doc_id", None)
+        documento = get_object_or_404(Documento, pk=doc_id)
+        defunto = get_object_or_404(AnagraficaDefunto, pk=def_id)
+
+        json_data = documento.fields or {}
+        form = DynamicJsonConfigForm(json_data=json_data)
+
+        return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
+    
+    @method_decorator(login_required(login_url="/login/"))
+    def post(self, request, *args, **kwargs):
+        def_id = kwargs.get("def_id", None)
+        doc_id = kwargs.get("doc_id", None)
+        documento = get_object_or_404(Documento, pk=doc_id)
+        defunto = get_object_or_404(AnagraficaDefunto, pk=def_id)
+        json_data = documento.fields or {}
+
+        form = DynamicJsonConfigForm(request.POST, json_data=json_data)
+        if form.is_valid():
+            documento.fields = form.to_json()
+            documento.save()
+
+            documenti = Documento.objects.all()
+            return render(request, "defunto_docs.html", {
+                "defunto":defunto,
+                "documenti":documenti,
+            })
+        else:
+            # Provvisorio
+            return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
 
 
 # def generate_pdf_file():

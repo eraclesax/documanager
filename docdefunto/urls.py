@@ -11,5 +11,5 @@ urlpatterns = [
     path("defunti/<int:id>/delete/", AnagraficaDefuntoDeleteView.as_view(), name="defunto_delete"),
     path("defunti/<int:id>/docs/", DefuntoDocsView.as_view(), name="defunto_docs"),
     path("defunti/<int:def_id>/docs/<int:doc_id>/<str:action>", GetDocView.as_view(), name="get_doc"),
-
+    path("defunti/<int:def_id>/docs/<int:doc_id>/", EditDocConfig.as_view(), name="edit_doc_config"),
 ]
