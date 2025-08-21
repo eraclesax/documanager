@@ -159,10 +159,13 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(CORE_DIR, 'staticfiles') # Dove i file statici vengono collezionati con collectstatic se DEBUG=False
 STATIC_URL = '/static/'
 # Altre cartelle oltre a <nome applicazione>/STATIC_URL da cui vengono collezionati i file statici
-STATICFILES_DIRS = ()
+STATICFILES_DIRS = (
+    os.path.join(CORE_DIR, 'core/static'),
+)
 
 MEDIA_ROOT = os.path.join(CORE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
+
 
 #############################################################
 #############################################################
