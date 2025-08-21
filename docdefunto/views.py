@@ -182,43 +182,17 @@ class GetDocView(View):
         empty_fields = doc.fields
         filled_fields = defunto.fill_fields(empty_fields)
         pdf_bytes = generate_filled_pdf(doc.file, filled_fields)
+        filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
 
         if action == "save":
             # Ritorno il PDF come risposta
-            response = FileResponse(pdf_bytes, as_attachment=True, filename="documento.pdf")
+            response = FileResponse(pdf_bytes, as_attachment=True, filename=filename)
         else:
             # Ritorno il PDF aperto nel browser
-            response = FileResponse(pdf_bytes, filename="documento.pdf")
-            response['Content-Disposition'] = 'inline; filename="documento.pdf"'
+            response = FileResponse(pdf_bytes, filename=filename)
+            response['Content-Disposition'] = f'inline; filename="{filename}"'
 
         return response
-    
-    # def GET_render(self,request,*args, **kwargs):
-        
-    #     def_id = kwargs.get("def_id", None)
-    #     doc_id = kwargs.get("doc_id", None)
-
-    #     # prendo il template (Documento)
-    #     doc = get_object_or_404(Documento, id=doc_id)
-    #     # prendo i dati del defunto
-    #     defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
-
-    #     # leggo il contenuto del file template
-    #     with doc.file.open("r") as f:
-    #         template_string = f.read()
-
-    #     # renderizzo il template con i dati del defunto
-    #     template = Template(template_string)
-    #     context = Context({
-    #         "defunto": defunto,  # puoi accedere con {{ defunto.nome }} ecc.
-    #     })
-    #     contenuto = template.render(context)
-
-    #     # preparo la risposta per il download
-    #     filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
-    #     response = HttpResponse(contenuto, content_type="text/plain")
-    #     response["Content-Disposition"] = f'attachment; filename="{filename}"'
-    #     return response
     
 class EditDocConfig(View):
     """[summary]
@@ -264,6 +238,34 @@ class EditDocConfig(View):
         else:
             # Provvisorio
             return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
+        
+    # def GET_render(self,request,*args, **kwargs):
+        
+    #     def_id = kwargs.get("def_id", None)
+    #     doc_id = kwargs.get("doc_id", None)
+
+    #     # prendo il template (Documento)
+    #     doc = get_object_or_404(Documento, id=doc_id)
+    #     # prendo i dati del defunto
+    #     defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
+
+    #     # leggo il contenuto del file template
+    #     with doc.file.open("r") as f:
+    #         template_string = f.read()
+
+    #     # renderizzo il template con i dati del defunto
+    #     template = Template(template_string)
+    #     context = Context({
+    #         "defunto": defunto,  # puoi accedere con {{ defunto.nome }} ecc.
+    #     })
+    #     contenuto = template.render(context)
+
+    #     # preparo la risposta per il download
+    #     filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
+    #     response = HttpResponse(contenuto, content_type="text/plain")
+    #     response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    #     return response
+    
 
 
 # def generate_pdf_file():
