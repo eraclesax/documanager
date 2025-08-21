@@ -182,7 +182,7 @@ class GetDocView(View):
         empty_fields = doc.fields
         filled_fields = defunto.fill_fields(empty_fields)
         pdf_bytes = generate_filled_pdf(doc.file, filled_fields)
-        filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
+        filename = f"{defunto.cognome}_{defunto.nome} - {doc}"
 
         if action == "save":
             # Ritorno il PDF come risposta
