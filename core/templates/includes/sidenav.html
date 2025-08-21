@@ -32,20 +32,24 @@
               {% endif %}
             </div>
           </a>
+
           <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-            <a href="{% url 'index' %}" class="dropdown-item">
+            <!-- <a href="{% url 'index' %}" class="dropdown-item">
               <i class="ni ni-single-02"></i>
               <span>Profilo</span>
             </a>
-            <a href="/profile.html" class="dropdown-item">
+            <a href="https://appseed.us" target="_blank" class="dropdown-item">
               <i class="ni ni-support-16"></i>
               <span>Supporto</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="{% url 'index' %}" class="dropdown-item">
-              <i class="ni ni-user-run"></i>
-              <span>Esci</span>
-            </a>
+            </a> 
+            <div class="dropdown-divider"></div>-->
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="dropdown-item" style="border:none; background:none; padding: 0px; padding-left:5px; width:100%; text-align:left;">
+                <i class="ni ni-user-run"></i>
+                <span>Esci</span>
+              </button>
+            </form>
           </div>
         </li>
       </ul>

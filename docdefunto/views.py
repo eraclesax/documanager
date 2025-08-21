@@ -1,4 +1,3 @@
-from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from app.models import AppUser
 from .models import *
@@ -8,21 +7,19 @@ import datetime
 
 from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
-from django.urls import reverse
-from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
 from django.template.context_processors import csrf
-from django.views.generic import View
+from django.views.generic import View, DeleteView
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.template import Template, Context
 
 from crispy_forms.utils import render_crispy_form
 from rest_framework.views import APIView
-
-from django.urls import reverse_lazy
-from django.views.generic import DeleteView
 
 
 
@@ -134,23 +131,101 @@ class AnagraficaDefuntoDeleteView(DeleteView):
     template_name = "defunti/defunto_confirm_delete.html"  # non verrà usato con il modal
     success_url = reverse_lazy("defunti")
 
-# def lista(request):
-#     if request.method == 'POST':
-#         form = AnagraficaForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#     # Redirect to PDF generation after adding a book
-#             return redirect('lista')  
-#     else:
-#         form = AnagraficaForm()
-#     return render(request, 'reate_user_profile.html', 
-#                   {'form': form})    
+class DefuntoDocsView(View):
+    """[summary]
+
+    Args:
+        APIView ([type]): [description]
+    """
+    template_name = 'defunto_docs.html'
     
-# def generate_pdf(request):
-#     response = FileResponse(generate_pdf_file(), 
-#                             as_attachment=True, 
-#                             filename='book_catalog.pdf')
-#     return response
+    @method_decorator(login_required(login_url="/login/"))
+    def get(self, request, *args, **kwargs):
+        return self.GET_render(request,*args, **kwargs)
+    
+    def GET_render(self,request,*args, **kwargs):
+        
+        id = kwargs.get("id", None)
+        defunto = get_object_or_404(AnagraficaDefunto,pk=id)
+        documenti = Documento.objects.all()
+
+        return render(request, self.template_name, {
+            "defunto":defunto,
+            "documenti":documenti,
+        })
+
+class GetDocView(View):
+    """[summary]
+
+    Args:
+        APIView ([type]): [description]
+    """
+    template_name = 'defunto_docs.html'
+    
+    @method_decorator(login_required(login_url="/login/"))
+    def get(self, request, *args, **kwargs):
+        return self.GET_render(request,*args, **kwargs)
+    
+    def GET_render(self,request,*args, **kwargs):
+        from .utils import generate_filled_pdf
+
+        def_id = kwargs.get("def_id", None)
+        doc_id = kwargs.get("doc_id", None)
+        action = kwargs.get("action", "open")
+        
+        # prendo il template (Documento)
+        doc = get_object_or_404(Documento, id=doc_id)
+        # prendo i dati del defunto
+        defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
+
+
+        fields = {
+                "nome": {"text": "Mario Rossi", "x": 100, "y": 700},
+                "data": {"text": "21/08/2025", "x": 400, "y": 700},
+                "luogo": {"text": "Trieste", "x": 100, "y": 650},
+            }
+
+        pdf_bytes = generate_filled_pdf(doc.file, fields)
+
+        if action == "save":
+            # Ritorno il PDF come risposta
+            response = FileResponse(pdf_bytes, as_attachment=True, filename="documento.pdf")
+        else:
+            # Ritorno il PDF aperto nel browser
+            response = FileResponse(pdf_bytes, filename="documento.pdf")
+            response['Content-Disposition'] = 'inline; filename="documento.pdf"'
+            print("Sto salvando")
+
+        return response
+    
+    # def GET_render(self,request,*args, **kwargs):
+        
+    #     def_id = kwargs.get("def_id", None)
+    #     doc_id = kwargs.get("doc_id", None)
+
+    #     # prendo il template (Documento)
+    #     doc = get_object_or_404(Documento, id=doc_id)
+    #     # prendo i dati del defunto
+    #     defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
+
+    #     # leggo il contenuto del file template
+    #     with doc.file.open("r") as f:
+    #         template_string = f.read()
+
+    #     # renderizzo il template con i dati del defunto
+    #     template = Template(template_string)
+    #     context = Context({
+    #         "defunto": defunto,  # puoi accedere con {{ defunto.nome }} ecc.
+    #     })
+    #     contenuto = template.render(context)
+
+    #     # preparo la risposta per il download
+    #     filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
+    #     response = HttpResponse(contenuto, content_type="text/plain")
+    #     response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    #     return response
+    
+
 
 
 # def generate_pdf_file():

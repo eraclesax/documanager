@@ -17,6 +17,8 @@ from pathlib import Path
 from envparse import env
 from django.urls import reverse_lazy
 from django.contrib.messages import constants as messages
+from django.conf import settings
+from django.conf.urls.static import static
 
 from dotenv import load_dotenv
 load_dotenv('.env') # Carica le variabili di ambiente
@@ -156,16 +158,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_ROOT = os.environ.get('STATIC_ROOT') # Dove i file statici vengono collezionati con collectstatic se DEBUG=False
 STATIC_URL = '/static/'
+STATIC_ROOT = os.environ.get('STATIC_ROOT') # Dove i file statici vengono collezionati con collectstatic se DEBUG=False
 # Altre cartelle oltre a <nome applicazione>/STATIC_URL da cui vengono collezionati i file statici
 STATICFILES_DIRS = (
     os.path.join(CORE_DIR, 'core/static'),
 )
 
-MEDIA_ROOT = os.path.join(CORE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #.replace('\\', '/')
 
 #############################################################
 #############################################################

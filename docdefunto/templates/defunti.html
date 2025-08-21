@@ -65,23 +65,22 @@
                       <td scope="row">
                         <!-- Visualizza -->
                         <a href="{% url 'defunto' id=item.id %}" class="btn btn-info btn-sm" 
-                        data-toggle="tooltip" data-placement="top" title="Visualizza">
+                        data-toggle="tooltip" data-placement="top" title="Visualizza dati">
                           <i class="bi bi-eye"></i>
                         </a>
-                        <!-- Scarica PDF -->
-                        <button type="submit" class="btn btn-success btn-sm" 
-                        data-toggle="tooltip" data-placement="top" title="Scarica PDFs">
-                          <i class="bi bi-save"></i>
-                        </button>
-                        <!-- Stampa -->
-                        <button type="button" class="btn btn-secondary btn-sm" 
-                        data-toggle="tooltip" data-placement="top" title="Stampe" onclick="window.print()">
-                          <i class="bi bi-printer"></i>
-                        </button>
+                        <!-- Documenti -->
+                        <a href="{% url 'defunto_docs' item.id %}" class="btn btn-success btn-sm" 
+                        data-toggle="tooltip" data-placement="top" title="Documenti">
+                          <i class="bi bi-folder"></i>
+                        </a>
+                        <!-- <button type="submit" class="btn btn-success btn-sm" 
+                        data-toggle="tooltip" data-placement="top" title="Documenti">
+                          <i class="bi bi-folder"></i>
+                        </button> -->
                       </td>
                       <td scope="row">
                         <!-- Modifica -->
-                        <a href="{% url 'defunto_edit' id=item.id %}" class="btn btn-warning btn-sm" 
+                        <a href="{% url 'defunto_edit' item.id %}" class="btn btn-warning btn-sm" 
                         data-toggle="tooltip" data-placement="top" title="Modifica">
                           <i class="bi bi-pencil"></i>
                         </a>
@@ -138,6 +137,7 @@
                         </div>
                       </div>
                     </div>
+                    <!-- END Modal di conferma eliminazione -->
                   {% endfor %}
                 </tbody>
               </table>

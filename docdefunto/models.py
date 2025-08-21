@@ -62,3 +62,11 @@ class AnagraficaDefunto(models.Model):
 
     def __str__(self):
         return f"{self.cognome} {self.nome}"
+
+class Documento(models.Model):
+    file = models.FileField(upload_to="documenti/")
+
+    def __str__(self):
+        return self.file.name.split("/")[-1]  # mostra solo il nome del file
+    
+    

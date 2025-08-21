@@ -8,7 +8,8 @@ urlpatterns = [
     path('defunti/<int:id>', DefuntoView.as_view(), name='defunto'),
     path('defunti/<int:id>/edit', DefuntoEditView.as_view(), name='defunto_edit'),
     path('defunti/new', DefuntoEditView.as_view(), name='defunto_new'),
-    path("defunti/<int:pk>/delete/", AnagraficaDefuntoDeleteView.as_view(), name="defunto_delete"),
+    path("defunti/<int:id>/delete/", AnagraficaDefuntoDeleteView.as_view(), name="defunto_delete"),
+    path("defunti/<int:id>/docs/", DefuntoDocsView.as_view(), name="defunto_docs"),
+    path("defunti/<int:def_id>/docs/<int:doc_id>/<str:action>", GetDocView.as_view(), name="get_doc"),
 
-    # path('generate-pdf/', views.generate_pdf, name='generate_pdf'),
 ]

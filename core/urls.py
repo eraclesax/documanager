@@ -29,8 +29,10 @@ urlpatterns = [
     path('', include("app.urls")),             # UI Kits Html files - must be last one
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
 # from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # # Serving the media files in development mode
 # if settings.DEBUG:

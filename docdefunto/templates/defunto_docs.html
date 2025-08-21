@@ -1,0 +1,79 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Scheda Defunto {% endblock title %}
+
+{% block stylesheets %}
+  <style>
+    .blinking {
+      animation: blink 1s ease-in infinite;
+    }
+
+    @keyframes blink {
+      from, to { opacity: 1 }
+      50% { opacity: 0 }
+    }
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Documenti {{ defunto }}</h3>
+            </div>
+          </div>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome Documento</th>
+                <th scope="col">Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for doc in documenti %}
+              <tr>
+                <td>{{ doc }}</td>
+                <td>
+                  <a href="{% url 'get_doc' def_id=defunto.id doc_id=doc.id action='open' %}" class="btn btn-sm btn-success" target="_blank">Apri</a>
+                  <a href="{% url 'get_doc' def_id=defunto.id doc_id=doc.id action='save' %}" class="btn btn-sm btn-success" download>Salva</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="2" class="text-center">Nessun documento disponibile</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {% include "includes/footer.html" %}
+</div>
+
+{% endblock content %}
+
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+{% endblock javascripts %}
