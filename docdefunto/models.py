@@ -62,11 +62,36 @@ class AnagraficaDefunto(models.Model):
 
     def __str__(self):
         return f"{self.cognome} {self.nome}"
-
+    
+    def fill_fields(self, empty_fields):
+        """Fills fields of the type:
+            empty_fields = {
+                "nome": {"x": 100, "y": 700},
+                "data": {"x": 400, "y": 700},
+                "luogo": {"x": 100, "y": 650},
+            }
+            in fields of the type:
+            empty_fields = {
+                "nome": {"text": "Mario Rossi", "x": 100, "y": 700},
+                "data": {"text": "21/08/2025", "x": 400, "y": 700},
+                "luogo": {"text": "Trieste", "x": 100, "y": 650},
+            }        
+        """
+        for field_name, data in empty_fields.items():
+            empty_fields[field_name]["text"] = str(getattr(self, field_name))
+        
+        return empty_fields
+    
 class Documento(models.Model):
-    file = models.FileField(upload_to="documenti/")
+    file = models.FileField(verbose_name="File", upload_to="documenti/")
+    fields = models.JSONField(verbose_name="Campi", null=True)
+    # fields structure:
+    # {
+    #     "AnagraficaDefunto.nomeCampo1": {"x": 100, "y": 700},
+    #     "AnagraficaDefunto.nomeCampo2": {"x": 400, "y": 700},
+    #     ...
+    # }
 
     def __str__(self):
         return self.file.name.split("/")[-1]  # mostra solo il nome del file
-    
     

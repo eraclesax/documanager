@@ -179,13 +179,9 @@ class GetDocView(View):
         defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
 
 
-        fields = {
-                "nome": {"text": "Mario Rossi", "x": 100, "y": 700},
-                "data": {"text": "21/08/2025", "x": 400, "y": 700},
-                "luogo": {"text": "Trieste", "x": 100, "y": 650},
-            }
-
-        pdf_bytes = generate_filled_pdf(doc.file, fields)
+        empty_fields = doc.fields
+        filled_fields = defunto.fill_fields(empty_fields)
+        pdf_bytes = generate_filled_pdf(doc.file, filled_fields)
 
         if action == "save":
             # Ritorno il PDF come risposta
@@ -194,7 +190,6 @@ class GetDocView(View):
             # Ritorno il PDF aperto nel browser
             response = FileResponse(pdf_bytes, filename="documento.pdf")
             response['Content-Disposition'] = 'inline; filename="documento.pdf"'
-            print("Sto salvando")
 
         return response
     
