@@ -6,6 +6,7 @@ def generate_filled_pdf(template_pdf_file, fields):
     from PyPDF2 import PdfReader, PdfWriter
     from reportlab.pdfgen import canvas
     from reportlab.lib.pagesizes import letter
+    from reportlab.lib.units import mm
     from io import BytesIO
     from reportlab.lib.pagesizes import A4
 
@@ -22,12 +23,12 @@ def generate_filled_pdf(template_pdf_file, fields):
         info = data["info"]
         if info["active"]:
             text = data['text']
-            x = data['x']
+            x = data['x']*mm
             # Sposta l'origine in alto a sinistra
             if info["invert_y"]:  
-                y = height - data['y']
+                y = height - data['y']*mm
             else:
-                y = data['y']
+                y = data['y']*mm
             can.setFont(info["font"], info["size"])    
             can.drawString(x, y, text)
 
