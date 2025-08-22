@@ -21,6 +21,7 @@ sudo mkdir -p /run/gunicorn
 sudo chown ubuntu:www-data /run/gunicorn
 
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-16-16-183-145.eu-north-1.compute.amazonaws.com
+ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-171-113-111.eu-north-1.compute.amazonaws.com
 
 
 
