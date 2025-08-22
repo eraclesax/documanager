@@ -46,3 +46,4 @@ def generate_filled_pdf(template_pdf_file, fields):
     pdf_bytes.seek(0)
 
     return pdf_bytes
+

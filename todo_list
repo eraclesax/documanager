@@ -6,6 +6,10 @@ https
 
 Comandi utili
 
+Impostazioni nginx:
+sudo nano /etc/nginx/sites-available/documanager
+sudo nano /etc/systemd/system/gunicorn.service
+
 sudo systemctl daemon-reload
 sudo systemctl restart gunicorn
 sudo systemctl restart nginx
@@ -13,9 +17,6 @@ sudo systemctl restart nginx
 sudo tail -f /var/log/nginx/error.log
 sudo journalctl -u gunicorn --since "5 minutes ago"
 
-Impostazioni nginx:
-sudo nano /etc/nginx/sites-available/documanager
-sudo nano /etc/systemd/system/gunicorn.service
 
 sudo mkdir -p /run/gunicorn
 sudo chown ubuntu:www-data /run/gunicorn
