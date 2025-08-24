@@ -49,11 +49,11 @@
             <tbody>
               {% for doc in documenti %}
               <tr>
-                <td>{{ doc }}</td>
+                <td>{{ doc.nome }}</td>
                 <td>
                   <a href="{% url 'get_doc' def_id=defunto.id doc_id=doc.id action='open' %}" class="btn btn-sm btn-success" target="_blank">Apri</a>
                   <a href="{% url 'get_doc' def_id=defunto.id doc_id=doc.id action='save' %}" class="btn btn-sm btn-success" download>Scarica</a>
-                  <!-- <a href="{% url 'edit_doc_config' def_id=defunto.id doc_id=doc.id %}" class="btn btn-sm btn-warning">Impostazioni</a> -->
+                  <!-- <a href="" class="btn btn-sm btn-warning">Impostazioni</a> -->
                 </td>
               </tr>
               {% empty %}

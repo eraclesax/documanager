@@ -1,4 +1,4 @@
-from reportlab.pdfgen import canvas
+# from reportlab.pdfgen import canvas
 from app.models import AppUser
 from .models import *
 from .forms import *
@@ -20,7 +20,7 @@ from django.template import Template, Context
 
 from crispy_forms.utils import render_crispy_form
 from rest_framework.views import APIView
-
+from weasyprint import HTML
 
 
 # class RedirectView(View):
@@ -155,48 +155,41 @@ class DefuntoDocsView(View):
         })
 
 class GetDocView(View):
-    """[summary]
-
-    Args:
-        APIView ([type]): [description]
-    """
     template_name = 'defunto_docs.html'
     
     @method_decorator(login_required(login_url="/login/"))
     def get(self, request, *args, **kwargs):
-        return self.GET_render(request,*args, **kwargs)    
-        
-    def GET_render(self,request,*args, **kwargs):
-        
+        return self.GET_render(request, *args, **kwargs)    
+    
+    def GET_render(self, request, *args, **kwargs):
         def_id = kwargs.get("def_id", None)
         doc_id = kwargs.get("doc_id", None)
         action = kwargs.get("action", "open")
 
-        # prendo il template (Documento)
         doc = get_object_or_404(Documento, id=doc_id)
-        # prendo i dati del defunto
         defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
 
         # leggo il contenuto del file template
         with doc.file.open("r") as f:
             template_string = f.read()
 
-        # renderizzo il template con i dati del defunto
+        # renderizzo il template con i dati
         template = Template(template_string)
         context = Context({
-            "defunto": defunto,  # puoi accedere con {{ defunto.nome }} ecc.
+            "defunto": defunto,
         })
-        contenuto = template.render(context)
+        contenuto_html = template.render(context)
 
-        # preparo la risposta per il download
-        filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
-        response = HttpResponse(contenuto, content_type="text/plain")
+        # converto in PDF con WeasyPrint
+        pdf_file = HTML(string=contenuto_html, base_url=request.build_absolute_uri('/')).write_pdf()
+
+        # preparo la risposta
+        filename = f"{defunto.cognome}_{defunto.nome} - {doc}.pdf"
+        response = HttpResponse(pdf_file, content_type="application/pdf")
 
         if action == "save":
-            # Ritorno il PDF come risposta
-            response["Content-Disposition"] = f'attachment; filename="{filename}"'
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
         else:
-            # Ritorno il PDF aperto nel browser
             response['Content-Disposition'] = f'inline; filename="{filename}"'
         
         return response
