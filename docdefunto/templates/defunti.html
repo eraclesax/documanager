@@ -46,20 +46,20 @@
                 <tbody>
                   {% for item in defunti %}
                     <tr>
-                      <td scope="row" data-order="{{item.birth_date|date:'Ymd'}}">
+                      <td scope="row" data-order="{{item.id}}">
                         <span>{{item.id}}</span>
                       </td>
-                      <td scope="row">
+                      <td scope="row" data-order="{{item.cognome|default_if_none:''}}">
                         <span>{{item.cognome|default_if_none:""}}</span>
                       </td>
-                      <td scope="row">
-                        <span>{{item.nome|default_if_none:""}} {{item.middle_name|default_if_none:""}}</span>
+                      <td scope="row" data-order="{{item.nome|default_if_none:''}}">
+                        <span>{{item.nome|default_if_none:""}}</span>
                       </td>
-                      <td scope="row" data-order="{{item.birth_date|date:'Ymd'}}">
+                      <td scope="row" data-order="{{item.data_nascita|date:'d/m/Y'}}">
                         <span>{{item.data_nascita|date:'d/m/Y'}}</span>
                       </td>
-                      <td scope="row" data-order="{{item.birth_date|date:'Ymd'}}">
-                        <span>{{item.data_ora_morte|date:'d/m/Y'}}</span>
+                      <td scope="row" data-order="{{item.data_morte|date:'d/m/Y'}}">
+                        <span>{{item.data_morte|date:'d/m/Y'}}</span>
                       </td>
 
                       <td scope="row">
@@ -144,9 +144,9 @@
   <script>
     $(document).ready( function () {
         $('#data_table').DataTable({
-            // "responsive": true,
-            "paging":   false,
-            "pageLength" : 10,
+            "responsive": true,
+            "paging":   true,
+            "pageLength" : 50,
             // "aaSorting": [[0,"asc"],[3,"des"]],
             "lengthChange": false,
             "autoWidth": false,

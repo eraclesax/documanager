@@ -14,7 +14,8 @@ class AnagraficaDefunto(models.Model):
     via_decesso = models.CharField(verbose_name="Via del Decesso", blank=True, null=True, max_length=255, default="")
     ospedale = models.CharField(verbose_name="Ospedale", blank=True, null=True, max_length=255, default="")
     reparto_ospedaliero = models.CharField(verbose_name="Reparto Ospedaliero", blank=True, null=True, max_length=255, default="")
-    data_ora_morte = models.CharField(verbose_name="Data e Ora di Morte", blank=True, null=True, max_length=63, default="")
+    data_morte = models.DateField(verbose_name="Data di Morte", blank=True, null=True)
+    ora_morte = models.TimeField(verbose_name="Orario di Morte", blank=True, null=True)
 
     # Stato civile e famiglia
     professione = models.CharField(verbose_name="Professione", blank=True, null=True, max_length=255, default="")
@@ -67,63 +68,70 @@ class AnagraficaDefunto(models.Model):
     def __str__(self):
         return f"{self.cognome} {self.nome}"
 
-    def fill_fields(self, empty_fields):
-        """Fills fields of the type:
-            empty_fields = {
-                "nome": {"x": 100, "y": 700, "info":{...}},
-                "data": {"x": 400, "y": 700, "info":{...}},
-                "luogo": {"x": 100, "y": 650, "info":{...}},
-            }
-            in fields of the type:
-            empty_fields = {
-                "nome": {"text": "Mario Rossi", "x": 100, "y": 700, "info":{...}},
-                "data": {"text": "21/08/2025", "x": 400, "y": 700, "info":{...}},
-                "luogo": {"text": "Trieste", "x": 100, "y": 650, "info":{...}},
-            }        
-        """
-        for field_name, _ in empty_fields.items():
-            empty_fields[field_name]["text"] = str(getattr(self, field_name))
-        return empty_fields
-    
+    # def fill_fields(self, empty_fields):
+    #     """Fills fields of the type:
+    #         empty_fields = {
+    #             "nome": {"x": 100, "y": 700, "info":{...}},
+    #             "data": {"x": 400, "y": 700, "info":{...}},
+    #             "luogo": {"x": 100, "y": 650, "info":{...}},
+    #         }
+    #         in fields of the type:
+    #         empty_fields = {
+    #             "nome": {"text": "Mario Rossi", "x": 100, "y": 700, "info":{...}},
+    #             "data": {"text": "21/08/2025", "x": 400, "y": 700, "info":{...}},
+    #             "luogo": {"text": "Trieste", "x": 100, "y": 650, "info":{...}},
+    #         }        
+    #     """
+    #     for field_name, _ in empty_fields.items():
+    #         empty_fields[field_name]["text"] = str(getattr(self, field_name))
+    #     return empty_fields
+
 class Documento(models.Model):
     file = models.FileField(verbose_name="File", upload_to="documenti/")
     nome = models.CharField(verbose_name="Nome File", blank=True, null=True, max_length=255, default="")
-    fields = models.JSONField(verbose_name="Campi", null=True, blank=True)
-    # fields structure:
-    # {
-    #     "AnagraficaDefunto.nomeCampo1": {"x": 100, "y": 700, "info":{...}},
-    #     "AnagraficaDefunto.nomeCampo2": {"x": 400, "y": 700, "info":{...}},
-    #     ...
-    # }
 
     def __str__(self):
         return self.file.name.split("/")[-1]  # mostra solo il nome del file
     
-    def save(self, *args, **kwargs):
-        if not self.fields:  # solo alla creazione
-            self.fields = self._genera_config()
-        super().save(*args, **kwargs)
+# class Documento(models.Model):
+#     file = models.FileField(verbose_name="File", upload_to="documenti/")
+#     nome = models.CharField(verbose_name="Nome File", blank=True, null=True, max_length=255, default="")
+#     fields = models.JSONField(verbose_name="Campi", null=True, blank=True)
+#     # fields structure:
+#     # {
+#     #     "AnagraficaDefunto.nomeCampo1": {"x": 100, "y": 700, "info":{...}},
+#     #     "AnagraficaDefunto.nomeCampo2": {"x": 400, "y": 700, "info":{...}},
+#     #     ...
+#     # }
+
+#     def __str__(self):
+#         return self.file.name.split("/")[-1]  # mostra solo il nome del file
     
-    def _genera_config(self):
-        """
-        Genera un dizionario con i campi del modello come chiavi principali,
-        ognuno con la stessa struttura interna.
-        """
-        from .models import AnagraficaDefunto
+#     def save(self, *args, **kwargs):
+#         if not self.fields:  # solo alla creazione
+#             self.fields = self._genera_config()
+#         super().save(*args, **kwargs)
+    
+#     def _genera_config(self):
+#         """
+#         Genera un dizionario con i campi del modello come chiavi principali,
+#         ognuno con la stessa struttura interna.
+#         """
+#         from .models import AnagraficaDefunto
 
-        struttura_base = {
-            "x": 0,
-            "y": 0,
-            "info": {
-                "active": False,
-                "invert_y": True,
-                "font": "Helvetica",
-                "size": 14,}
-        }
+#         struttura_base = {
+#             "x": 0,
+#             "y": 0,
+#             "info": {
+#                 "active": False,
+#                 "invert_y": True,
+#                 "font": "Helvetica",
+#                 "size": 14,}
+#         }
 
-        config = {}
-        for field in AnagraficaDefunto._meta.get_fields():
-            if field.concrete and not field.many_to_many and not field.is_relation:
-                config[field.name] = struttura_base.copy()
+#         config = {}
+#         for field in AnagraficaDefunto._meta.get_fields():
+#             if field.concrete and not field.many_to_many and not field.is_relation:
+#                 config[field.name] = struttura_base.copy()
 
-        return config
+#         return config

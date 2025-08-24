@@ -164,129 +164,115 @@ class GetDocView(View):
     
     @method_decorator(login_required(login_url="/login/"))
     def get(self, request, *args, **kwargs):
-        return self.GET_render(request,*args, **kwargs)
-    
+        return self.GET_render(request,*args, **kwargs)    
+        
     def GET_render(self,request,*args, **kwargs):
-        from .utils import generate_filled_pdf
-
+        
         def_id = kwargs.get("def_id", None)
         doc_id = kwargs.get("doc_id", None)
         action = kwargs.get("action", "open")
-        
+
         # prendo il template (Documento)
         doc = get_object_or_404(Documento, id=doc_id)
         # prendo i dati del defunto
         defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
 
+        # leggo il contenuto del file template
+        with doc.file.open("r") as f:
+            template_string = f.read()
 
-        empty_fields = doc.fields
-        filled_fields = defunto.fill_fields(empty_fields)
-        pdf_bytes = generate_filled_pdf(doc.file, filled_fields)
-        filename = f"{defunto.cognome}_{defunto.nome} - {doc}"
+        # renderizzo il template con i dati del defunto
+        template = Template(template_string)
+        context = Context({
+            "defunto": defunto,  # puoi accedere con {{ defunto.nome }} ecc.
+        })
+        contenuto = template.render(context)
+
+        # preparo la risposta per il download
+        filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
+        response = HttpResponse(contenuto, content_type="text/plain")
 
         if action == "save":
             # Ritorno il PDF come risposta
-            response = FileResponse(pdf_bytes, as_attachment=True, filename=filename)
+            response["Content-Disposition"] = f'attachment; filename="{filename}"'
         else:
             # Ritorno il PDF aperto nel browser
-            response = FileResponse(pdf_bytes, filename=filename)
             response['Content-Disposition'] = f'inline; filename="{filename}"'
-
+        
         return response
     
-class EditDocConfig(View):
-    """[summary]
-
-    Args:
-        APIView ([type]): [description]
-    """
-    template_name = 'defunto_docs.html'
-    
-    @method_decorator(login_required(login_url="/login/"))
-    def get(self, request, *args, **kwargs):
-        return self.GET_render(request,*args, **kwargs)
-    
-    def GET_render(self,request,*args, **kwargs):
-        def_id = kwargs.get("def_id", None)
-        doc_id = kwargs.get("doc_id", None)
-        documento = get_object_or_404(Documento, pk=doc_id)
-        defunto = get_object_or_404(AnagraficaDefunto, pk=def_id)
-
-        json_data = documento.fields or {}
-        form = DynamicJsonConfigForm(json_data=json_data)
-
-        return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
-    
-    @method_decorator(login_required(login_url="/login/"))
-    def post(self, request, *args, **kwargs):
-        def_id = kwargs.get("def_id", None)
-        doc_id = kwargs.get("doc_id", None)
-        documento = get_object_or_404(Documento, pk=doc_id)
-        defunto = get_object_or_404(AnagraficaDefunto, pk=def_id)
-        json_data = documento.fields or {}
-
-        form = DynamicJsonConfigForm(request.POST, json_data=json_data)
-        if form.is_valid():
-            documento.fields = form.to_json()
-            documento.save()
-
-            documenti = Documento.objects.all()
-            return render(request, "defunto_docs.html", {
-                "defunto":defunto,
-                "documenti":documenti,
-            })
-        else:
-            # Provvisorio
-            return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
-        
     # def GET_render(self,request,*args, **kwargs):
-        
+    #     from .utils import generate_filled_pdf
+
     #     def_id = kwargs.get("def_id", None)
     #     doc_id = kwargs.get("doc_id", None)
-
+    #     action = kwargs.get("action", "open")
+        
     #     # prendo il template (Documento)
     #     doc = get_object_or_404(Documento, id=doc_id)
     #     # prendo i dati del defunto
     #     defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
 
-    #     # leggo il contenuto del file template
-    #     with doc.file.open("r") as f:
-    #         template_string = f.read()
 
-    #     # renderizzo il template con i dati del defunto
-    #     template = Template(template_string)
-    #     context = Context({
-    #         "defunto": defunto,  # puoi accedere con {{ defunto.nome }} ecc.
-    #     })
-    #     contenuto = template.render(context)
+    #     empty_fields = doc.fields
+    #     filled_fields = defunto.fill_fields(empty_fields)
+    #     pdf_bytes = generate_filled_pdf(doc.file, filled_fields)
+    #     filename = f"{defunto.cognome}_{defunto.nome} - {doc}"
 
-    #     # preparo la risposta per il download
-    #     filename = f"{defunto.cognome}_{defunto.nome} - {doc}.txt"
-    #     response = HttpResponse(contenuto, content_type="text/plain")
-    #     response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    #     if action == "save":
+    #         # Ritorno il PDF come risposta
+    #         response = FileResponse(pdf_bytes, as_attachment=True, filename=filename)
+    #     else:
+    #         # Ritorno il PDF aperto nel browser
+    #         response = FileResponse(pdf_bytes, filename=filename)
+    #         response['Content-Disposition'] = f'inline; filename="{filename}"'
+
     #     return response
     
+# class EditDocConfig(View):
+#     """[summary]
 
+#     Args:
+#         APIView ([type]): [description]
+#     """
+#     template_name = 'defunto_docs.html'
+    
+#     @method_decorator(login_required(login_url="/login/"))
+#     def get(self, request, *args, **kwargs):
+#         return self.GET_render(request,*args, **kwargs)
+    
+#     def GET_render(self,request,*args, **kwargs):
+#         def_id = kwargs.get("def_id", None)
+#         doc_id = kwargs.get("doc_id", None)
+#         documento = get_object_or_404(Documento, pk=doc_id)
+#         defunto = get_object_or_404(AnagraficaDefunto, pk=def_id)
 
-# def generate_pdf_file():
-#     from io import BytesIO
+#         json_data = documento.fields or {}
+#         form = DynamicJsonConfigForm(json_data=json_data)
 
-#     buffer = BytesIO()
-#     p = canvas.Canvas(buffer)
+#         return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
+    
+#     @method_decorator(login_required(login_url="/login/"))
+#     def post(self, request, *args, **kwargs):
+#         def_id = kwargs.get("def_id", None)
+#         doc_id = kwargs.get("doc_id", None)
+#         documento = get_object_or_404(Documento, pk=doc_id)
+#         defunto = get_object_or_404(AnagraficaDefunto, pk=def_id)
+#         json_data = documento.fields or {}
 
-#     # Create a PDF document
-#     books = AnagraficaDefunto.objects.all()
-#     p.drawString(100, 750, "Book Catalog")
+#         form = DynamicJsonConfigForm(request.POST, json_data=json_data)
+#         if form.is_valid():
+#             documento.fields = form.to_json()
+#             documento.save()
 
-#     y = 700
-#     for book in books:
-#         p.drawString(100, y, f"Title: {book.title}")
-#         p.drawString(100, y - 20, f"Author: {book.author}")
-#         p.drawString(100, y - 40, f"Year: {book.publication_year}")
-#         y -= 60
+#             documenti = Documento.objects.all()
+#             return render(request, "defunto_docs.html", {
+#                 "defunto":defunto,
+#                 "documenti":documenti,
+#             })
+#         else:
+#             # Provvisorio
+#             return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
+        
 
-#     p.showPage()
-#     p.save()
-
-#     buffer.seek(0)
-#     return buffer
+    
