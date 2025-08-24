@@ -184,7 +184,7 @@ class GetDocView(View):
         pdf_file = HTML(string=contenuto_html, base_url=request.build_absolute_uri('/')).write_pdf()
 
         # preparo la risposta
-        filename = f"{defunto.cognome}_{defunto.nome} - {doc}.pdf"
+        filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.pdf"
         response = HttpResponse(pdf_file, content_type="application/pdf")
 
         if action == "save":
