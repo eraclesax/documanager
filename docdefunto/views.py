@@ -25,15 +25,15 @@ from weasyprint import HTML
 
 from django.http import HttpResponse
 
-def ping(request):
-    return HttpResponse("pong from Django via Gunicorn")
+# def ping(request):
+#     return HttpResponse("pong from Django via Gunicorn")
 
 # class RedirectView(View):
 #     def get(self, request, *args, **kwargs):
 #         url_name = kwargs["url_name"]
 #         url_kwargs = kwargs.get("url_kwargs",{})
 #         return redirect(reverse(url_name,kwargs=url_kwargs))
-    
+
 class DefuntiListView(View):
     """[summary]
 
@@ -41,13 +41,13 @@ class DefuntiListView(View):
         APIView ([type]): [description]
     """
     template_name = 'defunti.html'
-    
+
     @method_decorator(login_required(login_url="/login/"))
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
-    
+
     def GET_render(self,request,*args, **kwargs):
-        
+
         defunti = AnagraficaDefunto.objects.all().order_by('-id')
         return render(request, self.template_name, {
             "defunti":defunti,
@@ -60,19 +60,19 @@ class DefuntoView(View):
         APIView ([type]): [description]
     """
     template_name = 'defunto.html'
-    
+
     @method_decorator(login_required(login_url="/login/"))
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
-    
+
     def GET_render(self,request,*args, **kwargs):
-        
+
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
         return render(request, self.template_name, {
             "defunto":defunto,
         })
-    
+
 class DefuntoEditView(View):
     """[summary]
 
@@ -80,11 +80,11 @@ class DefuntoEditView(View):
         APIView ([type]): [description]
     """
     template_name = 'defunto_edit.html'
-    
+
     @method_decorator(login_required(login_url="/login/"))
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
-    
+
     def GET_render(self,request,*args, **kwargs):
         from .forms import DefuntoEditForm
         from .models import AnagraficaDefunto
@@ -92,7 +92,7 @@ class DefuntoEditView(View):
         form = kwargs.get("form",None)
         has_error = kwargs.get("has_error",False)
         ###########################
-    
+
         id = kwargs.get("id", None)
         if id is not None:
             obj = get_object_or_404(AnagraficaDefunto,pk=id)
@@ -106,7 +106,7 @@ class DefuntoEditView(View):
             "form":form,
             "has_error":has_error,
         })
-    
+
     @method_decorator(login_required(login_url="/login/"))
     def post(self, request, *args, **kwargs):
         from .forms import DefuntoEditForm
@@ -143,13 +143,13 @@ class DefuntoDocsView(View):
         APIView ([type]): [description]
     """
     template_name = 'defunto_docs.html'
-    
+
     @method_decorator(login_required(login_url="/login/"))
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
-    
+
     def GET_render(self,request,*args, **kwargs):
-        
+
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
         documenti = Documento.objects.all()
@@ -161,11 +161,11 @@ class DefuntoDocsView(View):
 
 class GetDocView(View):
     template_name = 'defunto_docs.html'
-    
+
     @method_decorator(login_required(login_url="/login/"))
     def get(self, request, *args, **kwargs):
-        return self.GET_render(request, *args, **kwargs)    
-    
+        return self.GET_render(request, *args, **kwargs)
+
     def GET_render(self, request, *args, **kwargs):
         def_id = kwargs.get("def_id", None)
         doc_id = kwargs.get("doc_id", None)
@@ -187,7 +187,8 @@ class GetDocView(View):
 
         if settings.BUILDING_DOCUMENTS_LAYOUT:
             filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.html"
-            response = HttpResponse(contenuto_html, content_type="html/text")
+            response = HttpResponse(contenuto_html)
+            return response
         else:
             # converto in PDF con WeasyPrint
             pdf_file = HTML(string=contenuto_html, base_url=request.build_absolute_uri('/')).write_pdf()
@@ -200,16 +201,16 @@ class GetDocView(View):
             response['Content-Disposition'] = f'attachment; filename="{filename}"'
         else:
             response['Content-Disposition'] = f'inline; filename="{filename}"'
-        
+
         return response
-    
+
     # def GET_render(self,request,*args, **kwargs):
     #     from .utils import generate_filled_pdf
 
     #     def_id = kwargs.get("def_id", None)
     #     doc_id = kwargs.get("doc_id", None)
     #     action = kwargs.get("action", "open")
-        
+
     #     # prendo il template (Documento)
     #     doc = get_object_or_404(Documento, id=doc_id)
     #     # prendo i dati del defunto
@@ -230,7 +231,7 @@ class GetDocView(View):
     #         response['Content-Disposition'] = f'inline; filename="{filename}"'
 
     #     return response
-    
+
 # class EditDocConfig(View):
 #     """[summary]
 
@@ -238,11 +239,11 @@ class GetDocView(View):
 #         APIView ([type]): [description]
 #     """
 #     template_name = 'defunto_docs.html'
-    
+
 #     @method_decorator(login_required(login_url="/login/"))
 #     def get(self, request, *args, **kwargs):
 #         return self.GET_render(request,*args, **kwargs)
-    
+
 #     def GET_render(self,request,*args, **kwargs):
 #         def_id = kwargs.get("def_id", None)
 #         doc_id = kwargs.get("doc_id", None)
@@ -253,7 +254,7 @@ class GetDocView(View):
 #         form = DynamicJsonConfigForm(json_data=json_data)
 
 #         return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
-    
+
 #     @method_decorator(login_required(login_url="/login/"))
 #     def post(self, request, *args, **kwargs):
 #         def_id = kwargs.get("def_id", None)
@@ -275,6 +276,5 @@ class GetDocView(View):
 #         else:
 #             # Provvisorio
 #             return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
-        
 
-    
+
