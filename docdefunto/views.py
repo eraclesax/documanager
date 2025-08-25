@@ -23,6 +23,10 @@ from crispy_forms.utils import render_crispy_form
 from rest_framework.views import APIView
 from weasyprint import HTML
 
+from django.http import HttpResponse
+
+def ping(request):
+    return HttpResponse("pong from Django via Gunicorn")
 
 # class RedirectView(View):
 #     def get(self, request, *args, **kwargs):

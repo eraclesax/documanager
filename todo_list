@@ -27,6 +27,14 @@ Scopri se gunicorn legge l'environment:
     sudo systemctl show-environment | grep DEBUG
 Avvia Gunicorn manualmente sulla porta 8000 (la porta deve essere sbloccata nei gruppi di permessi)
     gunicorn --bind 0.0.0.0:8000 documanager.wsgi:application --reload
+Avvia Gunicorn manualmente con le stesse impostazioni (potenzialmente) di systemd
+    /var/www/documanager/venv/bin/gunicorn \
+    --bind unix:/var/www/documanager/run/gunicorn.sock \
+    --chdir /var/www/documanager \
+    core.wsgi:application --reload --log-level debug
+Triggera manualmente il file socket (dovresti ottenere la risposta in html)
+    curl --unix-socket /var/www/documanager/run/gunicorn.sock http://localhost/defunti
+
 
 
 sudo mkdir -p /run/gunicorn
