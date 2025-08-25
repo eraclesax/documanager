@@ -17,6 +17,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.template import Template, Context
+from django.conf import settings
 
 from crispy_forms.utils import render_crispy_form
 from rest_framework.views import APIView
@@ -180,12 +181,16 @@ class GetDocView(View):
         })
         contenuto_html = template.render(context)
 
-        # converto in PDF con WeasyPrint
-        pdf_file = HTML(string=contenuto_html, base_url=request.build_absolute_uri('/')).write_pdf()
+        if settings.BUILDING_DOCUMENTS_LAYOUT:
+            filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.html"
+            response = HttpResponse(contenuto_html, content_type="html/text")
+        else:
+            # converto in PDF con WeasyPrint
+            pdf_file = HTML(string=contenuto_html, base_url=request.build_absolute_uri('/')).write_pdf()
 
-        # preparo la risposta
-        filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.pdf"
-        response = HttpResponse(pdf_file, content_type="application/pdf")
+            # preparo la risposta
+            filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.pdf"
+            response = HttpResponse(pdf_file, content_type="application/pdf")
 
         if action == "save":
             response['Content-Disposition'] = f'attachment; filename="{filename}"'

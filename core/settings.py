@@ -212,3 +212,6 @@ MESSAGE_TAGS = {
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
 # DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+## DOCUDEFUNTO APP CONFIG
+BUILDING_DOCUMENTS_LAYOUT = os.environ.get('BUILDING_DOCUMENTS_LAYOUT', False)
