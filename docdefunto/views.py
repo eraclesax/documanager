@@ -197,10 +197,10 @@ class GetDocView(View):
             filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.pdf"
             response = HttpResponse(pdf_file, content_type="application/pdf")
 
-        if action == "save":
-            response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        else:
-            response['Content-Disposition'] = f'inline; filename="{filename}"'
+            if action == "save":
+                response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            else:
+                response['Content-Disposition'] = f'inline; filename="{filename}"'
 
         return response
 

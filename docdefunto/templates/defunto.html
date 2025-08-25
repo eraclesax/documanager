@@ -177,8 +177,8 @@
             <dt class="col-sm-3 col-md-2">Data e Ora Funerale</dt>
             <dd class="col-sm-9 col-md-4">{{ defunto.data_ora_funerale|date:"d/m/Y H:i" }}</dd>
 
-            <dt class="col-sm-3 col-md-2">Cimitero</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.cimitero|default_if_none:"" }}</dd>
+            <dt class="col-sm-3 col-md-2">Comune di inumazione</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.comune_inumazione|default_if_none:"" }}</dd>
 
             <dt class="col-sm-3 col-md-2">Ubicazione Feretro</dt>
             <dd class="col-sm-9 col-md-4">{{ defunto.ubicazione_feretro|default_if_none:"" }}</dd>
