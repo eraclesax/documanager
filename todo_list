@@ -9,24 +9,33 @@ apt install libpangocairo-1.0-0
 
 Comandi utili
 
-Impostazioni nginx:
-sudo nano /etc/nginx/sites-available/documanager
-sudo nano /etc/systemd/system/gunicorn.service
+Impostazioni nginx e gunicorn:
+    sudo nano /etc/nginx/sites-available/documanager
+    sudo nano /etc/systemd/system/gunicorn.service
 
-sudo systemctl daemon-reload
-sudo systemctl restart gunicorn
-sudo systemctl restart nginx
+Riavviare i servizi
+    sudo systemctl daemon-reload
+    sudo systemctl restart gunicorn
+    sudo systemctl restart nginx
 
-sudo tail -f /var/log/nginx/error.log
-sudo journalctl -u gunicorn --since "5 minutes ago"
+File di log di Nginx e Gunicorn
+    sudo tail -f /var/log/nginx/error.log
+    sudo journalctl -u gunicorn --since "5 minutes ago"
+    sudo systemctl status gunicorn
+
+Scopri se gunicorn legge l'environment:
+    sudo systemctl show-environment | grep DEBUG
+Avvia Gunicorn manualmente sulla porta 8000 (la porta deve essere sbloccata nei gruppi di permessi)
+    gunicorn --bind 0.0.0.0:8000 documanager.wsgi:application --reload
 
 
 sudo mkdir -p /run/gunicorn
 sudo chown ubuntu:www-data /run/gunicorn
 
+Indirizzi dns per connettersi con ssh:
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-16-16-183-145.eu-north-1.compute.amazonaws.com
 ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-171-113-111.eu-north-1.compute.amazonaws.com
-
+ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-16-171-206-6.eu-north-1.compute.amazonaws.com
 
 
 
@@ -35,3 +44,164 @@ cd /media/riso/
 sudo mkdir TOSHIBA\ EXT
 ls
 sudo mount -t ntfs-3g /dev/sda1 /media/riso/TOSHIBA\ EXT
+
+--------------------------------------------------
+
+Processo setup nuovo server:
+
+scambio le chiavi di sicurezza con il provider
+scopro il nome utente (ec2-user o ubuntu o altri)
+scopro l'indirizzo pubblico DNS del server (ec2-13-53-205-189.eu-north-1.compute.amazonaws.com in questo caso)
+entro nel server
+    ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-53-205-189.eu-north-1.compute.amazonaws.com
+aggiorno i pacchetti alle versioni di sviluppo
+    sudo yum update
+    sudo yum upgrade
+(ad esempio qui aggiorno python. credits https://tecadmin.net/how-to-install-python-3-12-on-amazon-linux/ 
+e https://stackoverflow.com/questions/1210664/no-module-named-sqlite3)
+    sudo yum groupinstall "Development Tools" -y
+    sudo yum install gcc openssl-devel bzip2-devel libffi-devel -y
+    sudo yum install sqlite-devel -y
+    cd /usr/src
+    sudo wget https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tgz
+    sudo tar xzf Python-3.12.2.tgz
+    cd Python-3.12.2
+    sudo ./configure --enable-optimizations --enable-loadable-sqlite-extensions
+    sudo make
+    sudo make altinstall
+    python3.12 --version
+(qui installo pip)
+    sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    sudo python3.12 get-pip.py
+    pip3.12 --version
+(qui installo nginx)
+    sudo yum install nginx
+(qui installo git)
+    sudo yum install git
+creo una nuova coppia di chiavi e scambio la chiave pubblica con github
+    cd ~/.ssh/
+    ssh-keygen -t ed25519 -C "eraclesax@github.com"
+Adding your SSH key to the ssh-agent
+    eval "$(ssh-agent -s)"
+    ssh-add ~/.ssh/id_ed25519
+(se serve cambio i permessi di accesso e apertura della chiave e della cartella ssh)
+    chmod ...
+copio la chiave pubblica in github
+    nano ~/.ssh/id_ed25519.pub
+    -> copio la chiave in github
+clono la repository
+    cd ~/
+    git clone git@github.com:eraclesax/documanager.git
+creo un virtualenv
+    cd documanager/
+    sudo yum install python3 pip
+    pip install virtualenv
+    python3 -m virtualenv venv
+installo i pacchetti dei requirements
+    source venv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
+creo un file .env
+    touch .env
+    nano .env
+dentro ci metto
+    ALLOWED_HOST=13.53.205.189 
+    DEBUG=False
+    STATIC_ROOT=/var/www/documanager/static
+L'host è quello pubblico dichiarato dal provider
+L'ultima opzione serve per Nginx, è la cartella dove andrà a prendersi i file statici
+
+Installo Gunicorn (nel venv)
+    pip install gunicorn
+Ne testo il funzionamento
+    gunicorn --bind 0.0.0.0:8000 mysite_core.wsgi:application
+(se vedi la tua app su <EC2_PUBLIC_IP>:8000, funziona ✅)
+Crea un service systemd per avvio automatico:
+    sudo nano /etc/systemd/system/gunicorn.service
+contenuto:
+    [Unit]
+    Description=Gunicorn daemon for Django project
+    After=network.target
+
+    [Service]
+    User=ec2-user
+    Group=nginx
+    WorkingDirectory=/home/ec2-user/documanager
+    ExecStart=/home/ec2-user/documanager/venv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn/documanager.sock core.wsgi:application
+
+    [Install]
+    WantedBy=multi-user.target
+Una versione modificata che esplicita una variabile d'ambiente e l'indirizzo del file .env
+    [Unit]
+    Description=Gunicorn daemon for Django project
+    After=network.target
+
+    [Service]
+    User=ec2-user
+    Group=nginx
+    WorkingDirectory=/home/ec2-user/documanager
+    ExecStart=/home/ec2-user/documanager/venv/bin/gunicorn \
+            --workers 3 \
+            --bind unix:/run/gunicorn/documanager.sock \
+            core.wsgi:application
+    Environment="DJANGO_SETTINGS_MODULE=core.settings"
+    EnvironmentFile=/home/ec2-user/documanager/.env
+
+    [Install]
+    WantedBy=multi-user.target
+
+Creo la cartella in cui andrò a mettere il socket. Deve essere accessibile di nginx:
+    sudo mkdir -p /run/gunicorn
+    sudo chown ec2-user:nginx /run/gunicorn
+Poi:
+    sudo systemctl start gunicorn
+    sudo systemctl enable gunicorn
+
+Configuro Nginx:
+Creo la cartella per i file statici
+    sudo mkdir /var/www
+    sudo mkdir /var/www/documanager
+    sudo mkdir /var/www/documanager/static
+Imposta la directory statica con gid e permessi di gruppo corretti:
+(a volte l'utente nginx è www-data)
+    sudo chown -R ec2-user:nginx /var/www/documanager/static
+    sudo chmod 2775 /var/www/documanager/static
+Aggiungi il tuo utente al gruppo nginx
+    sudo usermod -a -G nginx ec2-user
+Controlla i permessi:
+    ls -ld /var/www/documanager/static
+Dovresti vedere qualcosa tipo:
+    drwxr-sr-x 2 deployuser www-data 4096 ago 21 15:00 static
+Creo il file di configurazione:
+    sudo mkdir /etc/nginx/sites-available
+    sudo nano /etc/nginx/sites-available/documanager
+contenuto:
+    server {
+        listen 80;
+        server_name 13.53.205.189;
+
+        location = /favicon.ico { access_log off; log_not_found off; }
+        location /static/ {
+            root /var/www/documanager/static;
+        }
+
+        location / {
+            include proxy_params;
+            proxy_pass http://unix:/run/gunicorn/documanager/documanager.sock;
+        }
+    }
+Attiva la config:
+    sudo ln -s /etc/nginx/sites-available/documanager /etc/nginx/sites-enabled
+    sudo nginx -t
+    sudo systemctl restart nginx
+Vai su http://13.53.205.189 → dovrebbe comparire la tua app Django 🎉
+
+creo il database e sposto i file statici
+    python manage.py migrate
+    python manage.py collectstatic
+
+
+
+
+
+    
