@@ -195,7 +195,7 @@ class GetDocView(View):
             "defunto": defunto,
         })
         contenuto_html = template.render(context)
-
+        #TODO: Check se è inumazione altro comune che ci sia il comune
         if settings.BUILDING_DOCUMENTS_LAYOUT:
             filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.html"
             response = HttpResponse(contenuto_html)

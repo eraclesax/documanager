@@ -12,9 +12,11 @@ def crea_defunto_di_test():
         nome="Mario",
         sesso="M",
         cittadinanza="Italiana",
-        luogo_nascita="Trieste",
+        comune_nascita="Trieste",
+        provincia_nascita="TS",
         data_nascita=date(1950, 5, 12),
         comune_residenza="Trieste",
+        provincia_residenza="TS",
         via_residenza="Via Roma 1",
         codice_fiscale="RSSMRA50E12L424Z",
         doc_ric_def="Carta d'Identità",
@@ -23,6 +25,7 @@ def crea_defunto_di_test():
 
         # Decesso
         comune_decesso="Trieste",
+        provincia_decesso="TS",
         via_decesso="Via Milano 10",
         ospedale="Ospedale Maggiore",
         reparto_ospedaliero="Cardiologia",
@@ -30,6 +33,7 @@ def crea_defunto_di_test():
         ora_morte=time(14, 30),
         tipo_luogo_salma=1,
         comune_salma="Trieste",
+        provincia_salma="TS",
         via_salma="Via San Marco 7",
 
         # Stato civile e famiglia
@@ -50,10 +54,12 @@ def crea_defunto_di_test():
         # Funerale
         chiesa="Chiesa di San Giusto",
         comune_chiesa="Trieste",
+        provincia_chiesa="TS",
         data_ora_funerale=datetime(2023, 3, 20, 10, 30),
         data_inumazione=date(2023, 3, 20),
         ora_inumazione=time(11, 30),
-        comune_inumazione="Trieste (TS)",
+        comune_inumazione="Trieste",
+        provincia_inumazione="TS",
         ubicazione_feretro="Cimitero di Sant'Anna, loculo 23",
         affissione_manifesti=True,
         medico_curante="Dott. Verdi",
