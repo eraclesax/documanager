@@ -11,6 +11,8 @@ Comandi utili
 
 Impostazioni nginx e gunicorn:
     sudo nano /etc/nginx/sites-available/documanager
+    Su aws linux:
+    (sudo nano /etc/nginx/conf.d/documanager.conf)
     sudo nano /etc/systemd/system/gunicorn.service
 
 Riavviare i servizi
@@ -42,9 +44,7 @@ sudo chown ubuntu:www-data /run/gunicorn
 
 Indirizzi dns per connettersi con ssh:
 ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-171-113-111.eu-north-1.compute.amazonaws.com
-
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-13-51-193-252.eu-north-1.compute.amazonaws.com
-ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-53-205-189.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-60-228-41.eu-north-1.compute.amazonaws.com
 
 
@@ -460,7 +460,15 @@ creo il database e sposto i file statici
     python manage.py collectstatic
 
 
+--------------------------------------------------------------------
 
+Installazione certificato
+
+Installa certbot
+    sudo apt update
+    sudo apt install certbot python3-certbot-nginx -y
+Richiedi il certificato
+    sudo certbot --nginx -d tuodominio.it -d www.tuodominio.it
 
 
     
