@@ -1,0 +1,77 @@
+<!-- Static assets -->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>
+    Archetti - {% block title %} Documanager {% endblock %}
+  </title>
+
+  <!-- Favicon - loaded as static -->
+  <link href="{% static 'assets/img/brand/favicon.png' %}" rel="icon" type="image/png">
+  
+  <!-- Fonts -->
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+  <!-- Icons -->
+  <link href="{% static 'assets/js/plugins/nucleo/css/nucleo.css' %}" rel="stylesheet" />
+  <link href="{% static 'assets/js/plugins/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link href="{% static 'assets/css/argon-dashboard.css' %}" rel="stylesheet" />
+
+  <!-- Specific CSS goes HERE -->
+  {% block stylesheets %}{% endblock stylesheets %}
+
+</head>
+
+<body class="bg-default">
+
+  <div class="main-content">
+
+    {% include "includes/navigation-fullscreen.html" %}
+
+    <!-- Header -->
+    <div class="header bg-gradient-primary py-7 py-lg-8">
+      <div class="container">
+        <div class="header-body text-center mb-5">
+          <div class="row justify-content-center">
+            <div class="col-lg-3 col-md-3">
+              {% comment %} <h1 class="text-white">
+                <a target="_blank" class="text-white" href="https://www.creative-tim.com/product/argon-dashboard-django">Pad Med Dashboard</a>
+                   Pad Med Dashboard
+              </h1> {% endcomment %}
+              <a href="/">
+                <img class="img-fluid" src="{% static 'assets/img/brand/logo-white.png' %}" alt="...">
+              </a> 
+              {% comment %} <p class="text-lead text-light">
+                UI-Ready open-source admin panel enhanced with database and authentication - 
+                Coded by <a target="_blank" class="text-white" href="https://www.creative-tim.com/">Creative-Tim</a> 
+                and <a target="_blank" class="text-white" href="https://appseed.us">AppSeed</a>.  
+              </p> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="separator separator-bottom separator-skew zindex-100">
+        <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+        </svg>
+      </div>
+    </div>
+    
+    {% block content %}{% endblock content %}
+
+    {% include "includes/footer-fullscreen.html" %}
+
+  </div>
+    
+  {% include "includes/scripts-fullscreen.html" %}
+
+</body>
+
+</html>

@@ -1,0 +1,180 @@
+{% extends BASE_TEMPLATE %}
+{% load static %}
+{% block title %} Lista Schede Defunto {% endblock title %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+      <div class="container-fluid">
+        <div class="header-body">
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid mt--7">
+
+      <!-- Table pending -->
+
+      <div class="row">
+        <div class="col">
+          <div class="card shadow">
+            <div class="card-header border-0">
+              <h3 class="mb-0">Lista Schede Defunto</h3>
+            </div>
+            <div class="card-header border-0">
+              <a href="{% url 'defunto_new' %}" class="btn btn-success btn-sm" title="Aggiungi una nuova scheda defunto">
+                Aggiungi nuova scheda
+              </a>
+            </div>
+            <div class="table-responsive">
+              <table id="data_table" class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Cognome</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Data nascita</th>
+                    <th scope="col">Data morte</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in defunti %}
+                    <tr>
+                      <td scope="row" data-order="{{item.id}}">
+                        <span>{{item.id}}</span>
+                      </td>
+                      <td scope="row" data-order="{{item.cognome|default_if_none:''}}">
+                        <span>{{item.cognome|default_if_none:""}}</span>
+                      </td>
+                      <td scope="row" data-order="{{item.nome|default_if_none:''}}">
+                        <span>{{item.nome|default_if_none:""}}</span>
+                      </td>
+                      <td scope="row" data-order="{{item.data_nascita|date:'d/m/Y'}}">
+                        <span>{{item.data_nascita|date:'d/m/Y'}}</span>
+                      </td>
+                      <td scope="row" data-order="{{item.data_morte|date:'d/m/Y'}}">
+                        <span>{{item.data_morte|date:'d/m/Y'}}</span>
+                      </td>
+
+                      <td scope="row">
+                        <!-- Visualizza -->
+                        <a href="{% url 'defunto' id=item.id %}" class="btn btn-info btn-sm" 
+                        data-toggle="tooltip" data-placement="top" title="Visualizza dati">
+                          <i class="bi bi-eye"></i>
+                        </a>
+                        <!-- Documenti -->
+                        <a href="{% url 'defunto_docs' item.id %}" class="btn btn-success btn-sm" 
+                        data-toggle="tooltip" data-placement="top" title="Documenti">
+                          <i class="bi bi-folder"></i>
+                        </a>
+                        <!-- <button type="submit" class="btn btn-success btn-sm" 
+                        data-toggle="tooltip" data-placement="top" title="Documenti">
+                          <i class="bi bi-folder"></i>
+                        </button> -->
+                      </td>
+                      <td scope="row">
+                        <!-- Modifica -->
+                        <a href="{% url 'defunto_edit' item.id %}" class="btn btn-warning btn-sm" 
+                        data-toggle="tooltip" data-placement="top" title="Modifica">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <!-- Bottone che apre il modal -->
+                        <span data-toggle="modal" data-target="#deleteModal{{ item.id }}">
+                          <button type="button" class="btn btn-danger btn-sm" title="Elimina"
+                          data-toggle="tooltip" data-placement="top" title="Elimina">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </span>
+                      </td>
+                    </tr>
+                    <!-- Modal di conferma eliminazione -->
+                    <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel{{ item.id }}">Conferma Eliminazione</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                          <div class="modal-body">
+                            Sei sicuro di voler eliminare l’anagrafica di <strong>{{ item }}</strong>?
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+
+                            <!-- Form di eliminazione -->
+                            <form method="post" action="{% url 'defunto_delete' item.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Elimina</button>
+                            </form>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                    <!-- END Modal di conferma eliminazione -->
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% include "includes/footer.html" %}
+
+    </div>
+    
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script>
+    $(document).ready( function () {
+        $('#data_table').DataTable({
+            "responsive": true,
+            "paging":   true,
+            "pageLength" : 50,
+            // "aaSorting": [[0,"asc"],[3,"des"]],
+            "lengthChange": false,
+            "autoWidth": false,
+            "language": {
+              "sEmptyTable":     "Nessun dato presente nella tabella",
+              "sInfo":           "Vista da _START_ a _END_ di _TOTAL_ elementi",
+              "sInfoEmpty":      "Vista da 0 a 0 di 0 elementi",
+              "sInfoFiltered":   "(filtrati da _MAX_ elementi totali)",
+              "sInfoPostFix":    "",
+              "sInfoThousands":  ".",
+              "sLengthMenu":     "Visualizza _MENU_ elementi",
+              "sLoadingRecords": "Caricamento...",
+              "sProcessing":     "Elaborazione...",
+              "sSearch":         "Cerca:",
+              "sZeroRecords":    "La ricerca non ha portato alcun risultato.",
+              "oPaginate": {
+                "sFirst":      "Inizio",
+                "sPrevious":   "Precedente",
+                "sNext":       "Successivo",
+                "sLast":       "Fine"
+              },
+              "oAria": {
+                "sSortAscending":  ": attiva per ordinare la colonna in ordine crescente",
+                "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+              }
+            },
+          });
+      });
+  </script>
+
+{% endblock javascripts %}

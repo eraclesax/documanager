@@ -1,0 +1,299 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Scheda Defunto {% endblock title %}
+
+{% block stylesheets %}
+  <style>
+    .blinking {
+      animation: blink 1s ease-in infinite;
+    }
+
+    @keyframes blink {
+      from, to { opacity: 1 }
+      50% { opacity: 0 }
+    }
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">{{ defunto }}</h3>
+            </div>
+          </div>
+          <div class="card-header border-0 d-flex align-items-center">
+            <!-- Gruppo sinistro -->
+            <div>
+              <!-- Scarica PDF -->
+              <a href="{% url 'defunto_docs' defunto.id %}" class="btn btn-success btn-sm" title="Modifica">
+                Documenti
+              </a>
+            </div>
+
+            <!-- Gruppo destro -->
+            <div class="ml-auto">
+              <!-- Modifica -->
+              <a href="{% url 'defunto_edit' id=defunto.id %}" class="btn btn-warning btn-sm" title="Modifica">
+                Modifica
+              </a>
+
+              <!-- Bottone che apre il modal -->
+              <button type="button" class="btn btn-danger btn-sm" title="Elimina"
+                      data-toggle="modal" data-target="#deleteModal{{ defunto.id }}">
+                Elimina
+              </button>
+            </div>
+          </div>
+          <!-- Modal di conferma eliminazione -->
+          <div class="modal fade" id="deleteModal{{ defunto.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ defunto.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteModalLabel{{ defunto.id }}">Conferma Eliminazione</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="modal-body">
+                  Sei sicuro di voler eliminare l’anagrafica di <strong>{{ defunto }}</strong>?
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+
+                  <!-- Form di eliminazione -->
+                  <form method="post" action="{% url 'defunto_delete' defunto.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Elimina</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END Modal di conferma eliminazione -->
+        </div>
+        <div class="card-body">
+
+          <!-- ================= ANAGRAFICA ================= -->
+          <h3 class="border-bottom">Anagrafica</h3>
+          <dl class="row">
+            <dt class="col-sm-3 col-md-2">Cognome</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.cognome|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Nome</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.nome|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Data Nascita</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.data_nascita|date:"d/m/Y" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Luogo di Nascita</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.luogo_nascita|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Comune Residenza</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.comune_residenza|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Via Residenza</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.via_residenza|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Codice Fiscale</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.codice_fiscale|default_if_none:"" }}</dd>
+          </dl>
+
+          <!-- ================= DECESSO ================= -->
+          <h3 class="border-bottom">Decesso</h3>
+          <dl class="row">
+            <dt class="col-sm-3 col-md-2">Comune Decesso</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.comune_decesso|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Via Decesso</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.via_decesso|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Ospedale</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.ospedale|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Reparto</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.reparto_ospedaliero|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Data e Ora Morte</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.data_ora_morte|date:"d/m/Y H:i" }}</dd>
+          </dl>
+
+          <!-- ================= FAMIGLIA E CONTATTI ================= -->
+          <h3 class="border-bottom">Famiglia, Contatti e Note</h3>
+          <dl class="row">
+            <dt class="col-sm-3 col-md-2">Stato Civile</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.stato_civile|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Coniuge</dt>
+            <dd class="col-sm-9 col-md-4">
+              {{ defunto.nome_coniuge|default_if_none:"" }} {{ defunto.cognome_coniuge|default_if_none:"" }}
+            </dd>
+
+            <dt class="col-sm-3 col-md-2">Data Nascita Coniuge</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.data_nascita_coniuge|date:"d/m/Y" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Data Matrimonio</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.data_matrimonio|date:"d/m/Y" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Telefono Famiglia</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.tel_famiglia|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Medico Curante</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.medico_curante|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Fioraio</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.fioraio|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Email</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.email|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Note</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.altro|default_if_none:"" }}</dd>
+          </dl>
+
+          <!-- ================= FUNERALE ================= -->
+          <h3 class="border-bottom">Funerale</h3>
+          <dl class="row">
+            <dt class="col-sm-3 col-md-2">Chiesa</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.chiesa|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Data e Ora Funerale</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.data_ora_funerale|date:"d/m/Y H:i" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Comune di inumazione</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.comune_inumazione|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Ubicazione Feretro</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.ubicazione_feretro|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Affissione Manifesti</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.affissione_manifesti|yesno:"Sì,No" }}</dd>
+          </dl>
+
+          <!-- ================= SERVIZI FUNEBRI ================= -->
+          <h3 class="border-bottom">Servizi Funebri</h3>
+          <dl class="row">
+            <dt class="col-sm-3 col-md-2">Lutto a Casa</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.lutto_casa|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Corteo da Casa</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.corteo_da_casa|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Corteo da Ospedale</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.corteo_da_ospedale|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Passaggio da Casa Solo Auto</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.pass_solo_auto|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Passaggio da Casa per Iniziare Corteo</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.pass_casa_per_corteo|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Direttamente in Chiesa</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.dirett_in_chiesa|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Sala Commiato</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.sala_commiato|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Tutto in Auto</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.tutto_in_auto|yesno:"Sì,No" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Auto Chiesa / Cimitero</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.auto_chiesa_cimitero|yesno:"Sì,No" }}</dd>
+          </dl>
+
+          <!-- ================= SERVIZI ECONOMICI E LOGISTICI ================= -->
+          <h3 class="border-bottom">Servizi Economici e Logistici</h3>
+          <dl class="row">
+            <dt class="col-sm-3 col-md-2">Necrofori</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.necrofori|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Fattura N.</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.fattura_n|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Articolo Cofano Funebre</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.articolo_cofano_funebre|default_if_none:"" }}</dd>
+
+            <dt class="col-sm-3 col-md-2">Altro (servizi)</dt>
+            <dd class="col-sm-9 col-md-4">{{ defunto.altro_servizi|default_if_none:"" }}</dd>
+          </dl>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include "includes/footer.html" %}
+</div>
+
+{% endblock content %}
+
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+  <script>
+
+    $(document).ready(function () {
+      // Responsive update_active_responsive_table
+      update_active_responsive_table('{{accesses_table|safe}}');
+    });
+
+    function build_active_responsive_table(){
+      $('#data_table').DataTable({
+          // "responsive": true,
+          "destroy": true,
+          "paging":   true,
+          "pageLength" : 20,
+          // "aaSorting": [[0,"asc"],[3,"des"]], //already sorted in backend
+          "lengthChange": false,
+          "autoWidth": false,
+          "language": {
+            "sEmptyTable":     "Nessun dato presente nella tabella",
+            "sInfo":           "Vista da _START_ a _END_ di _TOTAL_ elementi",
+            "sInfoEmpty":      "Vista da 0 a 0 di 0 elementi",
+            "sInfoFiltered":   "(filtrati da _MAX_ elementi totali)",
+            "sInfoPostFix":    "",
+            "sInfoThousands":  ".",
+            "sLengthMenu":     "Visualizza _MENU_ elementi",
+            "sLoadingRecords": "Caricamento...",
+            "sProcessing":     "Elaborazione...",
+            "sSearch":         "Cerca:",
+            "sZeroRecords":    "La ricerca non ha portato alcun risultato.",
+            "oPaginate": {
+              "sFirst":      "Inizio",
+              "sPrevious":   "Precedente",
+              "sNext":       "Successivo",
+              "sLast":       "Fine"
+            },
+            "oAria": {
+              "sSortAscending":  ": attiva per ordinare la colonna in ordine crescente",
+              "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+            }
+          },
+        });
+    }
+
+    function update_active_responsive_table(table){
+      $("#id_table_container").empty()
+      $("#id_table_container").append(table);
+      build_active_responsive_table();
+    }
+
+  </script>
+{% endblock javascripts %}

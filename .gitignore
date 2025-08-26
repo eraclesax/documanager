@@ -51,6 +51,14 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.so
+
 # Translations
 *.mo
 *.pot
@@ -205,14 +213,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pyc
-*.so
 
 # Virtualenv
 venv/
