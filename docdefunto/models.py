@@ -79,6 +79,17 @@ class AnagraficaDefunto(models.Model):
     def __str__(self):
         return f"{self.cognome} {self.nome}"
 
+    FIELD_CATEGORIES = {
+        "Anagrafica":('cognome', 'nome', 'sesso', 'cittadinanza', 'luogo_nascita', 'data_nascita', 'comune_residenza', 'via_residenza', 'codice_fiscale', 'doc_ric_def', 'ente_doc_def', 'data_doc_def', ),
+        "Decesso":('comune_decesso', 'via_decesso', 'ospedale', 'reparto_ospedaliero', 'data_morte', 'ora_morte', 'tipo_luogo_salma', 'comune_salma', 'via_salma', ),
+        "Stato civile e famiglia":('professione', 'stato_civile', 'cognome_parente', 'nome_parente', 'data_nascita_parente', 'doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
+        "Contatti":('tel_famiglia', 'email', 'altro', ),
+        "Funerale":('chiesa', 'comune_chiesa', 'data_ora_funerale', 'data_inumazione', 'ora_inumazione', 'comune_inumazione', 'ubicazione_feretro', 'affissione_manifesti', 'medico_curante', 'fioraio', ),
+        "Servizi funebri":('lutto_casa', 'corteo_da_casa', 'corteo_da_ospedale', 'pass_solo_auto', 'pass_casa_per_corteo', 'dirett_in_chiesa', 'sala_commiato', 'tutto_in_auto', 'auto_chiesa_cimitero', ),
+        "Servizi economico-logistici":('data_incarico', 'necrofori', 'fattura_n', 'articolo_cofano_funebre', 'targa_autofunebre', 'altro_servizi', ),
+        "Metadati":('created', 'modified', ),
+    }
+
     # def fill_fields(self, empty_fields):
     #     """Fills fields of the type:
     #         empty_fields = {

@@ -69,8 +69,19 @@ class DefuntoView(View):
 
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
+        defunto_fields = {}
+        for category,field_names in defunto.FIELD_CATEGORIES.items():
+            defunto_fields[category] = []
+            for field_name in field_names:
+                field = AnagraficaDefunto._meta.get_field(field_name)
+                defunto_fields[category].append({
+                    "name":field_name,
+                    "verbose_name":field.verbose_name,
+                    "value": getattr(defunto, field_name),
+                    })
         return render(request, self.template_name, {
             "defunto":defunto,
+            "defunto_fields":defunto_fields,
         })
 
 class DefuntoEditView(View):
