@@ -13,7 +13,8 @@ class AnagraficaDefunto(models.Model):
     provincia_residenza = models.CharField(verbose_name="Provincia di Residenza", blank=True, null=True, max_length=3, default="")
     via_residenza = models.CharField(verbose_name="Via di Residenza", blank=True, null=True, max_length=255, default="")
     codice_fiscale = models.CharField(verbose_name="Codice Fiscale", blank=True, null=True, max_length=16, default="")
-    doc_ric_def = models.CharField(verbose_name="Documento di Riconoscimento Defunto", blank=True, null=True, max_length=63, default="")
+    doc_ric_def = models.CharField(verbose_name="Tipo Documento di Riconoscimento Defunto", blank=True, null=True, max_length=63, default="")
+    n_doc_ric_def = models.CharField(verbose_name="Numero Documento di Riconoscimento Defunto", blank=True, null=True, max_length=63, default="")
     ente_doc_def = models.CharField(verbose_name="Ente di Rilascio Documento Defunto", blank=True, null=True, max_length=255, default="")
     data_doc_def = models.DateField(verbose_name="Data di Rilascio Documento Defunto", blank=True, null=True)
 
@@ -117,6 +118,7 @@ class AnagraficaDefunto(models.Model):
 class Documento(models.Model):
     file = models.FileField(verbose_name="File", upload_to="documenti/")
     nome = models.CharField(verbose_name="Nome File", blank=True, null=True, max_length=255, default="")
+    foglio_intestato = models.FileField(verbose_name="Foglio Intestato", upload_to="documenti/fogli_intestati/", null=True)
 
     def __str__(self):
         return self.file.name.split("/")[-1]  # mostra solo il nome del file

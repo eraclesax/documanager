@@ -1,9 +1,5 @@
-# from reportlab.pdfgen import canvas
-from app.models import AppUser
-from .models import *
-from .forms import *
-
 import datetime
+import io
 
 from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
@@ -18,12 +14,18 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.template import Template, Context
 from django.conf import settings
+from django.http import HttpResponse
+
+from app.models import AppUser
+from .models import *
+from .forms import *
 
 from crispy_forms.utils import render_crispy_form
 from rest_framework.views import APIView
 from weasyprint import HTML
+from PyPDF2 import PdfReader, PdfWriter
+# from reportlab.pdfgen import canvas
 
-from django.http import HttpResponse
 
 # def ping(request):
 #     return HttpResponse("pong from Django via Gunicorn")
@@ -201,13 +203,37 @@ class GetDocView(View):
             response = HttpResponse(contenuto_html)
             return response
         else:
+
+            # 1. Genera PDF del contenuto in memoria
             # converto in PDF con WeasyPrint
-            pdf_file = HTML(string=contenuto_html, base_url=request.build_absolute_uri('/')).write_pdf()
+            contenuto_pdf_bytes = HTML(
+                string=contenuto_html, 
+                base_url=request.build_absolute_uri('/')
+                ).write_pdf()
+
+            if doc.foglio_intestato and contenuto_pdf_bytes:
+                contenuto_pdf = PdfReader(io.BytesIO(contenuto_pdf_bytes))
+                # 2. Carica il foglio intestato (da FileField di Django)
+                foglio_file = doc.foglio_intestato.open("rb")  # assicura apertura
+                foglio_pdf = PdfReader(foglio_file)
+                writer = PdfWriter()
+                # 3. Sovrapponi contenuto alle pagine del foglio intestato
+                for page in contenuto_pdf.pages:
+                    background_page = foglio_pdf.pages[0]  # usa la prima pagina come sfondo
+                    print(background_page)
+                    page.merge_page(background_page)           # unisce il contenuto sopra lo sfondo
+                    print(background_page)
+                    writer.add_page(page)
+                    # 4. Salva in memoria il PDF finale
+                    output_buffer = io.BytesIO()
+                    writer.write(output_buffer)
+                    output_buffer.seek(0)
+                response = HttpResponse(output_buffer, content_type="application/pdf")
+            else:
+                response = HttpResponse(contenuto_pdf_bytes, content_type="application/pdf")
 
             # preparo la risposta
             filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.pdf"
-            response = HttpResponse(pdf_file, content_type="application/pdf")
-
             if action == "save":
                 response['Content-Disposition'] = f'attachment; filename="{filename}"'
             else:
