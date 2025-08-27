@@ -118,7 +118,7 @@ class AnagraficaDefunto(models.Model):
 class Documento(models.Model):
     file = models.FileField(verbose_name="File", upload_to="documenti/")
     nome = models.CharField(verbose_name="Nome File", blank=True, null=True, max_length=255, default="")
-    foglio_intestato = models.FileField(verbose_name="Foglio Intestato", upload_to="documenti/fogli_intestati/", null=True)
+    foglio_intestato = models.FileField(verbose_name="Foglio Intestato", upload_to="documenti/fogli_intestati/", blank=True, null=True)
 
     def __str__(self):
         return self.file.name.split("/")[-1]  # mostra solo il nome del file
