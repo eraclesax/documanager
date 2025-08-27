@@ -62,3 +62,7 @@ def register_user(request):
         form = SignUpForm()
 
     return render(request, "accounts/register.html", {"form": form, "msg" : msg, "success" : success })
+
+def password_reset_sent(request):
+
+    return render(request, "accounts/password_reset_sent.html")

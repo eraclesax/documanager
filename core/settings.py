@@ -41,7 +41,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-6@&(ti2fkhl&g0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG',cast=bool,default=True)
 # SECURITY WARNING: Do not use * in production.
-ALLOWED_HOSTS = ['*','127.0.0.1', 'localhost', os.environ.get('ALLOWED_HOST')]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', os.environ.get('ALLOWED_HOST')]
 # Application definition
 
 INSTALLED_APPS = [
@@ -151,6 +151,19 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# EMAIL SETTINGS
+DEBUG_EMAIL = env("DEBUG_EMAIL", cast=bool, default=True)
+if DEBUG_EMAIL:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.tuoservizio.com"   # es. smtp.gmail.com o email-smtp.eu-central-1.amazonaws.com (SES)
+    EMAIL_PORT = 587                      # tipico TLS
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = "il_tuo_username"
+    EMAIL_HOST_PASSWORD = "la_tua_password_o_token"
+    DEFAULT_FROM_EMAIL = "noreply@tuodominio.com"
+
 # import locale
 # locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')
 #############################################################
@@ -232,3 +245,4 @@ if DEEP_LOGS:
 
 ## DOCUDEFUNTO APP CONFIG
 BUILDING_DOCUMENTS_LAYOUT = env("BUILDING_DOCUMENTS_LAYOUT",cast=bool, default=False)
+USE_TZ = False

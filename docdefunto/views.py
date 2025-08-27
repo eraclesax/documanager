@@ -1,9 +1,5 @@
-# from reportlab.pdfgen import canvas
-from app.models import AppUser
-from .models import *
-from .forms import *
-
 import datetime
+import io
 
 from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
@@ -18,12 +14,18 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.template import Template, Context
 from django.conf import settings
+from django.http import HttpResponse
+
+from app.models import AppUser
+from .models import *
+from .forms import *
 
 from crispy_forms.utils import render_crispy_form
 from rest_framework.views import APIView
 from weasyprint import HTML
+from PyPDF2 import PdfReader, PdfWriter
+# from reportlab.pdfgen import canvas
 
-from django.http import HttpResponse
 
 # def ping(request):
 #     return HttpResponse("pong from Django via Gunicorn")
@@ -69,8 +71,19 @@ class DefuntoView(View):
 
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
+        defunto_fields = {}
+        for category,field_names in defunto.FIELD_CATEGORIES.items():
+            defunto_fields[category] = []
+            for field_name in field_names:
+                field = AnagraficaDefunto._meta.get_field(field_name)
+                defunto_fields[category].append({
+                    "name":field_name,
+                    "verbose_name":field.verbose_name,
+                    "value": getattr(defunto, field_name),
+                    })
         return render(request, self.template_name, {
             "defunto":defunto,
+            "defunto_fields":defunto_fields,
         })
 
 class DefuntoEditView(View):
@@ -184,19 +197,43 @@ class GetDocView(View):
             "defunto": defunto,
         })
         contenuto_html = template.render(context)
-
+        #TODO: Check se è inumazione altro comune che ci sia il comune
         if settings.BUILDING_DOCUMENTS_LAYOUT:
             filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.html"
             response = HttpResponse(contenuto_html)
             return response
         else:
+
+            # 1. Genera PDF del contenuto in memoria
             # converto in PDF con WeasyPrint
-            pdf_file = HTML(string=contenuto_html, base_url=request.build_absolute_uri('/')).write_pdf()
+            contenuto_pdf_bytes = HTML(
+                string=contenuto_html, 
+                base_url=request.build_absolute_uri('/')
+                ).write_pdf()
+
+            if doc.foglio_intestato and contenuto_pdf_bytes:
+                contenuto_pdf = PdfReader(io.BytesIO(contenuto_pdf_bytes))
+                # 2. Carica il foglio intestato (da FileField di Django)
+                foglio_file = doc.foglio_intestato.open("rb")  # assicura apertura
+                foglio_pdf = PdfReader(foglio_file)
+                writer = PdfWriter()
+                # 3. Sovrapponi contenuto alle pagine del foglio intestato
+                for page in contenuto_pdf.pages:
+                    background_page = foglio_pdf.pages[0]  # usa la prima pagina come sfondo
+                    print(background_page)
+                    page.merge_page(background_page)           # unisce il contenuto sopra lo sfondo
+                    print(background_page)
+                    writer.add_page(page)
+                    # 4. Salva in memoria il PDF finale
+                    output_buffer = io.BytesIO()
+                    writer.write(output_buffer)
+                    output_buffer.seek(0)
+                response = HttpResponse(output_buffer, content_type="application/pdf")
+            else:
+                response = HttpResponse(contenuto_pdf_bytes, content_type="application/pdf")
 
             # preparo la risposta
             filename = f"{doc.nome} - {defunto.cognome} {defunto.nome}.pdf"
-            response = HttpResponse(pdf_file, content_type="application/pdf")
-
             if action == "save":
                 response['Content-Disposition'] = f'attachment; filename="{filename}"'
             else:

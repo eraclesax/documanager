@@ -91,148 +91,15 @@
         </div>
         <div class="card-body">
 
-          <!-- ================= ANAGRAFICA ================= -->
-          <h3 class="border-bottom">Anagrafica</h3>
-          <dl class="row">
-            <dt class="col-sm-3 col-md-2">Cognome</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.cognome|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Nome</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.nome|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Data Nascita</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.data_nascita|date:"d/m/Y" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Luogo di Nascita</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.luogo_nascita|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Comune Residenza</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.comune_residenza|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Via Residenza</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.via_residenza|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Codice Fiscale</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.codice_fiscale|default_if_none:"" }}</dd>
-          </dl>
-
-          <!-- ================= DECESSO ================= -->
-          <h3 class="border-bottom">Decesso</h3>
-          <dl class="row">
-            <dt class="col-sm-3 col-md-2">Comune Decesso</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.comune_decesso|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Via Decesso</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.via_decesso|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Ospedale</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.ospedale|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Reparto</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.reparto_ospedaliero|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Data e Ora Morte</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.data_ora_morte|date:"d/m/Y H:i" }}</dd>
-          </dl>
-
-          <!-- ================= FAMIGLIA E CONTATTI ================= -->
-          <h3 class="border-bottom">Famiglia, Contatti e Note</h3>
-          <dl class="row">
-            <dt class="col-sm-3 col-md-2">Stato Civile</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.stato_civile|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Coniuge</dt>
-            <dd class="col-sm-9 col-md-4">
-              {{ defunto.nome_coniuge|default_if_none:"" }} {{ defunto.cognome_coniuge|default_if_none:"" }}
-            </dd>
-
-            <dt class="col-sm-3 col-md-2">Data Nascita Coniuge</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.data_nascita_coniuge|date:"d/m/Y" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Data Matrimonio</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.data_matrimonio|date:"d/m/Y" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Telefono Famiglia</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.tel_famiglia|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Medico Curante</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.medico_curante|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Fioraio</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.fioraio|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Email</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.email|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Note</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.altro|default_if_none:"" }}</dd>
-          </dl>
-
-          <!-- ================= FUNERALE ================= -->
-          <h3 class="border-bottom">Funerale</h3>
-          <dl class="row">
-            <dt class="col-sm-3 col-md-2">Chiesa</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.chiesa|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Data e Ora Funerale</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.data_ora_funerale|date:"d/m/Y H:i" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Comune di inumazione</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.comune_inumazione|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Ubicazione Feretro</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.ubicazione_feretro|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Affissione Manifesti</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.affissione_manifesti|yesno:"Sì,No" }}</dd>
-          </dl>
-
-          <!-- ================= SERVIZI FUNEBRI ================= -->
-          <h3 class="border-bottom">Servizi Funebri</h3>
-          <dl class="row">
-            <dt class="col-sm-3 col-md-2">Lutto a Casa</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.lutto_casa|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Corteo da Casa</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.corteo_da_casa|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Corteo da Ospedale</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.corteo_da_ospedale|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Passaggio da Casa Solo Auto</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.pass_solo_auto|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Passaggio da Casa per Iniziare Corteo</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.pass_casa_per_corteo|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Direttamente in Chiesa</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.dirett_in_chiesa|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Sala Commiato</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.sala_commiato|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Tutto in Auto</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.tutto_in_auto|yesno:"Sì,No" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Auto Chiesa / Cimitero</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.auto_chiesa_cimitero|yesno:"Sì,No" }}</dd>
-          </dl>
-
-          <!-- ================= SERVIZI ECONOMICI E LOGISTICI ================= -->
-          <h3 class="border-bottom">Servizi Economici e Logistici</h3>
-          <dl class="row">
-            <dt class="col-sm-3 col-md-2">Necrofori</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.necrofori|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Fattura N.</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.fattura_n|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Articolo Cofano Funebre</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.articolo_cofano_funebre|default_if_none:"" }}</dd>
-
-            <dt class="col-sm-3 col-md-2">Altro (servizi)</dt>
-            <dd class="col-sm-9 col-md-4">{{ defunto.altro_servizi|default_if_none:"" }}</dd>
-          </dl>
+          {% for category, fields in defunto_fields.items %}
+              <h3 class="border-bottom">{{ category }}</h3>
+              <dl class="row">
+                {% for field in fields %}
+                    <dt class="col-sm-3 col-md-2">{{ field.verbose_name }}</dt>
+                    <dd class="col-sm-9 col-md-4">{{ field.value|default_if_none:"" }}</dd>
+                {% endfor %}
+              </dl>
+          {% endfor %}
 
         </div>
       </div>

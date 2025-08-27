@@ -46,6 +46,8 @@ Indirizzi dns per connettersi con ssh:
 ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-171-113-111.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-13-51-193-252.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-60-228-41.eu-north-1.compute.amazonaws.com
+ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-3-238-40-176.compute-1.amazonaws.com
+
 
 
 
@@ -470,5 +472,43 @@ Installa certbot
 Richiedi il certificato
     sudo certbot --nginx -d tuodominio.it -d www.tuodominio.it
 
+-------------------------------------------------------------------
 
-    
+Definire un nuovo tag:
+
+# Assicurati di essere aggiornato
+git checkout development
+git pull origin development
+
+# Vai su master e aggiornalo
+git checkout master
+git pull origin master
+
+# Fai il merge dello sviluppo su master
+git merge --no-ff development -m "Merge branch 'development' into 'master' for release 1.0.0"
+
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+
+3. Continuare lo sviluppo
+
+Sul branch development continuerai a sviluppare nuove feature.
+Sul branch master avrai solo le versioni stabili rilasciate.
+Puoi anche creare un branch release/x.y.z se vuoi congelare il codice mentre testi/fissi bug prima di rilasciarlo.
+
+4. Consiglio: Semantic Versioning
+
+Seguire Semantic Versioning (SemVer)
+ ti aiuta a dare un senso ai numeri di versione:
+MAJOR: cambiamenti incompatibili (1.x.x → 2.0.0).
+MINOR: nuove feature compatibili (1.0.0 → 1.1.0).
+PATCH: fix retrocompatibili (1.0.0 → 1.0.1).
+
+-------------------------------------------------------------------------
+
+
+Rimuovere file temporanei seguiti da git
+
+rm -rf docdefunto/__pycache__/
+echo "__pycache__/" >> .gitignore
+git rm -r --cached docdefunto/__pycache__/
