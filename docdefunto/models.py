@@ -87,7 +87,7 @@ class AnagraficaDefunto(models.Model):
         return f"{self.cognome} {self.nome}"
 
     FIELD_CATEGORIES = {
-        "Anagrafica":('cognome', 'nome', 'sesso', 'cittadinanza', 'comune_nascita', 'provincia_nascita', 'data_nascita', 'comune_residenza', 'provincia_residenza', 'via_residenza', 'codice_fiscale', 'doc_ric_def', 'ente_doc_def', 'data_doc_def', ),
+        "Anagrafica":('cognome', 'nome', 'sesso', 'cittadinanza', 'comune_nascita', 'provincia_nascita', 'data_nascita', 'comune_residenza', 'provincia_residenza', 'via_residenza', 'codice_fiscale', 'doc_ric_def', 'n_doc_ric_def', 'ente_doc_def', 'data_doc_def', ),
         "Decesso":('comune_decesso', 'provincia_decesso', 'via_decesso', 'ospedale', 'reparto_ospedaliero', 'data_morte', 'ora_morte', 'tipo_luogo_salma', 'comune_salma', 'provincia_salma', 'via_salma', ),
         "Stato civile e famiglia":('professione', 'stato_civile', 'cognome_parente', 'nome_parente', 'data_nascita_parente', 'doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
