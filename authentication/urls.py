@@ -24,7 +24,7 @@ urlpatterns = [
     # link che l’utente clicca per settare la password
     path('imposta-password/<uidb64>/<token>/',
          PasswordResetConfirmView.as_view(
-             template_name='password_reset_confirm.html',
+             template_name='accounts/password_reset_confirm.html',
              success_url='/login/'
          ), 
          name='password_reset_confirm'),

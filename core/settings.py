@@ -151,10 +151,18 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# EMAIL SETTING
-
-EMAIL_BACKEND = env("EMAIL_BACKEND",cast=bool, default='django.core.mail.backends.console.EmailBackend')
-
+# EMAIL SETTINGS
+DEBUG_EMAIL = env("DEBUG_EMAIL", cast=bool, default=True)
+if DEBUG_EMAIL:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.tuoservizio.com"   # es. smtp.gmail.com o email-smtp.eu-central-1.amazonaws.com (SES)
+    EMAIL_PORT = 587                      # tipico TLS
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = "il_tuo_username"
+    EMAIL_HOST_PASSWORD = "la_tua_password_o_token"
+    DEFAULT_FROM_EMAIL = "noreply@tuodominio.com"
 
 # import locale
 # locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')
