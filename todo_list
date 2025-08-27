@@ -46,6 +46,8 @@ Indirizzi dns per connettersi con ssh:
 ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-171-113-111.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-13-51-193-252.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-60-228-41.eu-north-1.compute.amazonaws.com
+ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-3-238-40-176.compute-1.amazonaws.com
+
 
 
 
