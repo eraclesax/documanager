@@ -151,6 +151,11 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# EMAIL SETTING
+
+EMAIL_BACKEND = env("EMAIL_BACKEND",cast=bool, default='django.core.mail.backends.console.EmailBackend')
+
+
 # import locale
 # locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')
 #############################################################
