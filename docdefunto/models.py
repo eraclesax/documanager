@@ -47,12 +47,12 @@ class AnagraficaDefunto(models.Model):
 
     # Stato civile e famiglia
     professione = models.CharField(verbose_name="Professione", blank=True, null=True, max_length=255)
-    stato_civile = models.SmallIntegerField(verbose_name="Stato Civile", blank=True, null=True, max_length=127,
+    stato_civile = models.CharField(verbose_name="Stato Civile", blank=True, null=True, max_length=63,
                                     choices=[
-                                        (1, "Celibe / nubile"),
-                                        (2, "Coniugato / unito civilmente con"),
-                                        (3, "Vedovo di"),
-                                        (4, "Già coniugato / unito civolmente con")],
+                                        ("Celibe / nubile", "Celibe / nubile"),
+                                        ("Coniugato / unito civilmente", "Coniugato / unito civilmente con"),
+                                        ("Vedovo", "Vedovo di"),
+                                        ("Già coniugato / unito civolmente", "Già coniugato / unito civolmente con")],
                                     )
     cognome_coniuge = models.CharField(verbose_name="Cognome Coniuge", blank=True, null=True, max_length=255)
     nome_coniuge = models.CharField(verbose_name="Nome Coniuge", blank=True, null=True, max_length=255)
@@ -84,11 +84,11 @@ class AnagraficaDefunto(models.Model):
     ora_inumazione = models.TimeField(verbose_name="Orario di sepoltura", blank=True, null=True)
     comune_inumazione = models.CharField(verbose_name="Comune di sepoltura", blank=True, null=True, max_length=255)
     provincia_inumazione = models.CharField(verbose_name="Provincia di sepoltura (sigla)", blank=True, null=True, max_length=2)
-    ubicazione_feretro = models.CharField(verbose_name="Ubicazione Feretro", blank=True, null=True, max_length=2,
+    ubicazione_feretro = models.CharField(verbose_name="Ubicazione Feretro", blank=True, null=True, max_length=11,
                                       choices=[
-                                       ("C.I.", "Carta di Identità"),
-                                       ("Patente", "Patente"),
-                                       ("Passaporto", "Passaporto")], 
+                                       ("Cappella", "Cappella"),
+                                       ("Inumazione", "Inumazione"),
+                                       ("Tumulazione", "Tumulazione")], 
                                    ) 
     affissione_manifesti = models.BooleanField(verbose_name="Affissione Manifesti", default=False)
     medico_curante = models.CharField(verbose_name="Medico Curante", blank=True, null=True, max_length=255)
