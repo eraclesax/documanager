@@ -59,6 +59,31 @@
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
 <script>
+  // Questa funzione è inserita nei campi direttamente in forms.py
+  // Oscura i campi nome coniuge e cognome coniuge se stato civile è "celibe/nubile"
+  function toggleConiugeFields(value) {
+      const cognome = document.getElementById("id_cognome_coniuge");
+      const nome = document.getElementById("id_nome_coniuge");
+      const cognomeDiv = document.getElementById("div_id_cognome_coniuge");
+      const nomeDiv = document.getElementById("div_id_nome_coniuge");
+
+      if (value === "2" || value === "3" || value === "4") {  // Coniugato / unito civilmente o altro
+          cognomeDiv.style.display = "";
+          nomeDiv.style.display = "";
+      } else {
+          cognomeDiv.style.display = "none";
+          nomeDiv.style.display = "none";
+          cognome.value = "";
+          nome.value = "";
+      }
+  }
+  // Inizializza i campi oscurati
+  document.addEventListener("DOMContentLoaded", function() {
+      const statoCivile = document.getElementById("id_stato_civile");
+      toggleConiugeFields(statoCivile.value);
+  });
+
+// Questa funzione semplifica la compilazione riempiendo i campi successivi in maniera statisticamente valida
 document.addEventListener("DOMContentLoaded", function () {
   const comune_residenza = document.getElementById("id_comune_residenza");
   

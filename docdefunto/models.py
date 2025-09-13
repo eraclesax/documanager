@@ -4,7 +4,11 @@ class AnagraficaDefunto(models.Model):
     # Dati anagrafici
     cognome = models.CharField(verbose_name="Cognome Defunto", blank=True, null=True, max_length=255)
     nome = models.CharField(verbose_name="Nome Defunto", blank=True, null=True, max_length=255)
-    sesso = models.CharField(verbose_name="Sesso", choices=[("F", "Femmina"),("M", "Maschio")], max_length=1, blank=True, null=True)
+    sesso = models.CharField(verbose_name="Sesso", max_length=1, blank=True, null=True, 
+                             choices=[
+                                 ("F", "Femmina"),
+                                 ("M", "Maschio")]
+                                 )
     cittadinanza = models.CharField(verbose_name="Cittadinanza", blank=True, null=True, max_length=127)
     comune_nascita = models.CharField(verbose_name="Comune di Nascita", blank=True, null=True, max_length=255)
     provincia_nascita = models.CharField(verbose_name="Provincia di Nascita (sigla)", blank=True, null=True, max_length=2)
@@ -13,9 +17,12 @@ class AnagraficaDefunto(models.Model):
     provincia_residenza = models.CharField(verbose_name="Provincia di Residenza (sigla)", blank=True, null=True, max_length=2)
     via_residenza = models.CharField(verbose_name="Via di Residenza", blank=True, null=True, max_length=255)
     codice_fiscale = models.CharField(verbose_name="Codice Fiscale", blank=True, null=True, max_length=2)
-    doc_ric_def = models.CharField(verbose_name="Tipo Documento di Riconoscimento Defunto", 
-                                   choices=[("C.I.", "Carta di Identità"),("Patente", "Patente"),("Passaporto", "Passaporto")], 
-                                   blank=True, null=True, max_length=10)
+    doc_ric_def = models.CharField(verbose_name="Tipo Documento di Riconoscimento Defunto", blank=True, null=True, max_length=10, 
+                                   choices=[
+                                       ("C.I.", "Carta di Identità"),
+                                       ("Patente", "Patente"),
+                                       ("Passaporto", "Passaporto")]
+                                   )
     n_doc_ric_def = models.CharField(verbose_name="Numero Documento di Riconoscimento Defunto", blank=True, null=True, max_length=63)
     ente_doc_def = models.CharField(verbose_name="Ente di Rilascio Documento Defunto", blank=True, null=True, max_length=255)
     data_doc_def = models.DateField(verbose_name="Data di Rilascio Documento Defunto", blank=True, null=True)
@@ -28,20 +35,37 @@ class AnagraficaDefunto(models.Model):
     reparto_ospedaliero = models.CharField(verbose_name="Reparto Ospedaliero", blank=True, null=True, max_length=255)
     data_morte = models.DateField(verbose_name="Data di Morte", blank=True, null=True)
     ora_morte = models.TimeField(verbose_name="Orario di Morte", blank=True, null=True)
-    tipo_luogo_salma = models.SmallIntegerField(choices=[(1, "Abitazione privata"),(2, "Istituto / Casa di riposo"),(3, "struttura obitoriale")], blank=True, null=True)
+    tipo_luogo_salma = models.SmallIntegerField(blank=True, null=True,
+                                    choices=[
+                                        (1, "Abitazione privata"),
+                                        (2, "Istituto / Casa di riposo"),
+                                        (3, "struttura obitoriale")], 
+                                    )
     comune_salma = models.CharField(verbose_name="Comune dell'osservazione salma", blank=True, null=True, max_length=255)
     provincia_salma = models.CharField(verbose_name="Provincia dell'osservazione salma (sigla)", blank=True, null=True, max_length=2)
     via_salma = models.CharField(verbose_name="Via dell'osservazione salma", blank=True, null=True, max_length=255)
 
     # Stato civile e famiglia
     professione = models.CharField(verbose_name="Professione", blank=True, null=True, max_length=255)
-    stato_civile = models.CharField(verbose_name="Stato Civile", blank=True, null=True, max_length=127)
+    stato_civile = models.SmallIntegerField(verbose_name="Stato Civile", blank=True, null=True, max_length=127,
+                                    choices=[
+                                        (1, "Celibe / nubile"),
+                                        (2, "Coniugato / unito civilmente con"),
+                                        (3, "Vedovo di"),
+                                        (4, "Già coniugato / unito civolmente con")],
+                                    )
+    cognome_coniuge = models.CharField(verbose_name="Cognome Coniuge", blank=True, null=True, max_length=255)
+    nome_coniuge = models.CharField(verbose_name="Nome Coniuge", blank=True, null=True, max_length=255)
+
     cognome_parente = models.CharField(verbose_name="Cognome Parente", blank=True, null=True, max_length=255)
     nome_parente = models.CharField(verbose_name="Nome Parente", blank=True, null=True, max_length=255)
     data_nascita_parente = models.DateField(verbose_name="Data di Nascita Parente", blank=True, null=True)
-    doc_ric_par = models.CharField(verbose_name="Documento di Riconoscimento Parente", 
-                                   choices=[("C.I.", "Carta di Identità"),("Patente", "Patente"),("Passaporto", "Passaporto")], 
-                                   blank=True, null=True, max_length=10)
+    doc_ric_par = models.CharField(verbose_name="Documento di Riconoscimento Parente", blank=True, null=True, max_length=10,
+                                   choices=[
+                                       ("C.I.", "Carta di Identità"),
+                                       ("Patente", "Patente"),
+                                       ("Passaporto", "Passaporto")], 
+                                   )
     n_doc_ric_par = models.CharField(verbose_name="Numero Documento di Riconoscimento Parente", blank=True, null=True, max_length=63)
     ente_doc_par = models.CharField(verbose_name="Ente di Rilascio Documento Parente", blank=True, null=True, max_length=255)
     data_doc_par = models.DateField(verbose_name="Data di Rilascio Documento Parente", blank=True, null=True)

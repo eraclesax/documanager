@@ -49,6 +49,18 @@ class DefuntoEditForm(forms.ModelForm):
         self.fields['provincia_chiesa'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_inumazione'].widget.attrs['style'] = 'text-transform: uppercase;'
 
+        # aggiungo un onchange al select di stato_civile
+        self.fields['stato_civile'].widget.attrs.update({
+            'onchange': 'toggleConiugeFields(this.value);'
+        })
+        # # inizialmente nascondo i campi coniuge
+        # self.fields['cognome_coniuge'].widget.attrs.update({
+        #     'style': 'display:none;'
+        # })
+        # self.fields['nome_coniuge'].widget.attrs.update({
+        #     'style': 'display:none;'
+        # })
+
     def clean_codice_fiscale(self):
         value = self.cleaned_data["codice_fiscale"]
         # Validazione sul numero di caratteri
