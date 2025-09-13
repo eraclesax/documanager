@@ -80,11 +80,16 @@ class AnagraficaDefunto(models.Model):
     comune_chiesa = models.CharField(verbose_name="Comune Chiesa", blank=True, null=True, max_length=255)
     provincia_chiesa = models.CharField(verbose_name="Provincia della Chiesa (sigla)", blank=True, null=True, max_length=2)
     data_ora_funerale = models.DateTimeField(verbose_name="Data e Ora del Funerale", blank=True, null=True)
-    data_inumazione = models.DateField(verbose_name="Data di inumazione", blank=True, null=True)
-    ora_inumazione = models.TimeField(verbose_name="Orario di inumazione", blank=True, null=True)
+    data_inumazione = models.DateField(verbose_name="Data di sepoltura", blank=True, null=True)
+    ora_inumazione = models.TimeField(verbose_name="Orario di sepoltura", blank=True, null=True)
     comune_inumazione = models.CharField(verbose_name="Comune di sepoltura", blank=True, null=True, max_length=255)
     provincia_inumazione = models.CharField(verbose_name="Provincia di sepoltura (sigla)", blank=True, null=True, max_length=2)
-    ubicazione_feretro = models.TextField(verbose_name="Ubicazione Feretro", blank=True, null=True)
+    ubicazione_feretro = models.CharField(verbose_name="Ubicazione Feretro", blank=True, null=True, max_length=2,
+                                      choices=[
+                                       ("C.I.", "Carta di Identità"),
+                                       ("Patente", "Patente"),
+                                       ("Passaporto", "Passaporto")], 
+                                   ) 
     affissione_manifesti = models.BooleanField(verbose_name="Affissione Manifesti", default=False)
     medico_curante = models.CharField(verbose_name="Medico Curante", blank=True, null=True, max_length=255)
     fioraio = models.CharField(verbose_name="Fioraio", blank=True, null=True, max_length=255)
