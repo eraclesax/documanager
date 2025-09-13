@@ -12,7 +12,7 @@ class AnagraficaDefunto(models.Model):
     cittadinanza = models.CharField(verbose_name="Cittadinanza", blank=True, null=True, max_length=127)
     comune_nascita = models.CharField(verbose_name="Comune di Nascita", blank=True, null=True, max_length=255)
     provincia_nascita = models.CharField(verbose_name="Provincia di Nascita (sigla)", blank=True, null=True, max_length=2)
-    data_nascita = models.DateField(verbose_name="Data di Nascita", blank=True, null=True)
+    data_nascita = models.DateField(verbose_name="Data di Nascita (formato GG/MM/YYYY)", blank=True, null=True)
     comune_residenza = models.CharField(verbose_name="Comune di Residenza", blank=True, null=True, max_length=255)
     provincia_residenza = models.CharField(verbose_name="Provincia di Residenza (sigla)", blank=True, null=True, max_length=2)
     via_residenza = models.CharField(verbose_name="Via di Residenza", blank=True, null=True, max_length=255)
@@ -25,7 +25,7 @@ class AnagraficaDefunto(models.Model):
                                    )
     n_doc_ric_def = models.CharField(verbose_name="Numero Documento di Riconoscimento Defunto", blank=True, null=True, max_length=63)
     ente_doc_def = models.CharField(verbose_name="Ente di Rilascio Documento Defunto", blank=True, null=True, max_length=255)
-    data_doc_def = models.DateField(verbose_name="Data di Rilascio Documento Defunto", blank=True, null=True)
+    data_doc_def = models.DateField(verbose_name="Data di Rilascio Documento Defunto (formato GG/MM/YYYY)", blank=True, null=True)
 
     # Decesso
     comune_decesso = models.CharField(verbose_name="Comune del Decesso", blank=True, null=True, max_length=255)
@@ -33,8 +33,8 @@ class AnagraficaDefunto(models.Model):
     via_decesso = models.CharField(verbose_name="Via del Decesso", blank=True, null=True, max_length=255)
     ospedale = models.CharField(verbose_name="Ospedale", blank=True, null=True, max_length=255)
     reparto_ospedaliero = models.CharField(verbose_name="Reparto Ospedaliero", blank=True, null=True, max_length=255)
-    data_morte = models.DateField(verbose_name="Data di Morte", blank=True, null=True)
-    ora_morte = models.TimeField(verbose_name="Orario di Morte", blank=True, null=True)
+    data_morte = models.DateField(verbose_name="Data di Morte (formato GG/MM/YYYY)", blank=True, null=True)
+    ora_morte = models.TimeField(verbose_name="Orario di Morte (formato hh:mm)", blank=True, null=True)
     tipo_luogo_salma = models.SmallIntegerField(blank=True, null=True,
                                     choices=[
                                         (1, "Abitazione privata"),
@@ -59,7 +59,7 @@ class AnagraficaDefunto(models.Model):
 
     cognome_parente = models.CharField(verbose_name="Cognome Parente", blank=True, null=True, max_length=255)
     nome_parente = models.CharField(verbose_name="Nome Parente", blank=True, null=True, max_length=255)
-    data_nascita_parente = models.DateField(verbose_name="Data di Nascita Parente", blank=True, null=True)
+    data_nascita_parente = models.DateField(verbose_name="Data di Nascita Parente (formato GG/MM/YYYY)", blank=True, null=True)
     doc_ric_par = models.CharField(verbose_name="Documento di Riconoscimento Parente", blank=True, null=True, max_length=10,
                                    choices=[
                                        ("C.I.", "Carta di Identità"),
@@ -68,7 +68,7 @@ class AnagraficaDefunto(models.Model):
                                    )
     n_doc_ric_par = models.CharField(verbose_name="Numero Documento di Riconoscimento Parente", blank=True, null=True, max_length=63)
     ente_doc_par = models.CharField(verbose_name="Ente di Rilascio Documento Parente", blank=True, null=True, max_length=255)
-    data_doc_par = models.DateField(verbose_name="Data di Rilascio Documento Parente", blank=True, null=True)
+    data_doc_par = models.DateField(verbose_name="Data di Rilascio Documento Parente (formato GG/MM/YYYY)", blank=True, null=True)
 
     # Contatti
     tel_famiglia = models.CharField(verbose_name="Telefono Famiglia", blank=True, null=True, max_length=63)
@@ -79,9 +79,9 @@ class AnagraficaDefunto(models.Model):
     chiesa = models.CharField(verbose_name="Chiesa", blank=True, null=True, max_length=255)
     comune_chiesa = models.CharField(verbose_name="Comune Chiesa", blank=True, null=True, max_length=255)
     provincia_chiesa = models.CharField(verbose_name="Provincia della Chiesa (sigla)", blank=True, null=True, max_length=2)
-    data_ora_funerale = models.DateTimeField(verbose_name="Data e Ora del Funerale", blank=True, null=True)
-    data_inumazione = models.DateField(verbose_name="Data di sepoltura", blank=True, null=True)
-    ora_inumazione = models.TimeField(verbose_name="Orario di sepoltura", blank=True, null=True)
+    data_ora_funerale = models.DateTimeField(verbose_name="Data e Ora del Funerale (formato GG/MM/YYYY hh:mm)", blank=True, null=True)
+    # data_inumazione = models.DateField(verbose_name="Data di sepoltura (formato GG/MM/YYYY)", blank=True, null=True)
+    # ora_inumazione = models.TimeField(verbose_name="Orario di sepoltura (formato hh:mm)", blank=True, null=True)
     comune_inumazione = models.CharField(verbose_name="Comune di sepoltura", blank=True, null=True, max_length=255)
     provincia_inumazione = models.CharField(verbose_name="Provincia di sepoltura (sigla)", blank=True, null=True, max_length=2)
     ubicazione_feretro = models.CharField(verbose_name="Ubicazione Feretro", blank=True, null=True, max_length=11,
@@ -90,7 +90,7 @@ class AnagraficaDefunto(models.Model):
                                        ("Inumazione", "Inumazione"),
                                        ("Tumulazione", "Tumulazione")], 
                                    ) 
-    affissione_manifesti = models.BooleanField(verbose_name="Affissione Manifesti", default=False)
+    affissione_manifesti = models.TextField(verbose_name="Comuni affissione manifesti", blank=True, null=True)
     medico_curante = models.CharField(verbose_name="Medico Curante", blank=True, null=True, max_length=255)
     fioraio = models.CharField(verbose_name="Fioraio", blank=True, null=True, max_length=255)
 
@@ -106,7 +106,7 @@ class AnagraficaDefunto(models.Model):
     auto_chiesa_cimitero = models.BooleanField(verbose_name="Auto Chiesa / Cimitero", default=False)
 
     # Servizi economici e logistici
-    data_incarico = models.DateField(verbose_name="Data di Incarico", blank=True, null=True)
+    data_incarico = models.DateField(verbose_name="Data di Incarico (formato GG/MM/YYYY)", blank=True, null=True)
     necrofori = models.PositiveIntegerField(verbose_name="Numero Necrofori", blank=True, null=True)
     fattura_n = models.CharField(verbose_name="Fattura N.", blank=True, null=True, max_length=127)
     articolo_cofano_funebre = models.CharField(verbose_name="Articolo Cofano Funebre", blank=True, null=True, max_length=255)
@@ -130,8 +130,8 @@ class AnagraficaDefunto(models.Model):
         "Stato civile e famiglia":('professione', 'stato_civile', 'cognome_parente', 'nome_parente', 
                                    'data_nascita_parente', 'doc_ric_par', 'n_doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
-        "Funerale":('chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale', 'data_inumazione', 
-                    'ora_inumazione', 'comune_inumazione','provincia_inumazione', 'ubicazione_feretro', 
+        "Funerale":('chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  
+                    'comune_inumazione','provincia_inumazione', 'ubicazione_feretro', 
                     'affissione_manifesti', 'medico_curante', 'fioraio', ),
         "Servizi funebri":('lutto_casa', 'corteo_da_casa', 'corteo_da_ospedale', 'pass_solo_auto', 
                            'pass_casa_per_corteo', 'dirett_in_chiesa', 'sala_commiato', 'tutto_in_auto', 

@@ -48,6 +48,19 @@ class DefuntoEditForm(forms.ModelForm):
         self.fields['provincia_salma'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_chiesa'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_inumazione'].widget.attrs['style'] = 'text-transform: uppercase;'
+        # Placeholders
+        self.fields['data_nascita'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        self.fields['data_doc_def'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        self.fields['data_morte'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        self.fields['ora_morte'].widget.attrs['placeholder'] = 'Es. 21:45'
+        self.fields['via_salma'].widget.attrs['placeholder'] = 'Omettere la parola "Via"'
+        self.fields['data_nascita_parente'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        self.fields['data_doc_par'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        self.fields['data_ora_funerale'].widget.attrs['placeholder'] = 'Es. 31/05/1936 15:30'
+        # self.fields['data_inumazione'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        # self.fields['ora_inumazione'].widget.attrs['placeholder'] = 'Es. 21:45'
+        self.fields['data_incarico'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        self.fields['affissione_manifesti'].widget.attrs['placeholder'] = 'Rionero in Vulture\nBarile\necc.'
 
         # aggiungo un onchange al select di stato_civile
         self.fields['stato_civile'].widget.attrs.update({
