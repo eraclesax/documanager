@@ -50,7 +50,7 @@ class DefuntiListView(View):
 
     def GET_render(self,request,*args, **kwargs):
 
-        defunti = AnagraficaDefunto.objects.all().order_by('-id')
+        defunti = AnagraficaDefunto.objects.all().order_by('-pk')
         return render(request, self.template_name, {
             "defunti":defunti,
         })
