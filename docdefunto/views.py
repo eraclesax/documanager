@@ -71,6 +71,7 @@ class DefuntoView(View):
 
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
+        # Determina le categorie per ciascun campo
         defunto_fields = {}
         for category,field_names in defunto.FIELD_CATEGORIES.items():
             defunto_fields[category] = []

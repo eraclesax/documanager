@@ -10,6 +10,22 @@ from django.utils.translation import gettext_lazy as _
 from .models import *
 
 class DefuntoEditForm(forms.ModelForm):
+    
+    ## Crispy forms helper for formatting staff
+    helper = FormHelper()
+        
+    # codice_fiscale = forms.CharField(
+    #     max_length=16,
+    #     required=False,
+    #     widget=forms.TextInput(
+    #         attrs={
+    #             "style": "text-transform: uppercase;",
+    #             # "placeholder": "Codice fiscale del defunto",
+    #             "oninput": "this.value = this.value.toUpperCase()"
+    #         }
+    #     )
+    # )
+
     class Meta:
         from .models import AnagraficaDefunto
         model = AnagraficaDefunto
@@ -22,10 +38,63 @@ class DefuntoEditForm(forms.ModelForm):
         #     "country":"Stato",
         # }
         
-    ## Crispy forms helper for formatting staff
-    helper = FormHelper()
     def __init__(self, *args,**kwargs):
         super().__init__(*args, **kwargs)
+        # Inserimento in uppercase
+        self.fields['codice_fiscale'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_nascita'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_residenza'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_decesso'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_salma'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_chiesa'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_inumazione'].widget.attrs['style'] = 'text-transform: uppercase;'
+
+    def clean_codice_fiscale(self):
+        value = self.cleaned_data["codice_fiscale"]
+        # Validazione sul numero di caratteri
+        if value is None:
+            return None
+        value = value.strip()
+        if len(value) != 16:
+            raise forms.ValidationError("Il codice fiscale deve avere esattamente 16 caratteri.")
+        # Salva in uppercase
+        value = value.upper()
+        return value
+    
+    def clean_provincia_nascita(self):
+        value = self.cleaned_data['provincia_nascita']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_residenza(self):
+        value = self.cleaned_data['provincia_residenza']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_decesso(self):
+        value = self.cleaned_data['provincia_decesso']
+        if value:
+            value = value.upper()
+        return value
+    def clean_provincia_salma(self):
+        value = self.cleaned_data['provincia_salma']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_chiesa(self):
+        value = self.cleaned_data['provincia_chiesa']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_inumazione(self):
+        value = self.cleaned_data['provincia_inumazione']
+        if value:
+            value = value.upper()
+        return value
 
 class DynamicJsonConfigForm(forms.Form):
     """
