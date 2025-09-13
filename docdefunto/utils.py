@@ -1,12 +1,57 @@
 from datetime import date, time, datetime
 from docdefunto.models import AnagraficaDefunto
+from django.contrib.auth import get_user_model
+from app.models import Organization, User, Profile
 
-def crea_defunto_di_test():
+def setup_superuser(username="admin", password="admin", email="admin@admin.com"):
+    """
+    Crea un superuser e un'organizzazione 'Superusers', e li collega tra loro.
+    Se già esistono, li recupera senza duplicarli.
+    """
+
+    # Crea o recupera l'organizzazione
+    org, org_created = Organization.objects.get_or_create(
+        name="Superusers"
+    )
+    if org_created:
+        print("✅ Organizzazione 'Superusers' creata.")
+    else:
+        print("ℹ️ Organizzazione 'Superusers' già esistente.")
+
+    # Crea o recupera il superuser
+    user, created = User.objects.get_or_create(
+        username=username,
+        defaults={
+            "email": email, 
+            "is_superuser": True, 
+            "is_staff": True,}
+    )
+    if created:
+        user.set_password(password)
+        user.save()
+        user.profile, create = Profile.objects.get_or_create(user=user,
+                                             defaults={
+                                                 "organization":org,
+                                             })
+        print(f"✅ Superuser '{username}' creato.")
+    else:
+        print(f"ℹ️ Superuser '{username}' già esistente.")
+        user.profile.organization = org
+        user.profile.save()
+    print(f"✅ Assegnata organizzazione '{org}' a '{username}'.")
+
+    return user, org
+
+def crea_defunto_di_test(username="admin"):
     """
     Crea e salva un'istanza di AnagraficaDefunto con dati fittizi
     per scopi di test. Ritorna l'istanza salvata.
     """
+    user = User.objects.get(username=username)
     defunto = AnagraficaDefunto.objects.create(
+        # Metadata
+        created_by = user,
+        organization = user.profile.organization,
         # Dati anagrafici
         cognome="Rossi",
         nome="Mario",
@@ -56,8 +101,8 @@ def crea_defunto_di_test():
         comune_chiesa="Trieste",
         provincia_chiesa="TS",
         data_ora_funerale=datetime(2023, 3, 20, 10, 30),
-        data_inumazione=date(2023, 3, 20),
-        ora_inumazione=time(11, 30),
+        # data_inumazione=date(2023, 3, 20),
+        # ora_inumazione=time(11, 30),
         comune_inumazione="Trieste",
         provincia_inumazione="TS",
         ubicazione_feretro="Cimitero di Sant'Anna, loculo 23",
@@ -85,6 +130,7 @@ def crea_defunto_di_test():
         altro_servizi="Servizio aggiuntivo: trasporto floreale",
     )
     return defunto
+
 
 # def generate_filled_pdf(template_pdf_file, fields):
 #     """

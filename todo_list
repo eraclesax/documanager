@@ -1,3 +1,12 @@
+
+
+Se la memoria esterna non funziona:
+
+cd /media/riso/
+sudo mkdir TOSHIBA\ EXT
+ls
+sudo mount -t ntfs-3g /dev/sda1 /media/riso/TOSHIBA\ EXT
+
 Deploiment practice:
 https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 https
@@ -48,12 +57,6 @@ ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-60-228-41.eu-north-1.co
 ssh -i "/home/riso/.ssh/ec2us_east_1.pem" ubuntu@ec2-3-238-40-176.compute-1.amazonaws.com
 
 
-
-
-cd /media/riso/
-sudo mkdir TOSHIBA\ EXT
-ls
-sudo mount -t ntfs-3g /dev/sda1 /media/riso/TOSHIBA\ EXT
 
 
 --------------------------------------------------

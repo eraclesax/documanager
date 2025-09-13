@@ -15,8 +15,6 @@ from django.utils.decorators import method_decorator
 from django.template import Template, Context
 from django.conf import settings
 from django.http import HttpResponse
-
-from app.models import AppUser
 from .models import *
 from .forms import *
 
@@ -49,8 +47,7 @@ class DefuntiListView(View):
         return self.GET_render(request,*args, **kwargs)
 
     def GET_render(self,request,*args, **kwargs):
-
-        defunti = AnagraficaDefunto.objects.all().order_by('-pk')
+        defunti = AnagraficaDefunto.objects.filter(organization=request.user.profile.organization).order_by('-relative_id')
         return render(request, self.template_name, {
             "defunti":defunti,
         })
@@ -125,8 +122,8 @@ class DefuntoEditView(View):
     def post(self, request, *args, **kwargs):
         from .forms import DefuntoEditForm
         from django.contrib import messages
-        from app.models import AppUser
         id = kwargs.get("id", None)
+        user = request.user
         if id is not None:
             obj = get_object_or_404(AnagraficaDefunto,pk=id)
         else:
@@ -137,8 +134,14 @@ class DefuntoEditView(View):
             instance = obj,
         )
         if form.is_valid():
-            obj = form.save()
-            messages.add_message(request, messages.SUCCESS, _('Anagrafica "%s" salvata con successo!'%(obj)))
+            obj = form.save(commit=False)
+            obj.created_by = user
+            obj.organization = user.organization
+            obj.save()
+            messages.add_message(
+                request, 
+                messages.SUCCESS, 
+                _('Anagrafica "%s" salvata con successo!'%(obj)))
             return HttpResponseRedirect(reverse('defunti'))
         else:
             kwargs["form"] = form
@@ -212,10 +215,10 @@ class GetDocView(View):
                 base_url=request.build_absolute_uri('/')
                 ).write_pdf()
 
-            if doc.foglio_intestato and contenuto_pdf_bytes:
+            if doc.background and contenuto_pdf_bytes:
                 contenuto_pdf = PdfReader(io.BytesIO(contenuto_pdf_bytes))
                 # 2. Carica il foglio intestato (da FileField di Django)
-                foglio_file = doc.foglio_intestato.open("rb")  # assicura apertura
+                foglio_file = doc.background.open("rb")  # assicura apertura
                 foglio_pdf = PdfReader(foglio_file)
                 writer = PdfWriter()
                 # 3. Sovrapponi contenuto alle pagine del foglio intestato

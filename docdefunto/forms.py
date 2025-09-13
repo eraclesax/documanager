@@ -29,7 +29,7 @@ class DefuntoEditForm(forms.ModelForm):
     class Meta:
         from .models import AnagraficaDefunto
         model = AnagraficaDefunto
-        exclude = ("id",)
+        exclude = ("id","app_user","organization","relative_id","created","modified")
         # labels = {
         #     "name":"Nome",
         #     "full_address":"Indirizzo",

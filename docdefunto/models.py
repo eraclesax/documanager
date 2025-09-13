@@ -1,6 +1,15 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+from app.models import Organization, User
 
 class AnagraficaDefunto(models.Model):
+    # Metadata
+    created_by = models.ForeignKey(User, verbose_name=_("Creato da"), on_delete=models.PROTECT, blank=False, null=False)
+    organization = models.ForeignKey(Organization, verbose_name=_("Organizzazione"), on_delete=models.PROTECT, blank=False, null=False)
+    relative_id = models.PositiveIntegerField(blank=False, null=False) # Campo automatico, non compilare
+    created = models.DateTimeField(verbose_name="Data di creazione", auto_now_add=True) # Campo automatico, non compilare
+    modified = models.DateTimeField(verbose_name="Ultima modifica", blank=True, null=True, auto_now=True) # Campo automatico, non compilare
+
     # Dati anagrafici
     cognome = models.CharField(verbose_name="Cognome Defunto", blank=True, null=True, max_length=255)
     nome = models.CharField(verbose_name="Nome Defunto", blank=True, null=True, max_length=255)
@@ -114,12 +123,19 @@ class AnagraficaDefunto(models.Model):
     targa_autofunebre = models.CharField(verbose_name="Targa autofunebre", blank=True, null=True, max_length=255)
     altro_servizi = models.TextField(verbose_name="Altro (servizi)", blank=True, null=True)
 
-    # Metadata
-    created = models.DateTimeField(verbose_name="Data di creazione", auto_now_add=True)
-    modified = models.DateTimeField(verbose_name="Ultima modifica", blank=True, null=True, auto_now=True)
+    class Meta(): # type: ignore
+        verbose_name = _("Anagrafica Defunto")
+        verbose_name_plural = _("Anagrafiche Defunti")
 
     def __str__(self):
         return f"{self.cognome} {self.nome}"
+    
+    def save(self, *args, **kwargs):
+        if self.relative_id is None:  # solo alla creazione
+            last = AnagraficaDefunto.objects.filter(organization=self.organization)\
+                                    .aggregate(models.Max("relative_id"))["relative_id__max"]
+            self.relative_id = 1 if last is None else last + 1
+        super().save(*args, **kwargs)
 
     FIELD_CATEGORIES = {
         "Anagrafica":('cognome', 'nome', 'sesso', 'cittadinanza', 'comune_nascita', 'provincia_nascita', 
@@ -142,71 +158,23 @@ class AnagraficaDefunto(models.Model):
         "Metadati":('created', 'modified', ),
     }
 
-    # def fill_fields(self, empty_fields):
-    #     """Fills fields of the type:
-    #         empty_fields = {
-    #             "nome": {"x": 100, "y": 700, "info":{...}},
-    #             "data": {"x": 400, "y": 700, "info":{...}},
-    #             "luogo": {"x": 100, "y": 650, "info":{...}},
-    #         }
-    #         in fields of the type:
-    #         empty_fields = {
-    #             "nome": {"text": "Mario Rossi", "x": 100, "y": 700, "info":{...}},
-    #             "data": {"text": "21/08/2025", "x": 400, "y": 700, "info":{...}},
-    #             "luogo": {"text": "Trieste", "x": 100, "y": 650, "info":{...}},
-    #         }        
-    #     """
-    #     for field_name, _ in empty_fields.items():
-    #         empty_fields[field_name]["text"] = str(getattr(self, field_name))
-    #     return empty_fields
 
+def user_documents_path(instance, filename):
+    # esempio: "media/azienda_5/documenti/contratto.pdf"
+    return f"{instance.organization.tag}/documents/{filename}"
+def user_documentsbkgds_path(instance, filename):
+    # esempio: "media/azienda_5/documenti/contratto.pdf"
+    return f"{instance.organization.tag}/backgrounds/{filename}"
 class Documento(models.Model):
-    file = models.FileField(verbose_name="File", upload_to="documenti/")
-    nome = models.CharField(verbose_name="Nome File", blank=True, null=True, max_length=255, default="")
-    foglio_intestato = models.FileField(verbose_name="Foglio Intestato", upload_to="documenti/fogli_intestati/", blank=True, null=True)
+    nome = models.CharField(verbose_name="Nome Documento", blank=True, null=True, max_length=255, default="")
+    file = models.FileField(verbose_name="File", upload_to=user_documents_path)
+    background = models.FileField(verbose_name="Sfondo", upload_to=user_documentsbkgds_path, blank=True, null=True)
+    organization = models.ForeignKey(Organization, verbose_name=_("Organizzazione"), on_delete=models.PROTECT, blank=False, null=False)
+
+    class Meta(): # type: ignore
+        verbose_name = _("Documento")
+        verbose_name_plural = _("Documenti")
 
     def __str__(self):
         return self.file.name.split("/")[-1]  # mostra solo il nome del file
-    
-# class Documento(models.Model):
-#     file = models.FileField(verbose_name="File", upload_to="documenti/")
-#     nome = models.CharField(verbose_name="Nome File", blank=True, null=True, max_length=255, default="")
-#     fields = models.JSONField(verbose_name="Campi", null=True, blank=True)
-#     # fields structure:
-#     # {
-#     #     "AnagraficaDefunto.nomeCampo1": {"x": 100, "y": 700, "info":{...}},
-#     #     "AnagraficaDefunto.nomeCampo2": {"x": 400, "y": 700, "info":{...}},
-#     #     ...
-#     # }
 
-#     def __str__(self):
-#         return self.file.name.split("/")[-1]  # mostra solo il nome del file
-    
-#     def save(self, *args, **kwargs):
-#         if not self.fields:  # solo alla creazione
-#             self.fields = self._genera_config()
-#         super().save(*args, **kwargs)
-    
-#     def _genera_config(self):
-#         """
-#         Genera un dizionario con i campi del modello come chiavi principali,
-#         ognuno con la stessa struttura interna.
-#         """
-#         from .models import AnagraficaDefunto
-
-#         struttura_base = {
-#             "x": 0,
-#             "y": 0,
-#             "info": {
-#                 "active": False,
-#                 "invert_y": True,
-#                 "font": "Helvetica",
-#                 "size": 14,}
-#         }
-
-#         config = {}
-#         for field in AnagraficaDefunto._meta.get_fields():
-#             if field.concrete and not field.many_to_many and not field.is_relation:
-#                 config[field.name] = struttura_base.copy()
-
-#         return config

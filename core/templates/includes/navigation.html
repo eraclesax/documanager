@@ -22,10 +22,10 @@
       <li class="nav-item dropdown">
         <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <div class="media align-items-center">
-            {% if request.user.appuser %}
+            {% if request.user.profile %}
               <span class="avatar avatar-sm">
-                {% if request.user.appuser.img %}
-                  <img class="rounded-circle" src="{{ request.user.appuser.img.url }}">
+                {% if request.user.profile.img %}
+                  <img class="rounded-circle" src="{{ request.user.profile.img.url }}">
                 {% else %}
                   <img class="rounded-circle" src="{% static 'default_user_img.jpeg' %}">
                 {% endif %}
@@ -37,8 +37,8 @@
             {% endif %}
             <div class="media-body ml-2 d-none d-lg-block">
               <span class="mb-0 text-sm  font-weight-bold">
-                {% if request.user.appuser %}
-                  {{ request.user.appuser.logged_profile }}
+                {% if request.user.profile %}
+                  {{ request.user.profile }}
                 {% else %}
                   {{ request.user.username }}
                 {% endif %}
