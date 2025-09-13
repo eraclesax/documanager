@@ -76,11 +76,12 @@ class AnagraficaDefunto(models.Model):
     altro = models.TextField(verbose_name="Altre Informazioni", blank=True, null=True)
 
     # Funerale
+    data_ora_partenza = models.DateTimeField(verbose_name="Data e Ora della partenza del corteo (formato GG/MM/YYYY hh:mm)", blank=True, null=True) #TODO: non è la stessa cosa di data_ora_funerale?
     chiesa = models.CharField(verbose_name="Chiesa", blank=True, null=True, max_length=255)
     comune_chiesa = models.CharField(verbose_name="Comune Chiesa", blank=True, null=True, max_length=255)
     provincia_chiesa = models.CharField(verbose_name="Provincia della Chiesa (sigla)", blank=True, null=True, max_length=2)
     data_ora_funerale = models.DateTimeField(verbose_name="Data e Ora del Funerale (formato GG/MM/YYYY hh:mm)", blank=True, null=True)
-    # data_inumazione = models.DateField(verbose_name="Data di sepoltura (formato GG/MM/YYYY)", blank=True, null=True)
+    # data_inumazione = models.DateField(verbose_name="Data di sepoltura (formato GG/MM/YYYY)", blank=True, null=True) #TODO: sicuro che vadano eliminati?
     # ora_inumazione = models.TimeField(verbose_name="Orario di sepoltura (formato hh:mm)", blank=True, null=True)
     comune_inumazione = models.CharField(verbose_name="Comune di sepoltura", blank=True, null=True, max_length=255)
     provincia_inumazione = models.CharField(verbose_name="Provincia di sepoltura (sigla)", blank=True, null=True, max_length=2)
@@ -130,7 +131,7 @@ class AnagraficaDefunto(models.Model):
         "Stato civile e famiglia":('professione', 'stato_civile', 'cognome_parente', 'nome_parente', 
                                    'data_nascita_parente', 'doc_ric_par', 'n_doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
-        "Funerale":('chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  
+        "Funerale":('data_ora_partenza', 'chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  
                     'comune_inumazione','provincia_inumazione', 'ubicazione_feretro', 
                     'affissione_manifesti', 'medico_curante', 'fioraio', ),
         "Servizi funebri":('lutto_casa', 'corteo_da_casa', 'corteo_da_ospedale', 'pass_solo_auto', 
