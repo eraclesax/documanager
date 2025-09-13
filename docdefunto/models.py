@@ -13,7 +13,9 @@ class AnagraficaDefunto(models.Model):
     provincia_residenza = models.CharField(verbose_name="Provincia di Residenza (sigla)", blank=True, null=True, max_length=2)
     via_residenza = models.CharField(verbose_name="Via di Residenza", blank=True, null=True, max_length=255)
     codice_fiscale = models.CharField(verbose_name="Codice Fiscale", blank=True, null=True, max_length=2)
-    doc_ric_def = models.CharField(verbose_name="Tipo Documento di Riconoscimento Defunto", blank=True, null=True, max_length=63)
+    doc_ric_def = models.CharField(verbose_name="Tipo Documento di Riconoscimento Defunto", 
+                                   choices=[("C.I.", "Carta di Identità"),("Patente", "Patente"),("Passaporto", "Passaporto")], 
+                                   blank=True, null=True, max_length=10)
     n_doc_ric_def = models.CharField(verbose_name="Numero Documento di Riconoscimento Defunto", blank=True, null=True, max_length=63)
     ente_doc_def = models.CharField(verbose_name="Ente di Rilascio Documento Defunto", blank=True, null=True, max_length=255)
     data_doc_def = models.DateField(verbose_name="Data di Rilascio Documento Defunto", blank=True, null=True)
@@ -37,7 +39,10 @@ class AnagraficaDefunto(models.Model):
     cognome_parente = models.CharField(verbose_name="Cognome Parente", blank=True, null=True, max_length=255)
     nome_parente = models.CharField(verbose_name="Nome Parente", blank=True, null=True, max_length=255)
     data_nascita_parente = models.DateField(verbose_name="Data di Nascita Parente", blank=True, null=True)
-    doc_ric_par = models.CharField(verbose_name="Documento di Riconoscimento Parente", blank=True, null=True, max_length=63)
+    doc_ric_par = models.CharField(verbose_name="Documento di Riconoscimento Parente", 
+                                   choices=[("C.I.", "Carta di Identità"),("Patente", "Patente"),("Passaporto", "Passaporto")], 
+                                   blank=True, null=True, max_length=10)
+    n_doc_ric_par = models.CharField(verbose_name="Numero Documento di Riconoscimento Parente", blank=True, null=True, max_length=63)
     ente_doc_par = models.CharField(verbose_name="Ente di Rilascio Documento Parente", blank=True, null=True, max_length=255)
     data_doc_par = models.DateField(verbose_name="Data di Rilascio Documento Parente", blank=True, null=True)
 
@@ -87,13 +92,23 @@ class AnagraficaDefunto(models.Model):
         return f"{self.cognome} {self.nome}"
 
     FIELD_CATEGORIES = {
-        "Anagrafica":('cognome', 'nome', 'sesso', 'cittadinanza', 'comune_nascita', 'provincia_nascita', 'data_nascita', 'comune_residenza', 'provincia_residenza', 'via_residenza', 'codice_fiscale', 'doc_ric_def', 'n_doc_ric_def', 'ente_doc_def', 'data_doc_def', ),
-        "Decesso":('comune_decesso', 'provincia_decesso', 'via_decesso', 'ospedale', 'reparto_ospedaliero', 'data_morte', 'ora_morte', 'tipo_luogo_salma', 'comune_salma', 'provincia_salma', 'via_salma', ),
-        "Stato civile e famiglia":('professione', 'stato_civile', 'cognome_parente', 'nome_parente', 'data_nascita_parente', 'doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
+        "Anagrafica":('cognome', 'nome', 'sesso', 'cittadinanza', 'comune_nascita', 'provincia_nascita', 
+                      'data_nascita', 'comune_residenza', 'provincia_residenza', 'via_residenza', 
+                      'codice_fiscale', 'doc_ric_def', 'n_doc_ric_def', 'ente_doc_def', 'data_doc_def', ),
+        "Decesso":('comune_decesso', 'provincia_decesso', 'via_decesso', 'ospedale', 
+                   'reparto_ospedaliero', 'data_morte', 'ora_morte', 'tipo_luogo_salma', 'comune_salma', 
+                   'provincia_salma', 'via_salma', ),
+        "Stato civile e famiglia":('professione', 'stato_civile', 'cognome_parente', 'nome_parente', 
+                                   'data_nascita_parente', 'doc_ric_par', 'n_doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
-        "Funerale":('chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale', 'data_inumazione', 'ora_inumazione', 'comune_inumazione','provincia_inumazione', 'ubicazione_feretro', 'affissione_manifesti', 'medico_curante', 'fioraio', ),
-        "Servizi funebri":('lutto_casa', 'corteo_da_casa', 'corteo_da_ospedale', 'pass_solo_auto', 'pass_casa_per_corteo', 'dirett_in_chiesa', 'sala_commiato', 'tutto_in_auto', 'auto_chiesa_cimitero', ),
-        "Servizi economico-logistici":('data_incarico', 'necrofori', 'fattura_n', 'articolo_cofano_funebre', 'targa_autofunebre', 'altro_servizi', ),
+        "Funerale":('chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale', 'data_inumazione', 
+                    'ora_inumazione', 'comune_inumazione','provincia_inumazione', 'ubicazione_feretro', 
+                    'affissione_manifesti', 'medico_curante', 'fioraio', ),
+        "Servizi funebri":('lutto_casa', 'corteo_da_casa', 'corteo_da_ospedale', 'pass_solo_auto', 
+                           'pass_casa_per_corteo', 'dirett_in_chiesa', 'sala_commiato', 'tutto_in_auto', 
+                           'auto_chiesa_cimitero', ),
+        "Servizi economico-logistici":('data_incarico', 'necrofori', 'fattura_n', 'articolo_cofano_funebre', 
+                                       'targa_autofunebre', 'altro_servizi', ),
         "Metadati":('created', 'modified', ),
     }
 
