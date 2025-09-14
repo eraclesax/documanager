@@ -136,7 +136,7 @@ class DefuntoEditView(View):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.created_by = user
-            obj.organization = user.organization
+            obj.organization = user.profile.organization
             obj.save()
             messages.add_message(
                 request, 
@@ -146,6 +146,10 @@ class DefuntoEditView(View):
         else:
             kwargs["form"] = form
             kwargs["has_error"] = True
+            # messages.add_message(
+            #     request, 
+            #     messages.ERROR, 
+            #     _('Anagrafica "%s" salvata con successo!'%(obj)))
             return self.GET_render(request, *args, **kwargs)
 
 class AnagraficaDefuntoDeleteView(DeleteView):
