@@ -44,11 +44,11 @@ class AnagraficaDefunto(models.Model):
     reparto_ospedaliero = models.CharField(verbose_name="Reparto Ospedaliero", blank=True, null=True, max_length=255)
     data_morte = models.DateField(verbose_name="Data di Morte", blank=True, null=True)
     ora_morte = models.TimeField(verbose_name="Orario di Morte (formato hh:mm)", blank=True, null=True)
-    tipo_luogo_salma = models.SmallIntegerField(blank=True, null=True,
+    tipo_luogo_salma = models.CharField(blank=True, null=True,
                                     choices=[
-                                        (1, "Abitazione privata"),
-                                        (2, "Istituto / Casa di riposo"),
-                                        (3, "struttura obitoriale")], 
+                                        ("Abitazione privata", "Abitazione privata"),
+                                        ("Istituto / Casa di riposo", "Istituto / Casa di riposo"),
+                                        ("struttura obitoriale", "struttura obitoriale")], 
                                     )
     comune_salma = models.CharField(verbose_name="Comune dell'osservazione salma", blank=True, null=True, max_length=255)
     provincia_salma = models.CharField(verbose_name="Provincia dell'osservazione salma (sigla)", blank=True, null=True, max_length=2)
