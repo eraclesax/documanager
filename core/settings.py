@@ -55,11 +55,11 @@ INSTALLED_APPS = [
     'logger',
     'mail',
     'fontawesomefree',
-    'app',
     'crispy_forms',
     'crispy_bootstrap4',
     'rest_framework',
     # Custom
+    'app',
     'docdefunto',
     # Signals
     # 'app.apps.MyAppConfig',

@@ -146,10 +146,21 @@ class DefuntoEditView(View):
         else:
             kwargs["form"] = form
             kwargs["has_error"] = True
-            # messages.add_message(
-            #     request, 
-            #     messages.ERROR, 
-            #     _('Anagrafica "%s" salvata con successo!'%(obj)))
+            for field, errors in form.errors.items():
+                # Recupera la label leggibile (o il nome campo se non c'è)
+                label = form.fields[field].label if field in form.fields else field
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    _('%s: %s' % (label, errors[0]))
+                )
+
+            for error in form.non_field_errors():
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    '%s' % (error)
+                )
             return self.GET_render(request, *args, **kwargs)
 
 class AnagraficaDefuntoDeleteView(DeleteView):
