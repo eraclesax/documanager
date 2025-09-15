@@ -1,0 +1,222 @@
+{% load static %}
+
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Scheda Defunto</title>
+<style>
+  /* --- pagina A4 e stampa --- */
+  @page { size: A4; margin: 12mm 15mm; }
+  @media print { html, body { background: #fff; } }
+
+  body { font-family: "Times New Roman", Georgia, serif; color:#000; font-size: 14pt; text-align: justify; line-height:10mm}
+  h4.declaration {
+    display: block;
+    font-size: 14pt;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+    font-weight:700;
+  }
+  footer {
+    margin-top: 5mm;
+    margin-bottom: 1mm;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+  }
+  footer h4 {
+    font-size: 14pt;
+    font-weight:500;
+  }
+  .sheet { width: 170mm; margin: 0 auto; }
+
+  /* header */
+  .header { display:flex; align-items:top; justify-content:space-between; margin-bottom: 6mm; }
+  .logo {text-align: center; margin-bottom: 0mm; }
+  .title { flex:1; text-align:center; font-size: 20pt; font-weight:700; letter-spacing: .3mm; color:rgb(0, 0, 0); margin-bottom: 5mm;}
+
+  /* righe modulo */
+  div.recipient { text-align:right; font-size: 16pt; padding-top: 5mm; margin-bottom: 5mm;}
+  .row { display:flex; align-items:flex-end; flex-wrap:nowrap; gap: 3mm; margin-bottom: 2mm; }
+  .textbox {
+    display:block; 
+  }
+  .fill { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    border-bottom: 1px solid #000; 
+    padding-left: 2mm;
+    padding-right: 2mm;
+
+    width: fit-content;
+    text-align: center;   /* <-- centra inline e inline-block */
+    transform: translateY(-3mm);
+    box-sizing: border-box; /* così padding non si somma male */
+  }
+  .fills { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    border: 1px solid #000; 
+    padding-left: 2mm;
+    padding-right: 2mm;
+
+    box-sizing: border-box; /* così padding non si somma male */
+  }
+  /* .fill {
+    min-width: 5mm;   
+    display: inline-block; 
+    padding-left: 2mm;
+    padding-right: 2mm;
+    border-bottom: 1px solid #000; 
+    box-sizing: border-box; 
+  } */
+  .fill--short { 
+    min-width: 30mm;
+  }
+  .fill--mid   { 
+    min-width: 60mm; 
+  }
+  .value { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    transform: translateY(2mm);
+  }
+  .spacer { 
+    flex:0 0 6mm; 
+  }
+
+  /* separatore a freccia */
+  .arrow-sep-svg {
+    display: block;
+    width: 100%;
+    height: 4px;      /* puoi aumentare se vuoi punte più grandi */
+    margin: 10mm 0;
+  }
+
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between; /* Data a sinistra, Firma a destra */
+    margin-top: 10mm;               /* spazio prima della sezione */
+  }
+
+  .field {
+    flex: 0 0 40%;                  /* larghezza: 40% ciascuno (puoi variare) */
+    text-align: center;             /* testo centrato sopra la linea */
+    border-bottom: 1px solid #000;  /* linea continua per scrivere */
+    padding-bottom: 7mm;            /* spazio sotto al testo */
+    font-size: 12pt;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="header">
+    <div class="title">Comunicazione Periodo Osservazione Salma</div>
+  </div>
+
+  <div class="recipient">
+    <span class="recipient">Spett.le Ufficio Sanitario</span>
+  </div>
+
+  <div class="textbox">
+      Il sottoscritto NARDOZZA CARMINE in qualità di titolare dell’Agenzia di
+      Onoranze e Trasporti Funebri Archetti P. Iva 01842590760 SUAP 1814 del
+      28/12/2012 del Comune di Rionero in V. presso il quale ha la sede legale e
+      commerciale, incaricato dai famigliari in data 
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_incarico|date:"d/m/Y" |default_if_none:"" }}</span>
+      </div>
+       a svolgere il servizio funebre 
+      {% if defunto.sesso == 'M' %}del{% elif defunto.sesso == 'F' %}della{% else %}del/della{% endif %} 
+      {% if defunto.sesso == 'M' %}sig.{% elif defunto.sesso == 'F' %}sig.ra{% else %}sig./sig.ra{% endif %} 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.cognome | default_if_none:"" }} {{ defunto.nome | default_if_none:"" }}</span>
+      </div>
+      {% if defunto.sesso == 'M' %}nato{% elif defunto.sesso == 'F' %}nata{% else %}nato/a{% endif %} 
+      a 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_nascita | default_if_none:"" }} {% if defunto.provincia_nascita %}({{ defunto.provincia_nascita | default_if_none:"" }}){% endif %}</span>
+      </div>
+      il 
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_nascita|date:"d/m/Y" |default_if_none:"" }}</span> 
+      </div>
+      e 
+      {% if defunto.sesso == 'M' %}deceduto{% elif defunto.sesso == 'F' %}deceduta{% else %}deceduto/a{% endif %} 
+      presso 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_decesso | default_if_none:"" }} {% if defunto.provincia_decesso %}({{ defunto.provincia_decesso | default_if_none:"" }}){% endif %}</span>
+      </div>
+      Via 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.via_decesso | default_if_none:"" }}</span> 
+      </div>
+      il 
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_morte|date:"d/m/Y" | default_if_none:"" }}</span> 
+      </div>
+  </div>
+  <h4 class="declaration">
+    COMUNICA CHE PER LA PRESCRITTA OSSERVAZIONE LA SALMA
+  </h4>
+
+  <div class="textbox">
+    si trova presso 
+    {% if defunto.tipo_luogo_salma == 1 %}
+    abitazione privata sita in
+    {% elif defunto.tipo_luogo_salma == 2 %}
+    Istituto / Casa di Riposo situata in
+    {% elif defunto.tipo_luogo_salma == 3 %}
+    struttura obitoriale situata presso 
+    {% else %}abitazione privata / Istituto/Casa di Riposo situata in{% endif %} 
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}</span>
+    </div>
+    Via 
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.via_salma | default_if_none:"" }}</span> 
+    </div>
+  </div>
+
+  <svg class="arrow-sep-svg" viewBox="0 0 200 12" preserveAspectRatio="none"
+     role="img" aria-label="Separatore a doppia freccia">
+    <!-- linea -->
+    <line x1="50" y1="6" x2="150" y2="6" stroke="#333" stroke-width="3" />
+    <!-- punta sinistra -->
+    <polygon points="50,6 53,0 53,12" fill="#333" />
+    <!-- punta destra -->
+    <polygon points="150,6 147,0 147,12" fill="#333" />
+  </svg>
+
+  Il trasporto e corteo funebre sarà effettuato dopo il periodo di osservazione il giorno 
+  <div class="textbox">
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_ora_funerale |date:"d/m/Y" }}</span> 
+    </div>
+    alle ore 
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_ora_funerale |date:"H:m" }}</span>
+    </div>
+    . 
+  </div>
+ 
+  <div class="sign-section">
+    <div class="field">
+      <span>Data</span>
+    </div>
+    <div class="field">
+      <span>Firma</span>
+    </div>
+  </div>
+
+  <footer>
+    <h4>
+      LA COMUNICAZIONE VIENE PRESENTATA IN OSSERVANZA ALLE DISPOSIZIONI DELLA LEGGE REGIONALE n. 11/2016
+    </h4>
+  </footer>
+
+</div>
+</body>
+</html>

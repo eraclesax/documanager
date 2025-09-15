@@ -1,0 +1,301 @@
+{% load static %}
+
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Scheda Defunto</title>
+<style>
+  /* --- pagina A4 e stampa --- */
+  @page { size: A4; margin: 12mm 15mm; }
+  @media print { html, body { background: #fff; } }
+
+  body { font-family: "Times New Roman", Georgia, serif; color:#000; }
+  .sheet { width: 180mm; margin: 0 auto; }
+
+  /* header */
+  .header { display:flex; align-items:top; justify-content:space-between; margin-bottom: 6mm; }
+  .logo {text-align: center; margin-bottom: 0mm; }
+  .title { flex:1; text-align:center; font-size: 40pt; font-weight:500; letter-spacing: .6mm; color:rgb(33, 66, 99); margin-bottom: 5mm;}
+
+  /* righe modulo */
+  .row { display:flex; align-items:flex-end; flex-wrap:nowrap; gap: 3mm; margin-bottom: 2mm; }
+  .label { white-space:nowrap; font-size: 11pt; }
+  .fill { flex:1; border-bottom: 1px solid #000; min-height: 6mm; }
+  .fill--short { width: 35mm; }
+  .fill--mid   { width: 60mm; }
+  .spacer { flex:0 0 6mm; }
+
+  /* se vuoi mostrare il valore stampato sopra la linea */
+  .value { display:inline-block; min-height:3mm; transform: translateY(1mm); }
+
+  /* griglia “opzioni” in basso */
+  .options { margin-top: 2mm; border-top: 0px solid #000; padding-top: 0mm; }
+  .optline { display:flex; flex-wrap:wrap; gap: 8mm 10mm; margin-bottom: 2mm; }
+  .opt { display:inline-flex; align-items:center; gap: 3mm; }
+  .box { display:inline-block; width: 4mm; height: 4mm; border:1px solid #000; }
+  .box--checked { background:#000; } /* se vuoi riempita */
+
+  /* tabella finale */
+  table.grid { width:100%; border-collapse:collapse; margin-top: 6mm; }
+  table.grid td, table.grid th { border:1px solid #000; padding: 3mm; vertical-align:top; height: 22mm; }
+  table.grid th { text-align:left; font-weight:700; }
+  .tabletitle { font-weight:500; text-decoration: underline;}
+  .tabletext { font-weight:500; }
+
+  /* piccoli dettagli */
+  .muted { font-size: 10pt; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- intestazione -->
+  <div class="header">
+    <!-- LOGO -->
+    <div class="logo">
+      <img src="{% static 'documenti/img/logo.svg' %}" alt="Logo" height="80">
+    </div>
+    <div class="">
+      <div class="title">Scheda Defunto</div>
+      <div class="row">
+        <div class="label">Cognome</div>
+        <div class="fill"><span class="value">{{ defunto.cognome |default_if_none:"" }}</span></div>
+      </div>
+      <div class="row">
+        <div class="label">Nome</div>
+        <div class="fill"><span class="value">{{ defunto.nome |default_if_none:"" }}</span></div>
+      </div>
+    </div>
+    <div class="muted">&nbsp;</div>
+  </div>
+
+  <!-- riga 1 -->
+
+  <!-- riga 2 -->
+  <div class="row">
+    <div class="label">Luogo di nascita</div>
+    <div class="fill"><span class="value">{{ defunto.comune_nascita |default_if_none:"" }} {% if defunto.provincia_nascita %}({{ defunto.provincia_nascita | default_if_none:"" }}){% endif %}</span></div>
+
+    <div class="label">Data di nascita</div>
+    <div class="fill fill--short"><span class="value">{{ defunto.data_nascita|date:"d/m/Y" |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 3 -->
+  <div class="row">
+    <div class="label">Residente in</div>
+    <div class="fill"><span class="value">{{ defunto.comune_residenza |default_if_none:"" }} {% if defunto.provincia_residenza %}({{ defunto.provincia_residenza | default_if_none:"" }}){% endif %}</span></div>
+
+    <div class="label">Via</div>
+    <div class="fill"><span class="value">{{ defunto.via_residenza |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 4 -->
+  <div class="row">
+    <div class="label">Deceduto a</div>
+    <div class="fill"><span class="value">{{ defunto.comune_decesso |default_if_none:"" }} {% if defunto.provincia_decesso %}({{ defunto.provincia_decesso | default_if_none:"" }}){% endif %}</span></div>
+
+    <div class="label">Via</div>
+    <div class="fill"><span class="value">{{ defunto.via_decesso |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 5 -->
+  <div class="row">
+    <div class="label">Ospedale di</div>
+    <div class="fill"><span class="value">{{ defunto.ospedale |default_if_none:"" }}</span></div>
+
+    <div class="label">Reparto</div>
+    <div class="fill"><span class="value">{{ defunto.reparto_ospedaliero |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 6 -->
+  <div class="row">
+    <div class="label">Data e ora di morte</div>
+    <div class="fill fill--mid"><span class="value">{{ defunto.data_decesso|date:"d/m/Y" |default_if_none:"" }} {{ defunto.ora_decesso|date:"H:i" |default_if_none:"" }}</span></div>
+
+    <div class="label">Professione</div>
+    <div class="fill"><span class="value">{{ defunto.professione |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 7 -->
+  <div class="row">
+    <div class="label">Stato civile</div>
+    <div class="fill fill--mid"><span class="value">{{ defunto.stato_civile |default_if_none:"" }}</span></div>
+
+    <div class="label">Cogn. e nome parente</div>
+    <div class="fill"><span class="value">{{ defunto.cognome_parente |default_if_none:"" }} {{ defunto.nome_parente |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 8 -->
+  <div class="row">
+    <div class="label">Data nascita parente</div>
+    <div class="fill fill--short"><span class="value">{{ defunto.data_nascita_parente|date:"d/m/Y" |default_if_none:"" }}</span></div>
+    
+    <div class="label">Cell. famiglia</div>
+    <div class="fill fill--mid"><span class="value">{{ defunto.tel_famiglia |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 9 -->
+  <div class="row">
+    <div class="label">Chiesa</div>
+    <div class="fill"><span class="value">{{ defunto.chiesa |default_if_none:"" }}</span></div>
+
+    <div class="label">Data e ora funerale</div>
+    <div class="fill fill--mid"><span class="value">{{ defunto.data_ora_funerale|date:"d/m/Y H:i" |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 10 -->
+  <div class="row">
+    <div class="label">Cimitero di sepoltura</div>
+    <div class="fill"><span class="value">{{ defunto.comune_sepoltura |default_if_none:"" }} {% if defunto.provincia_sepoltura %}({{ defunto.provincia_sepoltura | default_if_none:"" }}){% endif %}</span></div>
+
+    <div class="label">Ubicazione feretro</div>
+    <div class="fill"><span class="value">{{ defunto.ubicazione_feretro |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 11 -->
+  <div class="row">
+    <div class="label">Affissione manifesti</div>
+    <div class="fill fill--short">
+      <span class="value">
+        {% if defunto.affissione_manifesti %}Sì{% else %}No{% endif %}
+      </span>
+    </div>
+
+    <div class="label">Medico Curante</div>
+    <div class="fill"><span class="value">{{ defunto.medico_curante |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 12 -->
+  <div class="row">
+    <div class="label">Fioraio</div>
+    <div class="fill"><span class="value">{{ defunto.fioraio |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 13 -->
+  <div class="row">
+    <div class="label">Codice fiscale defunto</div>
+    <div class="fill"><span class="value">{{ defunto.codice_fiscale |default_if_none:"" }}</span></div>
+
+    <div class="label">e-mail</div>
+    <div class="fill"><span class="value">{{ defunto.email |default_if_none:"" }}</span></div>
+  </div>
+
+  <!-- riga 14 -->
+  <div class="row">
+    <div class="label">Altre notizie</div>
+    <div class="fill"><span class="value">{{ defunto.altro |default_if_none:"" }}</span></div>
+  </div>
+  <div class="row">
+    <div class="fill"></div>
+  </div>
+  <div class="row">
+    <div class="fill"></div>
+  </div>
+
+  <!-- opzioni in basso -->
+  <div class="options">
+    <div class="row">
+      <div class="label">LUTTO CASA</div>
+      <div class="fill"><span class="value">{% if defunto.lutto_casa %}Sì{% else %}No{% endif %}</span></div>
+
+      <div class="label">CORTEO DA CASA</div>
+      <div class="fill"><span class="value">{% if defunto.corteo_da_casa %}Sì{% else %}No{% endif %}</span></div>
+
+      <div class="label">CORTEO DA OSPEDALE</div>
+      <div class="fill"><span class="value">{% if defunto.corteo_da_ospedale %}Sì{% else %}No{% endif %}</span></div>
+    </div>
+
+    <div class="row">
+      <div class="label">PASSAGGIO DA CASA SOLO AUTO</div>
+      <div class="fill"><span class="value">{% if defunto.pass_solo_auto %}Sì{% else %}No{% endif %}</span></div>
+
+      <div class="label">PASSAGGIO DA CASA PER INIZIARE CORTEO</div>
+      <div class="fill"><span class="value">{% if defunto.pass_casa_per_corteo %}Sì{% else %}No{% endif %}</span></div>
+    </div>
+
+    <div class="row">
+      <div class="label">DIRETTAMENTE IN CHIESA</div>
+      <div class="fill"><span class="value">{% if defunto.dirett_in_chiesa %}Sì{% else %}No{% endif %}</span></div>
+
+      <div class="label">SALA DEL COMMIATO</div>
+      <div class="fill"><span class="value">{% if defunto.sala_commiato %}Sì{% else %}No{% endif %}</span></div>
+    </div>
+    
+    <div class="row">
+      <div class="label">TUTTO IN AUTO</div>
+      <div class="fill"><span class="value">{% if defunto.tutto_in_auto %}Sì{% else %}No{% endif %}</span></div>
+
+      <div class="label">AUTO CHIESA / CIMITERO</div>
+      <div class="fill"><span class="value">{% if defunto.auto_chiesa_cimitero %}Sì{% else %}No{% endif %}</span></div>
+    </div>
+  </div>
+  
+
+  {% comment %}
+  <div class="options">
+    <div class="optline">
+      <span class="opt"><span class="box {% if defunto.lutto_casa %}box--checked{% endif %}"></span> LUTTO CASA</span>
+      <span class="opt"><span class="box {% if defunto.corteo_da_casa %}box--checked{% endif %}"></span> CORTEO DA CASA</span>
+      <span class="opt"><span class="box {% if defunto.corteo_da_ospedale %}box--checked{% endif %}"></span> CORTEO DA OSPEDALE</span>
+      <span class="opt"><span class="box {% if defunto.pass_solo_auto %}box--checked{% endif %}"></span> PASSAGGIO DA CASA SOLO AUTO</span>
+      <span class="opt"><span class="box {% if defunto.pass_casa_per_corteo %}box--checked{% endif %}"></span> PASSAGGIO DA CASA PER INIZIARE CORTEO</span>
+      <span class="opt"><span class="box {% if defunto.dirett_in_chiesa %}box--checked{% endif %}"></span> DIRETTAMENTE IN CHIESA</span>
+      <span class="opt"><span class="box {% if defunto.sala_commiato %}box--checked{% endif %}"></span> SALA DEL COMMIATO</span>
+      <span class="opt"><span class="box {% if defunto.tutto_in_auto %}box--checked{% endif %}"></span> TUTTO IN AUTO</span>
+      <span class="opt"><span class="box {% if defunto.auto_chiesa_cimitero %}box--checked{% endif %}"></span> AUTO CHIESA / CIMITERO</span>
+    </div>
+  </div>
+  {% endcomment %}
+
+  <!-- tabella finale -->
+  <table class="grid">
+    <tr style="padding-bottom: 0mm;">
+      <th>
+        <div>
+          <div class="tabletitle">
+            Necrofori
+          </div>
+          <div class="tabletext">
+            {{ defunto.necrofori |default_if_none:"" }}
+          </div>
+        </div>
+      </th>
+      <th>
+        <div>
+          <div class="tabletitle">
+            Fattura n°
+          </div>
+          <div class="tabletext">
+            {{ defunto.fattura_n |default_if_none:"" }}
+          </div>
+        </div>
+      </th>
+    </tr>
+    <tr style="margin-top: 10mm;">
+      <th>
+        <div>
+          <div class="tabletitle">
+            Articolo cofano funebre
+          </div>
+          <div class="tabletext">
+            {{ defunto.articolo_cofano_funebre |default_if_none:"" }}
+          </div>
+        </div>
+      </th>
+      <th style="padding-right: 50mm;">
+        <div>
+          <div class="tabletitle">
+            Altro
+          </div>
+          <div class="tabletext">
+            {{ defunto.altro_servizi |default_if_none:"" }}
+          </div>
+        </div>
+      </th>
+    </tr>
+  </table>
+
+</div>
+</body>
+</html>
