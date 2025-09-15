@@ -44,7 +44,7 @@ class DefuntoEditForm(forms.ModelForm):
     def __init__(self, *args,**kwargs):
         super().__init__(*args, **kwargs)
         # Uso widget date e datetime picker
-        # self.fields["data_nascita"].widget = forms.SelectDateWidget(years=[y for y in range(1900,datetime.today().year)])
+        # self.fields["data_nascita"].widget = forms.SelectDateWidget(years=[y for y in range(1900,datetime.today().year)])comune_sepoltura
         self.fields["data_nascita"].widget = forms.TextInput(attrs={'type': 'date'})
         self.fields['data_doc_def'].widget = forms.TextInput(attrs={'type': 'date'})
         self.fields['data_morte'].widget = forms.TextInput(attrs={'type': 'date'})
@@ -66,7 +66,7 @@ class DefuntoEditForm(forms.ModelForm):
         self.fields['via_salma'].widget.attrs['placeholder'] = 'Omettere la parola "Via"'
         # self.fields['data_inumazione'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
         # self.fields['ora_inumazione'].widget.attrs['placeholder'] = 'Es. 21:45'
-        self.fields['affissione_manifesti'].widget.attrs['placeholder'] = 'Rionero in Vulture\nBarile\necc.'
+        self.fields['affissione_manifesti'].widget.attrs['placeholder'] = 'Esempio:\nRionero in Vulture\nBarile\necc.'
         # aggiungo un onchange al select di stato_civile
         self.fields['stato_civile'].widget.attrs.update({
             'onchange': 'toggleConiugeFields(this.value);'

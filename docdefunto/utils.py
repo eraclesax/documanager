@@ -83,7 +83,7 @@ def crea_defunto_di_test(username="admin"):
 
         # Stato civile e famiglia
         professione="Pensionato",
-        stato_civile="Coniugato",
+        stato_civile="Celibe / nubile",
         cognome_parente="Bianchi",
         nome_parente="Lucia",
         data_nascita_parente=date(1955, 8, 21),

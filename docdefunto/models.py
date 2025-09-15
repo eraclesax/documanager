@@ -47,8 +47,8 @@ class AnagraficaDefunto(models.Model):
     tipo_luogo_salma = models.CharField(blank=True, null=True,
                                     choices=[
                                         ("Abitazione privata", "Abitazione privata"),
-                                        ("Istituto / Casa di riposo", "Istituto / Casa di riposo"),
-                                        ("struttura obitoriale", "struttura obitoriale")], 
+                                        ("Istituto / Casa di riposo / Struttura obitoriale / Ospedale", 
+                                         "Istituto / Casa di riposo / Struttura obitoriale / Ospedale"),], 
                                     )
     comune_salma = models.CharField(verbose_name="Comune dell'osservazione salma", blank=True, null=True, max_length=255)
     provincia_salma = models.CharField(verbose_name="Provincia dell'osservazione salma (sigla)", blank=True, null=True, max_length=2)
@@ -65,6 +65,12 @@ class AnagraficaDefunto(models.Model):
                                     )
     cognome_coniuge = models.CharField(verbose_name="Cognome Coniuge", blank=True, null=True, max_length=255)
     nome_coniuge = models.CharField(verbose_name="Nome Coniuge", blank=True, null=True, max_length=255)
+
+    # Parente
+    tipo_parente = models.CharField(verbose_name="Grado di parentela", blank=True, null=True, max_length=255)
+    comune_residenza_par = models.CharField(verbose_name="Comune di residenza parente", blank=True, null=True, max_length=255)
+    provincia_residenza_par = models.CharField(verbose_name="Provincia di residenza parente (sigla)", blank=True, null=True, max_length=2)
+    indirizzo_residenza_par = models.CharField(verbose_name="Via di residenza parente", blank=True, null=True, max_length=255)
 
     cognome_parente = models.CharField(verbose_name="Cognome Parente", blank=True, null=True, max_length=255)
     nome_parente = models.CharField(verbose_name="Nome Parente", blank=True, null=True, max_length=255)
@@ -92,7 +98,8 @@ class AnagraficaDefunto(models.Model):
     data_ora_funerale = models.DateTimeField(verbose_name="Data e Ora del Funerale", blank=True, null=True)
     # data_inumazione = models.DateField(verbose_name="Data di sepoltura", blank=True, null=True) #TODO: sicuro che vadano eliminati?
     # ora_inumazione = models.TimeField(verbose_name="Orario di sepoltura (formato hh:mm)", blank=True, null=True)
-    comune_inumazione = models.CharField(verbose_name="Comune di sepoltura", blank=True, null=True, max_length=255)
+    comune_sepoltura = models.CharField(verbose_name="Comune di sepoltura", blank=False, null=True, max_length=255)
+    # altro_comune = models.BooleanField(verbose_name="Comune diverso da Rionero in Vulture", default=False)
     provincia_inumazione = models.CharField(verbose_name="Provincia di sepoltura (sigla)", blank=True, null=True, max_length=2)
     ubicazione_feretro = models.CharField(verbose_name="Ubicazione Feretro", blank=True, null=True, max_length=11,
                                       choices=[
@@ -122,6 +129,18 @@ class AnagraficaDefunto(models.Model):
     articolo_cofano_funebre = models.CharField(verbose_name="Articolo Cofano Funebre", blank=True, null=True, max_length=255)
     targa_autofunebre = models.CharField(verbose_name="Targa autofunebre", blank=True, null=True, max_length=255)
     altro_servizi = models.TextField(verbose_name="Altro (servizi)", blank=True, null=True)
+
+    @property
+    def get_eta(self):
+        if self.data_nascita and self.data_morte:
+            years_delta = self.data_morte.year - self.data_nascita.year
+            months_delta = self.data_morte.month - self.data_nascita.month
+            days_delta = self.data_morte.day - self.data_nascita.day
+            happy_birthday = int(months_delta >= 0 and days_delta >= 0)
+            age = years_delta + happy_birthday
+            return age
+        else:
+            return None
 
     class Meta(): # type: ignore
         verbose_name = _("Anagrafica Defunto")
