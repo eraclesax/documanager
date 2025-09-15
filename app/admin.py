@@ -21,6 +21,9 @@ admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 
 
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    pass
 @admin.register(Permission)
 class PermissionAdmin(admin.ModelAdmin):
     pass

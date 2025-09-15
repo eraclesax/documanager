@@ -74,10 +74,13 @@ class DefuntoView(View):
             defunto_fields[category] = []
             for field_name in field_names:
                 field = AnagraficaDefunto._meta.get_field(field_name)
+                verbose_name = field.verbose_name
+                value = getattr(defunto, field_name)
+                if type(value) == bool:
+                    value = "Sì" if value else "No"
                 defunto_fields[category].append({
-                    "name":field_name,
-                    "verbose_name":field.verbose_name,
-                    "value": getattr(defunto, field_name),
+                    "verbose_name":verbose_name,
+                    "value": value,
                     })
         return render(request, self.template_name, {
             "defunto":defunto,

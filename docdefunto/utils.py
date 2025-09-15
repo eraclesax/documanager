@@ -11,7 +11,11 @@ def setup_superuser(username="admin", password="admin", email="admin@admin.com")
 
     # Crea o recupera l'organizzazione
     org, org_created = Organization.objects.get_or_create(
-        name="Superusers"
+        tag="superusers",
+        # defaults={
+        #     "name": "Superusers", 
+        #     "email": "superusers@admin.com", 
+        #     "domain": "superuser.ade.it",}
     )
     if org_created:
         print("✅ Organizzazione 'Superusers' creata.")
@@ -64,7 +68,8 @@ def crea_defunto_di_test(username="admin"):
         provincia_residenza="TS",
         via_residenza="Via Roma 1",
         codice_fiscale="RSSMRA50E12L424Z",
-        doc_ric_def="Carta d'Identità",
+        doc_ric_def="C.I.",
+        n_doc_ric_def="AR55593SS",
         ente_doc_def="Comune di Trieste",
         data_doc_def=date(2010, 4, 20),
 
@@ -72,22 +77,33 @@ def crea_defunto_di_test(username="admin"):
         comune_decesso="Trieste",
         provincia_decesso="TS",
         via_decesso="Via Milano 10",
-        ospedale="Ospedale Maggiore",
-        reparto_ospedaliero="Cardiologia",
-        data_morte=date(2023, 3, 15),
-        ora_morte=time(14, 30),
-        tipo_luogo_salma="Abitazione privata",
+        data_decesso=date(2023, 3, 15),
+        ora_decesso=time(14, 30),
+
+        # Osservazione salma
         comune_salma="Trieste",
         provincia_salma="TS",
+        tipo_luogo_salma="Abitazione privata",
+        ospedale="Ospedale Maggiore",
+        reparto_ospedaliero="Cardiologia",
         via_salma="Via San Marco 7",
 
-        # Stato civile e famiglia
+        # Stato civile
         professione="Pensionato",
         stato_civile="Celibe / nubile",
+        cognome_coniuge="Donati",
+        nome_coniuge="Francesca",
+
+        # Parente
+        tipo_parente="Cugina",
+        comune_residenza_par="Milano",
+        provincia_residenza_par="MI",
+        indirizzo_residenza_par="Via degli Uccellini, 23",
         cognome_parente="Bianchi",
         nome_parente="Lucia",
         data_nascita_parente=date(1955, 8, 21),
-        doc_ric_par="Carta d'Identità",
+        doc_ric_par="Patente",
+        n_doc_ric_par="CD66336DF",
         ente_doc_par="Comune di Trieste",
         data_doc_par=date(2015, 9, 10),
 
@@ -97,15 +113,16 @@ def crea_defunto_di_test(username="admin"):
         altro="Note aggiuntive di test.",
 
         # Funerale
+        data_ora_partenza=datetime(2023, 3, 20, 9, 30),
         chiesa="Chiesa di San Giusto",
-        comune_chiesa="Trieste",
-        provincia_chiesa="TS",
+        comune_chiesa="Cordenons",
+        provincia_chiesa="PS",
         data_ora_funerale=datetime(2023, 3, 20, 10, 30),
         # data_inumazione=date(2023, 3, 20),
         # ora_inumazione=time(11, 30),
-        comune_inumazione="Trieste",
-        provincia_inumazione="TS",
-        ubicazione_feretro="Cimitero di Sant'Anna, loculo 23",
+        comune_sepoltura="Pordenone",
+        provincia_sepoltura="PN",
+        ubicazione_feretro="Cappella",
         affissione_manifesti=True,
         medico_curante="Dott. Verdi",
         fioraio="Fioraio Bella Rosa",
@@ -128,6 +145,10 @@ def crea_defunto_di_test(username="admin"):
         articolo_cofano_funebre="Cofano in legno rovere",
         targa_autofunebre="AB123CD",
         altro_servizi="Servizio aggiuntivo: trasporto floreale",
+
+        # Data e firma
+        firmato=True,
+        data_firma=date(2025, 9, 15),
     )
     return defunto
 

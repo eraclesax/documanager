@@ -1,11 +1,7 @@
-from datetime import datetime
-from django.db.models import query
-from django.forms import widgets
-from django.forms.widgets import HiddenInput
-from django.utils import timezone
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column
+from crispy_forms.layout import Layout, Fieldset
+from crispy_forms.helper import FormHelper
 from django.utils.translation import gettext_lazy as _
 from .models import *
 
@@ -32,7 +28,7 @@ class DefuntoEditForm(forms.ModelForm):
     class Meta:
         from .models import AnagraficaDefunto
         model = AnagraficaDefunto
-        exclude = ("created_by","organization","relative_id","created","modified")
+        exclude = AnagraficaDefunto.NON_USER_FIELDS
         # labels = {
         #     "name":"Nome",
         #     "full_address":"Indirizzo",
@@ -42,18 +38,32 @@ class DefuntoEditForm(forms.ModelForm):
         # }
         
     def __init__(self, *args,**kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) 
+        
+        # Dividi i dati in categorie nel form di input
+        # self.helper.form_method = 'post'
+        fieldsets = []
+        for key,values in AnagraficaDefunto.FIELD_CATEGORIES.items():
+            fieldsets.append(
+                Fieldset(
+                    key,
+                    *[value for value in values],
+                )
+            )
+        self.helper.layout = Layout(*[fieldset for fieldset in fieldsets])
+
         # Uso widget date e datetime picker
         # self.fields["data_nascita"].widget = forms.SelectDateWidget(years=[y for y in range(1900,datetime.today().year)])comune_sepoltura
         self.fields["data_nascita"].widget = forms.TextInput(attrs={'type': 'date'})
         self.fields['data_doc_def'].widget = forms.TextInput(attrs={'type': 'date'})
-        self.fields['data_morte'].widget = forms.TextInput(attrs={'type': 'date'})
-        self.fields["ora_morte"].widget = forms.TextInput(attrs={'type': 'time'})
+        self.fields['data_decesso'].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields["ora_decesso"].widget = forms.TextInput(attrs={'type': 'time'})
         self.fields['data_nascita_parente'].widget = forms.TextInput(attrs={'type': 'date'})
         self.fields['data_doc_par'].widget = forms.TextInput(attrs={'type': 'date'})
         self.fields['data_ora_funerale'].widget = forms.TextInput(attrs={'type': 'datetime-local'})
         self.fields['data_ora_partenza'].widget = forms.TextInput(attrs={'type': 'datetime-local'})
         self.fields['data_incarico'].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields['data_firma'].widget = forms.TextInput(attrs={'type': 'date'})
         # Inserimento in uppercase
         self.fields['codice_fiscale'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_nascita'].widget.attrs['style'] = 'text-transform: uppercase;'
@@ -61,15 +71,18 @@ class DefuntoEditForm(forms.ModelForm):
         self.fields['provincia_decesso'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_salma'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_chiesa'].widget.attrs['style'] = 'text-transform: uppercase;'
-        self.fields['provincia_inumazione'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_sepoltura'].widget.attrs['style'] = 'text-transform: uppercase;'
         # Placeholders
-        self.fields['via_salma'].widget.attrs['placeholder'] = 'Omettere la parola "Via"'
+        # self.fields['via_salma'].widget.attrs['placeholder'] = 'Omettere la parola "Via"'
         # self.fields['data_inumazione'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
         # self.fields['ora_inumazione'].widget.attrs['placeholder'] = 'Es. 21:45'
         self.fields['affissione_manifesti'].widget.attrs['placeholder'] = 'Esempio:\nRionero in Vulture\nBarile\necc.'
         # aggiungo un onchange al select di stato_civile
         self.fields['stato_civile'].widget.attrs.update({
             'onchange': 'toggleConiugeFields(this.value);'
+        })
+        self.fields['tipo_luogo_salma'].widget.attrs.update({
+            'onchange': 'toggleLuogoSalmaFields(this.value);'
         })
         # # inizialmente nascondo i campi coniuge
         # self.fields['cognome_coniuge'].widget.attrs.update({
@@ -120,8 +133,8 @@ class DefuntoEditForm(forms.ModelForm):
             value = value.upper()
         return value
     
-    def clean_provincia_inumazione(self):
-        value = self.cleaned_data['provincia_inumazione']
+    def clean_provincia_sepoltura(self):
+        value = self.cleaned_data['provincia_sepoltura']
         if value:
             value = value.upper()
         return value

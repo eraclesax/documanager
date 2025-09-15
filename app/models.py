@@ -14,6 +14,8 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
+def org_logo_path(instance, filename):
+    return f"{instance.organization.tag}/logo/{filename}"
 class Organization(models.Model):
     tag = models.CharField(verbose_name="Tag Organizzazione", blank=False, null=False, unique=True, max_length=255) #Usato per nome cartelle ecc.
     name = models.CharField(verbose_name="Nome Organizzazione", blank=False, null=False, max_length=255)
@@ -24,6 +26,9 @@ class Organization(models.Model):
     free_trial = models.BooleanField(verbose_name="Periodo di prova", default=False)
     free_trial_finish = models.DateField(verbose_name="Fine periodo di prova", blank=True, null=True)
     account_expires = models.DateField(verbose_name="Scadenza account", blank=True, null=True)
+    # Brandizzazione
+    domain = models.CharField(max_length=200, unique=True)  # es: "azienda1.ade.it"
+    logo = models.ImageField(verbose_name=_("Logo"), upload_to=org_logo_path, blank=True, null=True)
 
     class Meta(): # type: ignore
         verbose_name = _("Organizzazione")
