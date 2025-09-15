@@ -2,7 +2,16 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from dotenv import load_dotenv
 
+# carica variabili di ambiente subito, metterle qui serve per l'ambiente di sviluppo
+load_dotenv('.env')
+# Fix per alcuni sistemi windows
+WIN_DLL_FIX = os.getenv("WIN_DLL_FIX", "false").lower() == "true"
+if WIN_DLL_FIX:
+    import ctypes
+    os.add_dll_directory(r"C:\msys64\mingw64\bin")
+    ctypes.CDLL("libpango-1.0-0.dll")
 
 def main():
     """Run administrative tasks."""

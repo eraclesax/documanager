@@ -8,6 +8,10 @@ https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
 """
 
 import os
+from dotenv import load_dotenv
+
+# carica variabili di ambiente subito, metterle qui serve per l'ambiente di produzione e test
+load_dotenv('.env')
 
 from django.core.asgi import get_asgi_application
 
