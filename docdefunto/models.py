@@ -48,7 +48,7 @@ class AnagraficaDefunto(models.Model):
     # Osservazione salma
     comune_salma = models.CharField(verbose_name="Comune dell'osservazione salma", blank=True, null=True, max_length=255)
     provincia_salma = models.CharField(verbose_name="Provincia dell'osservazione salma (sigla)", blank=True, null=True, max_length=2)
-    tipo_luogo_salma = models.CharField(blank=True, null=True,
+    tipo_luogo_salma = models.CharField(verbose_name="Luogo di osservazione della salma", blank=True, null=True,
                                     choices=[
                                         ("Abitazione privata", "Abitazione privata"),
                                         ("Istituto / Casa di riposo / Struttura obitoriale / Ospedale", 
