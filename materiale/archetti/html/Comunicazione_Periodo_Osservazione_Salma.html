@@ -10,7 +10,13 @@
   @page { size: A4; margin: 12mm 15mm; }
   @media print { html, body { background: #fff; } }
 
-  body { font-family: "Times New Roman", Georgia, serif; color:#000; font-size: 14pt; text-align: justify; line-height:10mm}
+  body { 
+    font-family: "Times New Roman", Georgia, serif; 
+    color:#000; 
+    font-size: 13pt; 
+    text-align: justify; 
+    line-height:8mm
+  }
   h4.declaration {
     display: block;
     font-size: 14pt;
@@ -40,8 +46,12 @@
   .title { flex:1; text-align:center; font-size: 20pt; font-weight:700; letter-spacing: .3mm; color:rgb(0, 0, 0); margin-bottom: 5mm;}
 
   /* righe modulo */
-  div.recipient { text-align:right; font-size: 16pt; padding-top: 5mm; margin-bottom: 5mm;}
-  .row { display:flex; align-items:flex-end; flex-wrap:nowrap; gap: 3mm; margin-bottom: 2mm; }
+  div.recipient { 
+    text-align:right; 
+    font-size: 16pt; 
+    padding-top: 5mm; 
+    margin-bottom: 5mm;
+  }
   .textbox {
     display:block; 
   }
@@ -53,25 +63,9 @@
 
     width: fit-content;
     text-align: center;   /* <-- centra inline e inline-block */
-    transform: translateY(-3mm);
+    transform: translateY(-2.5mm);
     box-sizing: border-box; /* così padding non si somma male */
   }
-  .fills { 
-    display:inline-block; /* o block, dipende dal contesto */ 
-    border: 1px solid #000; 
-    padding-left: 2mm;
-    padding-right: 2mm;
-
-    box-sizing: border-box; /* così padding non si somma male */
-  }
-  /* .fill {
-    min-width: 5mm;   
-    display: inline-block; 
-    padding-left: 2mm;
-    padding-right: 2mm;
-    border-bottom: 1px solid #000; 
-    box-sizing: border-box; 
-  } */
   .fill--short { 
     min-width: 30mm;
   }
@@ -80,7 +74,7 @@
   }
   .value { 
     display:inline-block; /* o block, dipende dal contesto */ 
-    transform: translateY(2mm);
+    transform: translateY(1.5mm);
   }
   .spacer { 
     flex:0 0 6mm; 
@@ -97,17 +91,50 @@
   /* Sign footer */
   .sign-section {
     display: flex;
-    justify-content: space-between; /* Data a sinistra, Firma a destra */
-    margin-top: 10mm;               /* spazio prima della sezione */
+    justify-content: space-between;
+    margin-top: 5mm;
+    gap: 30mm; /* space between date and signature */
   }
-
-  .field {
-    flex: 0 0 40%;                  /* larghezza: 40% ciascuno (puoi variare) */
-    text-align: center;             /* testo centrato sopra la linea */
-    border-bottom: 1px solid #000;  /* linea continua per scrivere */
-    padding-bottom: 7mm;            /* spazio sotto al testo */
+  .sign-block {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sign-label {
     font-size: 12pt;
+    margin-bottom: 0mm;
   }
+  .sign-bar {
+    width: 30%;
+    border-bottom: 1.5px solid #000;
+    position: relative;
+    height: 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign-date {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13pt;
+    background: #ffffff00;
+    padding: 0 4mm;
+  }
+  .sign-img {
+    max-height: 18mm;
+    max-width: 80mm;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff00;
+    padding: 0 2mm;
+  }
+  /* Footer style */
+
 </style>
 </head>
 <body>
@@ -155,7 +182,7 @@
       </div>
       il 
       <div class="fill fill--short">
-        <span class="value">{{ defunto.data_morte|date:"d/m/Y" | default_if_none:"" }}</span> 
+        <span class="value">{{ defunto.data_decesso|date:"d/m/Y" | default_if_none:"" }}</span> 
       </div>
   </div>
   <h4 class="declaration">
@@ -164,13 +191,11 @@
 
   <div class="textbox">
     si trova presso 
-    {% if defunto.tipo_luogo_salma == 1 %}
+    {% if defunto.tipo_luogo_salma == 'Abitazione privata' %}
     abitazione privata sita in
-    {% elif defunto.tipo_luogo_salma == 2 %}
-    Istituto / Casa di Riposo situata in
-    {% elif defunto.tipo_luogo_salma == 3 %}
-    struttura obitoriale situata presso 
-    {% else %}abitazione privata / Istituto/Casa di Riposo situata in{% endif %} 
+    {% elif defunto.tipo_luogo_salma == 'Istituto / Casa di riposo / Struttura obitoriale / Ospedale' %}
+    istituto / casa di riposo / struttura obitoriale / ospedale situata in
+    {% else %}abitazione privata / istituto / casa di riposo / struttura obitoriale / ospedale situata in{% endif %} 
     <div class="fill fill--mid">
       <span class="value">{{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}</span>
     </div>
@@ -197,25 +222,31 @@
     </div>
     alle ore 
     <div class="fill fill--short">
-      <span class="value">{{ defunto.data_ora_funerale |date:"H:m" }}</span>
+      <span class="value">{{ defunto.data_ora_funerale |date:"H:i" }}</span>
     </div>
     . 
   </div>
  
   <div class="sign-section">
-    <div class="field">
-      <span>Data</span>
+    <div class="sign-block">
+      <div class="sign-label">Data</div>
+      <div class="sign-bar">
+        <span class="sign-date">{{ defunto.data_firma|date:"d/m/Y" }}</span>
+      </div>
     </div>
-    <div class="field">
-      <span>Firma</span>
+    <div class="sign-block">
+      <div class="sign-label">Firma</div>
+      <div class="sign-bar">
+        <img class="sign-img" src="{{user.profile.signature.url}}" alt="" />
+      </div>
     </div>
   </div>
 
-  <footer>
-    <h4>
+  <!-- <footer>
+    <h5>
       LA COMUNICAZIONE VIENE PRESENTATA IN OSSERVANZA ALLE DISPOSIZIONI DELLA LEGGE REGIONALE n. 11/2016
-    </h4>
-  </footer>
+    </h5>
+  </footer> -->
 
 </div>
 </body>

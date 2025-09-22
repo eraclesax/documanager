@@ -216,6 +216,7 @@ class GetDocView(View):
         # renderizzo il template con i dati
         template = Template(template_string)
         context = Context({
+            "user": request.user,
             "defunto": defunto,
         })
         contenuto_html = template.render(context)
@@ -240,16 +241,23 @@ class GetDocView(View):
                 foglio_pdf = PdfReader(foglio_file)
                 writer = PdfWriter()
                 # 3. Sovrapponi contenuto alle pagine del foglio intestato
+                output_buffer = io.BytesIO()
                 for page in contenuto_pdf.pages:
                     background_page = foglio_pdf.pages[0]  # usa la prima pagina come sfondo
-                    print(background_page)
                     page.merge_page(background_page)           # unisce il contenuto sopra lo sfondo
-                    print(background_page)
                     writer.add_page(page)
-                    # 4. Salva in memoria il PDF finale
-                    output_buffer = io.BytesIO()
-                    writer.write(output_buffer)
-                    output_buffer.seek(0)
+                # 4. Salva in memoria il PDF finale
+                writer.write(output_buffer)
+                output_buffer.seek(0)
+
+                # for page in contenuto_pdf.pages:
+                #     background_page = foglio_pdf.pages[0]  # usa la prima pagina come sfondo
+                #     page.merge_page(background_page)           # unisce il contenuto sopra lo sfondo
+                #     writer.add_page(page)
+                #     # 4. Salva in memoria il PDF finale
+                #     output_buffer = io.BytesIO()
+                #     writer.write(output_buffer)
+                #     output_buffer.seek(0)
                 response = HttpResponse(output_buffer, content_type="application/pdf")
             else:
                 response = HttpResponse(contenuto_pdf_bytes, content_type="application/pdf")
