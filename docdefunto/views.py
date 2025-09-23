@@ -218,6 +218,7 @@ class GetDocView(View):
         context = Context({
             "user": user,
             "defunto": defunto,
+            "doc_name": doc.nome,
         })
         contenuto_html = template.render(context)
         #TODO: Check se è inumazione altro comune che ci sia il comune

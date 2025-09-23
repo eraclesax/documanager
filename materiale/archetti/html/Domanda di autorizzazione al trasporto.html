@@ -4,6 +4,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
+<title>{{doc_name}}</title>
 <style>
   /* --- pagina A4 e stampa --- */
   @page { size: A4; margin: 12mm 15mm; }
@@ -12,7 +13,7 @@
   body { 
     font-family: "Times New Roman", Georgia, serif; 
     color:#000; 
-    font-size: 13pt; 
+    font-size: 12pt; 
     text-align: justify; 
     line-height:6mm
   }
@@ -23,9 +24,9 @@
   /* header */
   h4.declaration {
     display: block;
-    font-size: 13pt;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    font-size: 12pt;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
     margin-left: 0;
     margin-right: 0;
     text-align: center;
@@ -33,8 +34,8 @@
   }  
   h5.header {
     display: block;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
     margin-left: 0;
     margin-right: 0;
     text-align: center;
@@ -104,6 +105,52 @@
     padding-bottom: 7mm;            /* spazio sotto al testo */
     font-size: 12pt;
   }
+
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5mm;
+    gap: 30mm; /* space between date and signature */
+  }
+  .sign-block {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sign-label {
+    font-size: 12pt;
+    margin-bottom: 0mm;
+  }
+  .sign-bar {
+    width: 30%;
+    border-bottom: 1.5px solid #000;
+    position: relative;
+    height: 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign-date {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13pt;
+    background: #ffffff00;
+    padding: 0 4mm;
+  }
+  .sign-img {
+    max-height: 18mm;
+    max-width: 80mm;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff00;
+    padding: 0 2mm;
+  }
 </style>
 
 </head>
@@ -115,7 +162,7 @@
     </h5>
 
     <div class="recipient">
-      <span class="recipient">Al Sig. Ufficiale dello Stato Civile del Comune di {{ defunto.comune_inumazione|default_if_none:"" }}{% if defunto.provincia_inumazione %}({{ defunto.provincia_inumazione | default_if_none:"" }}){% endif %}</span>
+      <span class="recipient">Al Sig. Ufficiale dello Stato Civile del Comune di {{ defunto.comune_sepoltura|default_if_none:"" }}{% if defunto.provincia_sepoltura %} ({{ defunto.provincia_sepoltura | default_if_none:"" }}){% endif %}</span>
     </div>
 
     <div class="textbox">
@@ -220,11 +267,11 @@
       </div>
       precisando che il trasporto sarà effettuato dalla <b>ditta Archetti</b> il 
       <div class="fill fill--short">
-        <span class="value">{{ defunto.data_ora_funerale|date:"d/m/Y" | default_if_none:"" }}</span>
+        <span class="value">{{ defunto.data_ora_partenza|date:"d/m/Y" | default_if_none:"" }}</span>
       </div>
       con partenza alle ore
       <div class="fill fill--xshort">
-        <span class="value">{{ defunto.data_ora_funerale|date:"H:i"}}</span>
+        <span class="value">{{ defunto.data_ora_partenza|date:"H:i"}}</span>
       </div> 
       autofunebre targato
       <div class="fill fill--short">
@@ -260,19 +307,19 @@
     </div> 
 
     <div class="sign-section">
-      <div class="field">
-        <span>Data</span>
+      <div class="sign-block">
+        <div class="sign-label">Data</div>
+        <div class="sign-bar">
+          <span class="sign-date">{{ defunto.data_firma|date:"d/m/Y" }}</span>
+        </div>
       </div>
-      <div class="field">
-        <span>Firma</span>
+      <div class="sign-block">
+        <div class="sign-label">Firma</div>
+        <div class="sign-bar">
+          <img class="sign-img" src="{{user.profile.signature.url}}" alt="" />
+        </div>
       </div>
     </div>
-
-    <footer>
-      <h6>
-        L’ISTANZA VIENE PRESENTATA IN OSSERVANZA ALLE DISPOSIZIONI DELLA LEGGE REGIONALE n.11/ 2016 ART. 19 E 24
-      </h6>
-    </footer>
 
   </div>
 </body>

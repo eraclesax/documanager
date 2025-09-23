@@ -100,8 +100,7 @@ class AnagraficaDefunto(models.Model):
     comune_chiesa = models.CharField(verbose_name="Comune Chiesa", blank=True, null=True, max_length=255)
     provincia_chiesa = models.CharField(verbose_name="Provincia della Chiesa (sigla)", blank=True, null=True, max_length=2)
     data_ora_funerale = models.DateTimeField(verbose_name="Data e Ora del Funerale", blank=True, null=True)
-    # data_inumazione = models.DateField(verbose_name="Data di sepoltura", blank=True, null=True) #TODO: sicuro che vadano eliminati?
-    # ora_inumazione = models.TimeField(verbose_name="Orario di sepoltura (formato hh:mm)", blank=True, null=True)
+    # data_ora_trasporto = models.DateTimeField(verbose_name="Data e Ora del Trasporto", blank=True, null=True) #TODO: Non sono sicuro abbia senso
     comune_sepoltura = models.CharField(verbose_name="Comune di sepoltura", blank=False, null=True, max_length=255)
     # altro_comune = models.BooleanField(verbose_name="Comune diverso da Rionero in Vulture", default=False)
     provincia_sepoltura = models.CharField(verbose_name="Provincia di sepoltura (sigla)", blank=True, null=True, max_length=2)
