@@ -43,7 +43,7 @@ class AnagraficaDefunto(models.Model):
     provincia_decesso = models.CharField(verbose_name="Provincia del Decesso (sigla)", blank=True, null=True, max_length=2)
     via_decesso = models.CharField(verbose_name="Via del Decesso", blank=True, null=True, max_length=255)
     data_decesso = models.DateField(verbose_name="Data del decesso", blank=True, null=True)
-    ora_decesso = models.TimeField(verbose_name="Orario del decesso (formato hh:mm)", blank=True, null=True)
+    ora_decesso = models.TimeField(verbose_name="Ora del decesso (formato hh:mm)", blank=True, null=True)
     
     # Osservazione salma
     comune_salma = models.CharField(verbose_name="Comune dell'osservazione salma", blank=True, null=True, max_length=255)
@@ -206,5 +206,5 @@ class Documento(models.Model):
         verbose_name_plural = _("Documenti")
 
     def __str__(self):
-        return self.file.name.split("/")[-1]  # mostra solo il nome del file
+        return f"{self.nome}"
 

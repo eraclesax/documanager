@@ -4,7 +4,6 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>Scheda Defunto</title>
 <style>
   /* --- pagina A4 e stampa --- */
   @page { size: A4; margin: 12mm 15mm; }
@@ -165,11 +164,11 @@
       </div>
       in data
       <div class="fill fill--short">
-        <span class="value">{{ defunto.data_morte|date:"d/m/Y" | default_if_none:"" }}</span>
+        <span class="value">{{ defunto.data_decesso|date:"d/m/Y" | default_if_none:"" }}</span>
       </div>
       alle ore
       <div class="fill fill--short">
-        <span class="value">{{ defunto.ora_morte | default_if_none:"" }}</span>
+        <span class="value">{{ defunto.ora_decesso|date:"H:i" }}</span>
       </div>
 
     <h4 class="declaration">
@@ -178,13 +177,13 @@
 
     <div class="textbox sm">
       si trova presso 
-      {% if defunto.tipo_luogo_salma == 1 %}
-      abitazione privata sita in
-      {% elif defunto.tipo_luogo_salma == 2 %}
-      Istituto / Casa di Riposo situata in
-      {% elif defunto.tipo_luogo_salma == 3 %}
-      struttura obitoriale situata presso l'ospedale di 
-      {% else %}abitazione privata / Istituto/Casa di Riposo / struttura obitoriale situata presso l'ospedale di {% endif %} 
+      {% if defunto.tipo_luogo_salma == 'Abitazione privata' %}
+        abitazione privata sita in
+      {% elif defunto.tipo_luogo_salma == 'Istituto / Casa di riposo / Struttura obitoriale / Ospedale' %}
+        Istituto / Casa di riposo / Struttura obitoriale / Ospedale sito in
+      {% else %}
+        abitazione privata / Istituto / Casa di Riposo / struttura obitoriale / ospedale di 
+      {% endif %} 
       <div class="fill fill--mid">
         <span class="value">{{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}</span>
       </div>
@@ -200,17 +199,24 @@
     </h4>
 
     <div class="textbox sm">
-      all’inumazione di cadavere presso il cimitero di
+      {% if defunto.ubicazione_feretro == 'Cappella' or defunto.ubicazione_feretro == 'Tumulazione'%}
+        alla tumulazione 
+      {% elif defunto.ubicazione_feretro == 'Inumazione' %}
+        all'inumazione 
+      {% else %}
+        alla tumulazione / all'inumazione 
+      {% endif %} 
+      di cadavere presso il cimitero di
       <div class="fill fill--mid">
-        <span class="value">{{ defunto.comune_inumazione | default_if_none:"" }} {% if defunto.provincia_inumazione %}({{ defunto.provincia_inumazione | default_if_none:"" }}){% endif %}</span>
+        <span class="value">{{ defunto.comune_sepoltura | default_if_none:"" }} {% if defunto.provincia_sepoltura %}({{ defunto.provincia_sepoltura | default_if_none:"" }}){% endif %}</span>
       </div>
       il 
       <div class="fill fill--short">
-        <span class="value">{{ defunto.data_inumazione|date:"d/m/Y" | default_if_none:"" }}</span>
+        <span class="value">{{ defunto.data_ora_funerale|date:"d/m/Y" }}</span>
       </div>
       ore 
       <div class="fill fill--xshort">
-        <span class="value">{{ defunto.ora_inumazione | default_if_none:"" }}</span>
+        <span class="value">{{ defunto.data_ora_funerale|date:"H:i" }}</span>
       </div>
       precisando che il trasporto sarà effettuato dalla <b>ditta Archetti</b> il 
       <div class="fill fill--short">
@@ -218,7 +224,7 @@
       </div>
       con partenza alle ore
       <div class="fill fill--xshort">
-        <span class="value">{{ defunto.data_ora_funerale|date:"H:m" | default_if_none:"" }}</span>
+        <span class="value">{{ defunto.data_ora_funerale|date:"H:i"}}</span>
       </div> 
       autofunebre targato
       <div class="fill fill--short">

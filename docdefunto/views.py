@@ -205,7 +205,7 @@ class GetDocView(View):
         def_id = kwargs.get("def_id", None)
         doc_id = kwargs.get("doc_id", None)
         action = kwargs.get("action", "open")
-
+        user = request.user
         doc = get_object_or_404(Documento, id=doc_id)
         defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
 
@@ -216,7 +216,7 @@ class GetDocView(View):
         # renderizzo il template con i dati
         template = Template(template_string)
         context = Context({
-            "user": request.user,
+            "user": user,
             "defunto": defunto,
         })
         contenuto_html = template.render(context)
@@ -237,17 +237,21 @@ class GetDocView(View):
             if doc.background and contenuto_pdf_bytes:
                 contenuto_pdf = PdfReader(io.BytesIO(contenuto_pdf_bytes))
                 # 2. Carica il foglio intestato (da FileField di Django)
-                foglio_file = doc.background.open("rb")  # assicura apertura
-                foglio_pdf = PdfReader(foglio_file)
-                writer = PdfWriter()
+                bg_file = doc.background.open("rb")  # assicura apertura
+                bg_pdf = PdfReader(bg_file)
+                pdf_writer = PdfWriter()
                 # 3. Sovrapponi contenuto alle pagine del foglio intestato
                 output_buffer = io.BytesIO()
                 for page in contenuto_pdf.pages:
-                    background_page = foglio_pdf.pages[0]  # usa la prima pagina come sfondo
-                    page.merge_page(background_page)           # unisce il contenuto sopra lo sfondo
-                    writer.add_page(page)
+                    bg_page = bg_pdf.pages[0]  # usa la prima pagina come sfondo
+                    page.merge_page(bg_page)           # unisce il contenuto sopra lo sfondo
+                    pdf_writer.add_page(page)
                 # 4. Salva in memoria il PDF finale
-                writer.write(output_buffer)
+                pdf_writer.add_metadata({
+                    '/Author': str(user.profile.organization),
+                    '/Title': str(doc.nome)
+                })
+                pdf_writer.write(output_buffer)
                 output_buffer.seek(0)
 
                 # for page in contenuto_pdf.pages:
