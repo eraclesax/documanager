@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from app.models import Organization, User
@@ -186,6 +187,17 @@ class AnagraficaDefunto(models.Model):
                                        'targa_autofunebre', 'altro_servizi', ),
         "Data e firma":('data_firma', 'firmato',)
     }
+
+    # Custom properties: ARCHETTI
+    @property
+    def get_is_rionero(self) -> bool:
+        """
+        Ritorna True se la stringa indica 'Rionero in Vulture'
+        (accettando varianti come 'rionero in V.', case-insensitive).
+        """
+        text = self.comune_sepoltura if self.comune_sepoltura is not None else ""
+        pattern = r"^\s*rionero\s+in\s+(vulture|v\.)\s*$"
+        return re.match(pattern, text.strip(), re.IGNORECASE) is not None
 
 
 def user_documents_path(instance, filename):
