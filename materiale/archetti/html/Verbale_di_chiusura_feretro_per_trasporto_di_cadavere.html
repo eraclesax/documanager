@@ -1,0 +1,451 @@
+{% load static %}
+
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Scheda Defunto</title>
+<style>
+  /* --- pagina A4 e stampa --- */
+  @page { size: A4; margin: 22mm 15mm; }
+  @media print { html, body { background: #fff; } }
+
+  body { font-family: "Times New Roman", Georgia, serif; color:#000; font-size: 14pt; text-align: justify; line-height:10mm}
+  h4.declaration {
+    display: block;
+    text-decoration: underline;
+    font-size: 12pt;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+    font-weight:700;
+  }
+  footer {
+    margin-top: 5mm;
+    margin-bottom: 1mm;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+  }
+  footer h4 {
+    font-size: 14pt;
+    font-weight:500;
+  }
+  .sheet { width: 170mm; margin: 0 auto; }
+
+  /* header */
+  .header { 
+    display:flex; 
+    align-items:top; 
+    justify-content:space-between; 
+    margin-bottom: 6mm; 
+  }
+  .logo {text-align: center; margin-bottom: 0mm; }
+  .title { 
+    text-align:center; 
+    font-size: 12pt; 
+    font-weight:700; 
+    line-height:1mm;
+    color:rgb(0, 0, 0); 
+    margin-bottom: 8mm;
+  }
+
+  /* righe modulo */
+  div.recipient { text-align:right; font-size: 16pt; padding-top: 5mm; margin-bottom: 5mm;}
+  .row { display:flex; align-items:flex-end; flex-wrap:nowrap; gap: 3mm; margin-bottom: 2mm; }
+  .textbox {
+    display:block; 
+    font-size: 12pt;
+    line-height: 5mm;
+  }  
+  .textbox-end {
+    display:block; 
+    font-size: 12pt;
+    line-height: 5mm;
+    text-align: left;
+  }
+  .fill { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    border-bottom: 1px solid #000; 
+    padding-left: 2mm;
+    padding-right: 2mm;
+    margin-top: 3mm;
+
+    width: fit-content;
+    text-align: center;   /* <-- centra inline e inline-block */
+    transform: translateY(-1.3mm);
+    box-sizing: border-box; /* così padding non si somma male */
+  }
+  .fill--xshort { 
+    min-width: 15mm;
+  }
+  .fill--short { 
+    min-width: 25mm;
+  }
+  .fill--mid   { 
+    min-width: 50mm; 
+  }
+  .fill--large   { 
+    min-width: 75mm; 
+  }
+  .fill--xlarge   { 
+    min-width: 100mm; 
+  }
+  .fill--xxlarge   { 
+    min-width: 120mm; 
+  }
+  .value { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    transform: translateY(0.5mm);
+  }
+  .spacer { 
+    flex:0 0 6mm; 
+  }
+
+  /* separatore a freccia */
+  .arrow-sep-svg {
+    display: block;
+    width: 100%;
+    height: 4px;      /* puoi aumentare se vuoi punte più grandi */
+    margin: 10mm 0;
+  }
+
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between; /* Data a sinistra, Firma a destra */
+    margin-top: 10mm;               /* spazio prima della sezione */
+  }
+
+  .field {
+    flex: 0 0 40%;                  /* larghezza: 40% ciascuno (puoi variare) */
+    text-align: center;             /* testo centrato sopra la linea */
+    border-bottom: 1px solid #000;  /* linea continua per scrivere */
+    padding-bottom: 7mm;            /* spazio sotto al testo */
+    font-size: 12pt;
+  }
+  /* caselle */
+  .todo { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+    font-size: 12pt;
+    line-height: 5mm;
+  }
+  .todo li { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-bottom: 1px solid #eee; }
+  .todo label { cursor: pointer; flex: 1; }
+  .todo input[type="checkbox"] { width: 9px; height: 9px; }
+  /* strike-through quando checked */
+  .todo input[type="checkbox"]:checked + label { text-decoration: line-through; opacity: 0.6; }
+  
+
+  .sigillo { 
+    display: inline-block;
+    height: 10mm;
+    width: 30mm;
+    margin-left: 120mm;
+    margin-top: 15mm;
+    text-align: center;
+    border: 1px solid #000000;; 
+    }
+
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="header">
+  </div>
+  <div class="title">
+    <p>VERBALE DI CHIUSURA FERETRO PER TRASPORTO DI CADAVERE</p>
+    <p>(Esclusi trasporti all’estero) - ( Legge Regionale n. 11 / 2016 )</p>
+  </div>
+
+  <div class="textbox" style="font-size: 12pt; text-align: center; margin:5mm;">
+    Il sottoscritto NARDOZZA CARMINE nato a VENOSA (PZ) il 28/08/1976  <br>
+    residente a RIONERO IN VULTURE (PZ) in via DEGLI ULIVI, 5
+  </div>
+
+  <div class="textbox">
+    titolare dell’ Agenzia di Onoranze e Trasporti Funebri Archetti con sede in Rionero in V.re in
+    Via degli Ulivi, 5 in qualità di addetto al trasporto, chiamato ad eseguire il trasporto del cadavere di
+
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.cognome | default_if_none:"" }} {{ defunto.nome | default_if_none:"" }}</span>
+    </div>
+    {% if defunto.sesso == 'M' %}nato{% elif defunto.sesso == 'F' %}nata{% else %}nato/a{% endif %} 
+    a 
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.comune_nascita | default_if_none:"" }} {% if defunto.provincia_nascita %}({{ defunto.provincia_nascita | default_if_none:"" }}){% endif %}</span>
+    </div>
+    il 
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_nascita|date:"d/m/Y" |default_if_none:"" }}</span> 
+    </div>
+    cittadinanza 
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.cittadinanza |default_if_none:"" }}</span> 
+    </div>
+    residente a
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.comune_residenza | default_if_none:"" }} {% if defunto.provincia_residenza %}({{ defunto.provincia_residenza | default_if_none:"" }}){% endif %}</span>
+    </div>
+    in Via
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.via_residenza | default_if_none:"" }}</span> 
+    </div>
+    C. Fiscale
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.codice_fiscale | default_if_none:"" }}</span> 
+    </div>
+    decedut{% if defunto.sesso == 'M' %}o{% elif defunto.sesso == 'F' %}a{% else %}o/a{% endif %} il
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_morte|date:"d/m/Y" | default_if_none:"" }}</span> 
+    </div>
+    alle ore
+    <div class="fill fill--xshort">
+      <span class="value">{{ defunto.ora_morte | default_if_none:"" }}</span> 
+    </div>
+    in
+    <div class="fill fill--short">
+      <span class="value"></span> 
+    </div> 
+    dal Comune di 
+    <div class="fill fill--mid">
+      <span class="value"></span>
+    </div>
+     al Cimitero / forno Crematorio di 
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.comune_inumazione | default_if_none:"" }} {% if defunto.provincia_inumazione %}({{ defunto.provincia_inumazione | default_if_none:"" }}){% endif %}</span>
+    </div>
+    e in data 
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_inumazione|date:"d/m/Y" | default_if_none:"" }}</span> 
+    </div>
+     presso la Chiesa
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.chiesa | default_if_none:"" }}</span> 
+    </div>
+    per la celebrazione delle esequie,nella sua veste di incaricato di pubblico servizio ai sensi dell’art.
+    358 C.P: e successive modificazioni, consapevole della responsabilità penale nella quale si può
+    incorrere in caso di dichiarazione mendace,
+  </div>
+
+  <h4 class="declaration">
+    DICHIARA CHE
+  </h4>
+
+  <div class="textbox">
+    Il cadavere sopra generalizzato, trascorso il periodo di osservazione, è stato riposto in idonea cassa
+    conforme alle prescrizioni previste dalla vigente normativa, in relazione alla destinazione e alla
+    distanza da percorrere, e in particolare:
+  </div>
+
+  <ul class="todo" aria-label="Lista attività">
+    <li>
+      <input type="checkbox" id="task-2">
+      <label for="task-2">
+        il cadavere è stato racchiuso in duplice cassa, una di legno e una di metallo (zinco), ermeticamente
+        chiusa mediante saldatura a fuoco o a freddo completa di valvola di sicurezza e materassino
+        biodegradabile;
+      </label>
+    </li>
+    <li>
+      <input type="checkbox" id="task-3">
+      <label for="task-3">
+        il cadavere è stato racchiuso nella sola cassa di legno foderata internamente con contenitore
+        biodegradabile autorizzato dal Ministero della Sanità e idoneo al trasporto, fuori regione, anche per
+        distanze superiori a 100 Km, perché sarà inumato o cremato;
+      </label>
+    </li>
+    <li>
+      <input type="checkbox" id="task-4">
+      <label for="task-4">
+        il cadavere è stato racchiuso nella sola cassa di legno perché sarà inumato;
+      </label>
+    </li>
+  </ul>
+
+  <div class="textbox">
+    Sono state adottate particolari precauzioni igienico – sanitarie e nella fattispecie 
+    <div class="fill fill--xxlarge">
+      <span class="value"></span> 
+    </div>
+    <br>
+    Esternamente al feretro è stata applicata una targhetta metallica riportante cognome, nome, data di
+    nascita e morte del{% if defunto.sesso == 'M' %}{% elif defunto.sesso == 'F' %}la{% else %}/la{% endif %} 
+    defunt{% if defunto.sesso == 'M' %}o{% elif defunto.sesso == 'F' %}a{% else %}o/a{% endif %}.
+    Il trasporto avrà inizio in data
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_inumazione|date:"d/m/Y" | default_if_none:"" }}</span> 
+    </div>
+     alle ore 
+    <div class="fill fill--xshort">
+      <span class="value">{{ defunto.ora_inumazione | default_if_none:"" }}</span> 
+    </div>
+     come da autorizzazione del Comune di
+    <div class="fill fill--mid">
+      <span class="value"></span> 
+    </div>
+    in data
+    <div class="fill fill--short">
+      <span class="value"></span> 
+    </div>
+    autorizzazione N°
+    <div class="fill fill--short">
+      <span class="value"></span> 
+    </div>
+    effettuato dal sottoscritto, accompagnato dai necrofori:
+    <br>
+    1 - 
+    <div class="fill fill--xxlarge">
+      <span class="value"></span> 
+    </div>
+    <br>
+    2 - 
+    <div class="fill fill--xxlarge">
+      <span class="value"></span> 
+    </div>
+    <br>
+    3 - 
+    <div class="fill fill--xxlarge">
+      <span class="value"></span> 
+    </div>
+    <br>
+    4 - 
+    <div class="fill fill--xxlarge">
+      <span class="value"></span> 
+    </div>
+    <br>
+    La movimentazione del feretro e il trasporto dal luogo di partenza a quello di destinazione viene
+    effettuato avvalendosi di idoneo personale e di carro funebre il cui impiego e conforme alle norme
+    vigenti;
+    <br>
+    Alla presenza dei familiari del{% if defunto.sesso == 'M' %}{% elif defunto.sesso == 'F' %}la{% else %}/la{% endif %} 
+     defunt{% if defunto.sesso == 'M' %}o{% elif defunto.sesso == 'F' %}a{% else %}o/a{% endif %}
+     ha personalmente provveduto all’identificazione del
+    cadavere mediante:
+
+    <ul class="todo" aria-label="Lista attività">
+      <li>
+        <input type="checkbox" id="task-6">
+        <label for="task-2">
+          tipo di documento
+          <div class="fill fill--short">
+            <span class="value">{{ defunto.doc_ric_def | default_if_none:"" }}</span> 
+          </div>
+          n.
+          <div class="fill fill--short">
+            <span class="value">{{ defunto.n_doc_ric_def | default_if_none:"" }}</span> 
+          </div>
+          rilasciato il
+          <div class="fill fill--short">
+            <span class="value">{{ defunto.data_doc_def|date:"d/m/Y" | default_if_none:"" }}</span> 
+          </div>
+          da
+          <div class="fill fill--md">
+            <span class="value">{{ defunto.ente_doc_def | default_if_none:"" }}</span> 
+          </div>
+          ;
+        </label>
+      </li>
+      <li>
+        <input type="checkbox" id="task-7">
+        <label for="task-3">
+          nella seguente forma dati e grado di un parente
+          <div class="fill fill--xxlarge">
+            <span class="value"></span> 
+          </div>
+        </label>
+      </li>
+    </ul>
+  </div>
+
+  <div class="textbox">
+    FIRMA
+    <div class="fill fill--xxlarge">
+      <span class="value"></span> 
+    </div>
+    <br>
+    <br>
+    A garanzia dell’integrità del feretro e del suo contenuto ha apposto, su una delle due viti di chiusura del coperchio, un
+    sigillo dell’impresa che effettua il trasporto( sul quale è impresso il nominativo dell’impresa stessa, il numero di
+    autorizzazione e il comune che l’ha rilasciata) riprodotto anche in calce al presente documento.
+    La presente dichiarazione di eseguite prescrizioni viene allegata in originale alla documentazione
+    che accompagna il feretro fino al cimitero / crematorio di destinazione. Copia viene conservata agli
+    atti dall’impresa funebre che ha eseguito il trasporto. Copia è inviata anche a mezzo fax o altro
+    sistema telematico al Comune di partenza, a quello di arrivo (anche se coincidono) e alle ASL dei
+    relativi territori.
+  </div>
+
+  <div class="textbox-end">
+    <div class="fill fill--short">
+      <span class="value"></span>
+    </div>
+    lì
+    <div class="fill fill--short">
+      <span class="value"></span>
+    </div>
+    &nbsp
+    l’addetto al trasporto
+    <div class="fill fill--mid">
+      <span class="value"></span> 
+    </div>
+  </div>
+
+
+  <div class="div-sigillo">
+    <div class="sigillo">
+      Sigillo Ditta
+    </div>
+  </div>
+
+  <div class="textbox" style="margin-top: 20mm;">
+    Il sottoscritto
+    <div class="fill fill--mid">
+      <span class="value"></span> 
+    </div>
+    addetto alla struttura ricevente
+    <div class="fill fill--mid">
+      <span class="value"></span> 
+    </div>
+    denominata
+    <div class="fill fill--mid">
+      <span class="value"></span> 
+    </div>
+    sita in
+    <div class="fill fill--mid">
+      <span class="value"></span> 
+    </div>
+    riceve il feretro sopra indicato il giorno
+    <div class="fill fill--short">
+      <span class="value"></span> 
+    </div>
+    alle ore
+    <div class="fill fill--xshort">
+      <span class="value"></span> 
+    </div>
+  </div>
+
+  <div class="textbox-end">
+    <div class="fill fill--short">
+      <span class="value"></span>
+    </div>
+    lì
+    <div class="fill fill--short">
+      <span class="value"></span>
+    </div>
+    &nbsp
+    &nbsp
+    &nbsp
+    il dichiarante
+    <div class="fill fill--mid">
+      <span class="value"></span> 
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

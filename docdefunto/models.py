@@ -73,13 +73,20 @@ class AnagraficaDefunto(models.Model):
 
     # Parente
     tipo_parente = models.CharField(verbose_name="Grado di parentela", blank=True, null=True, max_length=255)
+    cognome_parente = models.CharField(verbose_name="Cognome Parente", blank=True, null=True, max_length=255)
+    nome_parente = models.CharField(verbose_name="Nome Parente", blank=True, null=True, max_length=255)
+    sesso_par = models.CharField(verbose_name="Sesso Parente", max_length=1, blank=True, null=True, 
+                             choices=[
+                                 ("F", "Femmina"),
+                                 ("M", "Maschio")]
+                                 )
+    comune_nascita_par = models.CharField(verbose_name="Comune di Nascita Parente", blank=True, null=True, max_length=255)
+    provincia_nascita_par = models.CharField(verbose_name="Provincia di Nascita Parente (sigla)", blank=True, null=True, max_length=2)
+    data_nascita_parente = models.DateField(verbose_name="Data di Nascita Parente", blank=True, null=True)
     comune_residenza_par = models.CharField(verbose_name="Comune di residenza parente", blank=True, null=True, max_length=255)
     provincia_residenza_par = models.CharField(verbose_name="Provincia di residenza parente (sigla)", blank=True, null=True, max_length=2)
     indirizzo_residenza_par = models.CharField(verbose_name="Via di residenza parente", blank=True, null=True, max_length=255)
 
-    cognome_parente = models.CharField(verbose_name="Cognome Parente", blank=True, null=True, max_length=255)
-    nome_parente = models.CharField(verbose_name="Nome Parente", blank=True, null=True, max_length=255)
-    data_nascita_parente = models.DateField(verbose_name="Data di Nascita Parente", blank=True, null=True)
     doc_ric_par = models.CharField(verbose_name="Documento di Riconoscimento Parente", blank=True, null=True, max_length=10,
                                    choices=[
                                        ("C.I.", "Carta di Identità"),
@@ -173,9 +180,10 @@ class AnagraficaDefunto(models.Model):
         "Decesso":('comune_decesso', 'provincia_decesso', 'via_decesso', 'data_decesso', 'ora_decesso', ),
         "Salma":('comune_salma','provincia_salma','tipo_luogo_salma','ospedale', 'reparto_ospedaliero','via_salma',),
         "Stato civile":('professione', 'stato_civile','cognome_coniuge','nome_coniuge',), 
-        "Parente": ('tipo_parente', 'comune_residenza_par', 'provincia_residenza_par', 'indirizzo_residenza_par',
-                    'cognome_parente', 'nome_parente', 'data_nascita_parente', 'doc_ric_par', 'n_doc_ric_par', 
-                    'ente_doc_par', 'data_doc_par', ),
+        "Parente": ('tipo_parente', 'cognome_parente', 'nome_parente', 'sesso_par','comune_nascita_par', 
+                    'provincia_nascita_par', 'data_nascita_parente', 
+                    'comune_residenza_par', 'provincia_residenza_par', 'indirizzo_residenza_par',
+                    'doc_ric_par', 'n_doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
         "Funerale":('data_ora_partenza', 'chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  
                     'comune_sepoltura','provincia_sepoltura', 'ubicazione_feretro', 
