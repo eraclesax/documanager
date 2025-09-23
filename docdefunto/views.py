@@ -187,7 +187,7 @@ class DefuntoDocsView(View):
 
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
-        documenti = Documento.objects.all()
+        documenti = Documento.objects.all().order_by('order_number')
 
         return render(request, self.template_name, {
             "defunto":defunto,

@@ -211,7 +211,7 @@ class Documento(models.Model):
     file = models.FileField(verbose_name="File", upload_to=user_documents_path)
     background = models.FileField(verbose_name="Sfondo", upload_to=user_documentsbkgds_path, blank=True, null=True)
     organization = models.ForeignKey(Organization, verbose_name=_("Organizzazione"), on_delete=models.PROTECT, blank=False, null=False)
-
+    order_number = models.PositiveSmallIntegerField(verbose_name="Ordine in lista", blank=True, null=False, default=0)
     class Meta(): # type: ignore
         verbose_name = _("Documento")
         verbose_name_plural = _("Documenti")
