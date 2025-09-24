@@ -73,7 +73,10 @@ class DefuntoEditForm(forms.ModelForm):
         self.fields['provincia_chiesa'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_sepoltura'].widget.attrs['style'] = 'text-transform: uppercase;'
         # Placeholders
-        # self.fields['via_salma'].widget.attrs['placeholder'] = 'Omettere la parola "Via"'
+        self.fields['via_residenza'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        self.fields['via_decesso'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        self.fields['via_salma'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        self.fields['via_residenza_par'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
         # self.fields['data_inumazione'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
         # self.fields['ora_inumazione'].widget.attrs['placeholder'] = 'Es. 21:45'
         self.fields['affissione_manifesti'].widget.attrs['placeholder'] = 'Esempio:\nRionero in Vulture\nBarile\necc.'

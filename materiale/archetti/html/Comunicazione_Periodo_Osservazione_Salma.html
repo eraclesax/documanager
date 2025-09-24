@@ -172,7 +172,7 @@
       <div class="fill fill--mid">
         <span class="value">{{ defunto.comune_decesso | default_if_none:"" }} {% if defunto.provincia_decesso %}({{ defunto.provincia_decesso | default_if_none:"" }}){% endif %}</span>
       </div>
-      Via 
+      in 
       <div class="fill fill--mid">
         <span class="value">{{ defunto.via_decesso | default_if_none:"" }}</span> 
       </div>
@@ -188,14 +188,16 @@
   <div class="textbox">
     si trova presso 
     {% if defunto.tipo_luogo_salma == 'Abitazione privata' %}
-    abitazione privata sita in
+      abitazione privata situata a
     {% elif defunto.tipo_luogo_salma == 'Istituto / Casa di riposo / Struttura obitoriale / Ospedale' %}
-    istituto / casa di riposo / struttura obitoriale / ospedale situata in
-    {% else %}abitazione privata / istituto / casa di riposo / struttura obitoriale / ospedale situata in{% endif %} 
+      istituto / casa di riposo / struttura obitoriale / ospedale situata a
+    {% else %}
+      abitazione privata / istituto / casa di riposo / struttura obitoriale / ospedale situato a
+    {% endif %} 
     <div class="fill fill--mid">
       <span class="value">{{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}</span>
     </div>
-    Via 
+    in 
     <div class="fill fill--mid">
       <span class="value">{{ defunto.via_salma | default_if_none:"" }}</span> 
     </div>
