@@ -7,10 +7,16 @@
 <title>Scheda Defunto</title>
 <style>
   /* --- pagina A4 e stampa --- */
-  @page { size: A4; margin: 22mm 15mm; }
+  @page { size: A4; margin: 25mm 15mm; }
   @media print { html, body { background: #fff; } }
 
-  body { font-family: "Times New Roman", Georgia, serif; color:#000; font-size: 14pt; text-align: justify; line-height:10mm}
+  body { 
+    font-family: "Times New Roman", Georgia, serif; 
+    color:#000; 
+    font-size: 14pt; 
+    text-align: justify; 
+    line-height:10mm
+  }
   h4.declaration {
     display: block;
     text-decoration: underline;
@@ -22,18 +28,10 @@
     text-align: center;
     font-weight:700;
   }
-  footer {
-    margin-top: 5mm;
-    margin-bottom: 1mm;
-    margin-left: 0;
-    margin-right: 0;
-    text-align: center;
+  .sheet { 
+    width: 170mm; 
+    margin: 0 auto; 
   }
-  footer h4 {
-    font-size: 14pt;
-    font-weight:500;
-  }
-  .sheet { width: 170mm; margin: 0 auto; }
 
   /* header */
   .header { 
@@ -42,7 +40,10 @@
     justify-content:space-between; 
     margin-bottom: 6mm; 
   }
-  .logo {text-align: center; margin-bottom: 0mm; }
+  .logo {
+    text-align: center; 
+    margin-bottom: 0mm; 
+  }
   .title { 
     text-align:center; 
     font-size: 12pt; 
@@ -53,8 +54,19 @@
   }
 
   /* righe modulo */
-  div.recipient { text-align:right; font-size: 16pt; padding-top: 5mm; margin-bottom: 5mm;}
-  .row { display:flex; align-items:flex-end; flex-wrap:nowrap; gap: 3mm; margin-bottom: 2mm; }
+  div.recipient { 
+    text-align:right; 
+    font-size: 16pt; 
+    padding-top: 5mm; 
+    margin-bottom: 5mm;
+  }
+  .row { 
+    display:flex; 
+    align-items:flex-end; 
+    flex-wrap:nowrap; 
+    gap: 3mm; 
+    margin-bottom: 2mm; 
+  }
   .textbox {
     display:block; 
     font-size: 12pt;
@@ -71,7 +83,7 @@
     border-bottom: 1px solid #000; 
     padding-left: 2mm;
     padding-right: 2mm;
-    margin-top: 3mm;
+    margin-top: 1.75mm;
 
     width: fit-content;
     text-align: center;   /* <-- centra inline e inline-block */
@@ -96,6 +108,9 @@
   .fill--xxlarge   { 
     min-width: 120mm; 
   }
+  .fill--all { 
+    min-width: 166mm; 
+  }
   .value { 
     display:inline-block; /* o block, dipende dal contesto */ 
     transform: translateY(0.5mm);
@@ -103,7 +118,16 @@
   .spacer { 
     flex:0 0 6mm; 
   }
-
+  .tab {
+      padding-left:5em;
+  }
+  .inline-sign-img {
+    max-height: 14mm;
+    max-width: 62mm;
+    transform: translate(0%, 30%);
+    margin-top: -15px;
+    background: #ffffff00;
+  }
   /* separatore a freccia */
   .arrow-sep-svg {
     display: block;
@@ -111,6 +135,15 @@
     height: 4px;      /* puoi aumentare se vuoi punte più grandi */
     margin: 10mm 0;
   }
+  /* end page text */
+  /* .endpage {
+    position: absolute;
+    left: 0px;
+    top: -1px;
+    padding: 0 2mm;
+    margin-top: auto;
+    border: 1px solid #ff0303 ;
+  } */
 
   /* Sign footer */
   .sign-section {
@@ -134,13 +167,26 @@
     font-size: 12pt;
     line-height: 5mm;
   }
-  .todo li { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-bottom: 1px solid #eee; }
-  .todo label { cursor: pointer; flex: 1; }
-  .todo input[type="checkbox"] { width: 9px; height: 9px; }
+  .todo li { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    padding: 6px 6px; 
+    border-bottom: 0px solid #eee; 
+  }
+  .todo label { 
+    cursor: pointer; 
+    flex: 1; 
+  }
+  .todo input[type="checkbox"] { 
+    width: 9px; 
+    height: 9px; 
+  }
   /* strike-through quando checked */
-  .todo input[type="checkbox"]:checked + label { text-decoration: line-through; opacity: 0.6; }
-  
-
+  .todo input[type="checkbox"]:checked + label { 
+    text-decoration: line-through; 
+    opacity: 0.6; 
+  }
   .sigillo { 
     display: inline-block;
     height: 10mm;
@@ -150,6 +196,51 @@
     text-align: center;
     border: 1px solid #000000;; 
     }
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5mm;
+    gap: 30mm; /* space between date and signature */
+  }
+  .sign-block {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sign-label {
+    font-size: 12pt;
+    margin-bottom: 0mm;
+  }
+  .sign-bar {
+    width: 30%;
+    border-bottom: 1.5px solid #000;
+    position: relative;
+    height: 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign-date {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13pt;
+    background: #ffffff00;
+    padding: 0 4mm;
+  }
+  .sign-img {
+    max-height: 18mm;
+    max-width: 80mm;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff00;
+    padding: 0 2mm;
+  }
 
 </style>
 </head>
@@ -157,6 +248,7 @@
 <div class="sheet">
   <div class="header">
   </div>
+      
   <div class="title">
     <p>VERBALE DI CHIUSURA FERETRO PER TRASPORTO DI CADAVERE</p>
     <p>(Esclusi trasporti all’estero) - ( Legge Regionale n. 11 / 2016 )</p>
@@ -290,7 +382,10 @@
 
   <div class="textbox">
     Sono state adottate particolari precauzioni igienico – sanitarie e nella fattispecie 
-    <div class="fill fill--xxlarge">
+    <div class="fill fill--short">
+      <span class="value"></span> 
+    </div>
+    <div class="fill fill--all">
       <span class="value"></span> 
     </div>
     <br>
@@ -388,21 +483,36 @@
         <input type="checkbox" id="task-7">
         <label for="task-3">
           nella seguente forma dati e grado di un parente
-          <div class="fill fill--xxlarge">
+          <div class="fill fill--short">
             <span class="value">
-              {{ defunto.tipo_parente | default_if_none:"" }}:
+              {{ defunto.tipo_parente | default_if_none:"" }}
+              {% if defunto.tipo_parente %}
+                :
+              {% endif %}
+              {% if not defunto.cognome_parente %}
+                <span class='tab'></span>
+              {% endif %}
+              {% if not defunto.nome_parente %}
+                <span class='tab'></span>
+              {% endif %}
               {{ defunto.cognome_parente | default_if_none:"" }}
               {{ defunto.nome_parente | default_if_none:"" }},
-              {{ defunto.data_nascita_parente | date:"d/m/Y" }}, residenza
+            </span> 
+          </div>
+          <div class="fill fill--all" style="min-width: 156mm">
+            <span class="value">
+              {{ defunto.data_nascita_parente | date:"d/m/Y" }}
+              {% if defunto.comune_residenza_par %}
+                , residenza
+              {% endif %}
               {{ defunto.via_residenza_par | default_if_none:"" }}
               {% if defunto.comune_residenza_par %}
-                 - 
+                ,
               {% endif %}
               {{ defunto.comune_residenza_par | default_if_none:"" }}
               {% if defunto.provincia_residenza_par %}
                 ({{ defunto.provincia_residenza_par | default_if_none:"" }})
               {% endif %}
-
             </span> 
           </div>
         </label>
@@ -413,7 +523,9 @@
   <div class="textbox">
     FIRMA
     <div class="fill fill--xxlarge">
-      <span class="value"></span> 
+      <span class="value">
+        <img class="inline-sign-img" src="{{user.profile.signature.url}}" alt="" />
+      </span> 
     </div>
     <br>
     <br>
@@ -438,7 +550,9 @@
     &nbsp
     l’addetto al trasporto
     <div class="fill fill--mid">
-      <span class="value"></span> 
+      <span class="value">
+        <img class="inline-sign-img" src="{{user.profile.signature.url}}" alt="" />
+      </span> 
     </div>
   </div>
 
@@ -449,47 +563,50 @@
     </div>
   </div>
 
-  <div class="textbox" style="margin-top: 20mm;">
-    Il sottoscritto
-    <div class="fill fill--mid">
-      <span class="value"></span> 
-    </div>
-    addetto alla struttura ricevente
-    <div class="fill fill--mid">
-      <span class="value"></span> 
-    </div>
-    denominata
-    <div class="fill fill--mid">
-      <span class="value"></span> 
-    </div>
-    sita in
-    <div class="fill fill--mid">
-      <span class="value"></span> 
-    </div>
-    riceve il feretro sopra indicato il giorno
-    <div class="fill fill--short">
-      <span class="value"></span> 
-    </div>
-    alle ore
-    <div class="fill fill--xshort">
-      <span class="value"></span> 
-    </div>
-  </div>
 
-  <div class="textbox-end">
-    <div class="fill fill--short">
-      <span class="value"></span>
+  <div class="endpage">
+    <div class="textbox">
+      Il sottoscritto
+      <div class="fill fill--mid">
+        <span class="value"></span> 
+      </div>
+      addetto alla struttura ricevente
+      <div class="fill fill--mid">
+        <span class="value"></span> 
+      </div>
+      denominata
+      <div class="fill fill--mid">
+        <span class="value"></span> 
+      </div>
+      sita in
+      <div class="fill fill--mid">
+        <span class="value"></span> 
+      </div>
+      riceve il feretro sopra indicato il giorno
+      <div class="fill fill--short">
+        <span class="value"></span> 
+      </div>
+      alle ore
+      <div class="fill fill--xshort">
+        <span class="value"></span> 
+      </div>
     </div>
-    lì
-    <div class="fill fill--short">
-      <span class="value"></span>
-    </div>
-    &nbsp
-    &nbsp
-    &nbsp
-    il dichiarante
-    <div class="fill fill--mid">
-      <span class="value"></span> 
+
+    <div class="textbox-end">
+      <div class="fill fill--short">
+        <span class="value"></span>
+      </div>
+      lì
+      <div class="fill fill--short">
+        <span class="value"></span>
+      </div>
+      &nbsp
+      &nbsp
+      &nbsp
+      il dichiarante
+      <div class="fill fill--mid">
+        <span class="value"></span> 
+      </div>
     </div>
   </div>
 
