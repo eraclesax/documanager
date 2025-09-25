@@ -90,6 +90,10 @@
     transform: translateY(-1.3mm);
     box-sizing: border-box; /* così padding non si somma male */
   }
+  #footer .fill { 
+    margin-top: 4mm;
+    transform: translateY(-1.3mm);
+  }
   .fill--xshort { 
     min-width: 15mm;
   }
@@ -136,14 +140,20 @@
     margin: 10mm 0;
   }
   /* end page text */
-  /* .endpage {
+  .entire-page {
+    display: flex;
     position: absolute;
     left: 0px;
-    top: -1px;
-    padding: 0 2mm;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+  }
+  .endpage {
     margin-top: auto;
-    border: 1px solid #ff0303 ;
-  } */
+    padding-left: 5mm;
+    padding-right: 5mm;
+    padding-bottom: 20px;
+  }
 
   /* Sign footer */
   .sign-section {
@@ -564,48 +574,50 @@
   </div>
 
 
-  <div class="endpage">
-    <div class="textbox">
-      Il sottoscritto
-      <div class="fill fill--mid">
-        <span class="value"></span> 
+  <div class="entire-page">
+    <div class="endpage" id="footer">
+      <div class="textbox">
+        Il sottoscritto
+        <div class="fill fill--mid">
+          <span class="value"></span> 
+        </div>
+        addetto alla struttura ricevente
+        <div class="fill fill--mid">
+          <span class="value"></span> 
+        </div>
+        denominata
+        <div class="fill fill--mid">
+          <span class="value"></span> 
+        </div>
+        sita in
+        <div class="fill fill--mid">
+          <span class="value"></span> 
+        </div>
+        riceve il feretro sopra indicato il giorno
+        <div class="fill fill--short">
+          <span class="value"></span> 
+        </div>
+        alle ore
+        <div class="fill fill--xshort">
+          <span class="value"></span> 
+        </div>
       </div>
-      addetto alla struttura ricevente
-      <div class="fill fill--mid">
-        <span class="value"></span> 
-      </div>
-      denominata
-      <div class="fill fill--mid">
-        <span class="value"></span> 
-      </div>
-      sita in
-      <div class="fill fill--mid">
-        <span class="value"></span> 
-      </div>
-      riceve il feretro sopra indicato il giorno
-      <div class="fill fill--short">
-        <span class="value"></span> 
-      </div>
-      alle ore
-      <div class="fill fill--xshort">
-        <span class="value"></span> 
-      </div>
-    </div>
 
-    <div class="textbox-end">
-      <div class="fill fill--short">
-        <span class="value"></span>
-      </div>
-      lì
-      <div class="fill fill--short">
-        <span class="value"></span>
-      </div>
-      &nbsp
-      &nbsp
-      &nbsp
-      il dichiarante
-      <div class="fill fill--mid">
-        <span class="value"></span> 
+      <div class="textbox-end">
+        <div class="fill fill--short">
+          <span class="value"></span>
+        </div>
+        lì
+        <div class="fill fill--short">
+          <span class="value"></span>
+        </div>
+        &nbsp
+        &nbsp
+        &nbsp
+        il dichiarante
+        <div class="fill fill--mid">
+          <span class="value"></span> 
+        </div>
       </div>
     </div>
   </div>
