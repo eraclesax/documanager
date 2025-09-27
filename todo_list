@@ -1,3 +1,12 @@
+
+
+Se la memoria esterna non funziona:
+
+cd /media/riso/
+sudo mkdir TOSHIBA\ EXT
+ls
+sudo mount -t ntfs-3g /dev/sda1 /media/riso/TOSHIBA\ EXT
+
 Deploiment practice:
 https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 https
@@ -8,7 +17,6 @@ apt install libpangocairo-1.0-0
 
 
 Comandi utili
-
 Impostazioni nginx e gunicorn:
     sudo nano /etc/nginx/sites-available/documanager
     Su aws linux:
@@ -46,15 +54,9 @@ Indirizzi dns per connettersi con ssh:
 ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-171-113-111.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-13-51-193-252.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-60-228-41.eu-north-1.compute.amazonaws.com
-ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-3-238-40-176.compute-1.amazonaws.com
+ssh -i "/home/riso/.ssh/ec2us_east_1.pem" ubuntu@ec2-3-238-40-176.compute-1.amazonaws.com
 
 
-
-
-cd /media/riso/
-sudo mkdir TOSHIBA\ EXT
-ls
-sudo mount -t ntfs-3g /dev/sda1 /media/riso/TOSHIBA\ EXT
 
 
 --------------------------------------------------
@@ -79,9 +81,9 @@ https://www.giannifavilli.it/blog/python-django-su-webserver-nginx-e-gunicorn/
         apt install sqlite3
         Opzionali
 
-        apt install curl git nano build-essential – Tool Sviluppo
-        apt install python3-certbot-nginx – Certbot
-        apt install libpq-dev postgresql postgresql-contrib – PostgreSQL)
+        apt install curl git nano build-essential - Tool Sviluppo
+        apt install python3-certbot-nginx - Certbot
+        apt install libpq-dev postgresql postgresql-contrib - PostgreSQL)
 Qui installo python
     sudo yum groupinstall "Development Tools" -y
     sudo yum install gcc openssl-devel bzip2-devel libffi-devel -y
@@ -144,12 +146,17 @@ creo un file .env
     touch .env
     nano .env
 dentro ci metto
-    ALLOWED_HOST=13.60.228.41
-    DJANGO_SECRET_KEY=django-insecure-6@&(ti2fkhl&g0$ar)&wv=04+@6-lo8%l17@a(-0s4s&rf4oci
-    DEBUG=False
-    STATIC_ROOT=/var/www/documanager/static
+ALLOWED_HOST=3.238.40.176
+DJANGO_SECRET_KEY=6@&(ti2fkhl&g0$ar)&wv=04+@6-lo8%l17@a(-0s4s&rf4oci
+DEBUG=False
+DEBUG_EMAIL=False
+STATIC_ROOT=/var/www/documanager/static
 L'host è quello pubblico dichiarato dal provider
 L'ultima opzione serve per Nginx, è la cartella dove andrà a prendersi i file statici
+
+creo il database e sposto i file statici
+    python manage.py migrate
+    python manage.py collectstatic
 
 Installo Gunicorn (nel venv)
     pip install gunicorn
@@ -157,9 +164,6 @@ Ne testo il funzionamento
     gunicorn --bind 0.0.0.0:8000 core.wsgi:application
 (se vedi la tua app su <EC2_PUBLIC_IP>:8000, funziona ✅),
 
-creo il database e sposto i file statici
-    python manage.py migrate
-    python manage.py collectstatic
 
 Crea un service systemd per avvio automatico:
     sudo nano /etc/systemd/system/gunicorn.service
@@ -169,10 +173,13 @@ contenuto:
     After=network.target
 
     [Service]
-    User=ec2-user
-    Group=nginx
-    WorkingDirectory=/home/ec2-user/documanager
-    ExecStart=/home/ec2-user/documanager/venv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn/documanager.sock core.wsgi:application
+    User=ubuntu
+    Group=www-data
+    WorkingDirectory=/var/www/documanager/documanager
+    ExecStart=/var/www/documanager/documanager/venv/bin/gunicorn \
+        --workers 3 \
+        --bind unix:/run/gunicorn/documanager.sock \
+        core.wsgi:application
 
     [Install]
     WantedBy=multi-user.target
@@ -196,22 +203,22 @@ Una versione modificata che esplicita una variabile d'ambiente e l'indirizzo del
     WantedBy=multi-user.target
 
 Creo la cartella in cui andrò a mettere il socket. Deve essere accessibile di nginx:
-    sudo mkdir -p /run/gunicorn
-    sudo chown ec2-user:nginx /run/gunicorn
+    sudo mkdir -p /var/www/run/gunicorn
+    sudo chown ubuntu:www-data /var/www/run/gunicorn
 Poi:
     sudo systemctl start gunicorn
     sudo systemctl enable gunicorn
     sudo systemctl status gunicorn
 
 Configuro Nginx:
-Creo la cartella per i file statici
+Creo la cartella per i file statici (ma dovrebbe già essere stata creata)
     sudo mkdir -p /var/www/documanager/static
 Imposta la directory statica con gid e permessi di gruppo corretti:
 (a volte l'utente nginx è www-data)
-    sudo chown -R ec2-user:nginx /var/www/documanager/static
+    sudo chown -R ubuntu:www-data /var/www/documanager/static
     sudo chmod 2775 /var/www/documanager/static
-Aggiungi il tuo utente al gruppo nginx
-    sudo usermod -a -G nginx ec2-user
+Aggiungi il tuo utente al gruppo di nginx
+    sudo usermod -a -G www-data ubuntu
 Controlla i permessi:
     ls -ld /var/www/documanager/static
 Dovresti vedere qualcosa tipo:
@@ -223,20 +230,20 @@ Convenzione di ubuntu:
 Convenzione amazon linux:
     sudo nano /etc/nginx/conf.d/documanager.conf
 contenuto per Ubuntu:
-    server {
-        listen 80;
-        server_name 13.60.228.41;
+server {
+    listen 80;
+    server_name 3.238.40.176;
 
-        location = /favicon.ico { access_log off; log_not_found off; }
-        location /static/ {
-            root /var/www/documanager/static/;
-        }
-
-        location / {
-            include proxy_params;
-            proxy_pass http://unix:/var/www/documanager/run/gunicorn.sock;
-        }
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /var/www/documanager/static/;
     }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+    }
+}
 contenuto per Amazon Linux (vedi chat con ChatGPT5, è stato difficilissimo, sono stato 3 giorni):
 upstream documanager {
     server unix:/var/www/documanager/run/gunicorn.sock fail_timeout=0;
@@ -284,8 +291,8 @@ creo la cartella static e la cartella logs
 Attiva la config:
     sudo ln -s /etc/nginx/sites-available/documanager /etc/nginx/sites-enabled
     sudo nginx -t
-    sudo systemctl restart nginx
-Vai su http://13.60.228.41 → dovrebbe comparire la tua app Django 🎉
+    sudo systemctl start nginx
+Vai su http://3.238.40.176 → dovrebbe comparire la tua app Django 🎉
 
 
 
@@ -316,9 +323,9 @@ https://www.giannifavilli.it/blog/python-django-su-webserver-nginx-e-gunicorn/
         apt install sqlite3
         Opzionali
 
-        apt install curl git nano build-essential – Tool Sviluppo
-        apt install python3-certbot-nginx – Certbot
-        apt install libpq-dev postgresql postgresql-contrib – PostgreSQL)
+        apt install curl git nano build-essential - Tool Sviluppo
+        apt install python3-certbot-nginx - Certbot
+        apt install libpq-dev postgresql postgresql-contrib - PostgreSQL)
 Qui installo python
     sudo yum groupinstall "Development Tools" -y
     sudo yum install gcc openssl-devel bzip2-devel libffi-devel -y
@@ -470,7 +477,7 @@ Installa certbot
     sudo apt update
     sudo apt install certbot python3-certbot-nginx -y
 Richiedi il certificato
-    sudo certbot --nginx -d tuodominio.it -d www.tuodominio.it
+    sudo certbot --nginx -d archetti.click -d www.archetti.click
 
 -------------------------------------------------------------------
 

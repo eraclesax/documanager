@@ -1,19 +1,34 @@
-import datetime
-from django.db.models import query
-from django.forms import widgets
-from django.forms.widgets import HiddenInput
-from django.utils import timezone
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column
+from crispy_forms.layout import Layout, Fieldset
+from crispy_forms.helper import FormHelper
 from django.utils.translation import gettext_lazy as _
 from .models import *
 
 class DefuntoEditForm(forms.ModelForm):
+    
+    ## Crispy forms helper for formatting staff
+    helper = FormHelper()
+
+    # data_nascita = forms.DateField(
+    # widget=forms.TextInput(attrs={'type': 'date'})
+    # )        
+    # codice_fiscale = forms.CharField(
+    #     max_length=16,
+    #     required=False,
+    #     widget=forms.TextInput(
+    #         attrs={
+    #             "style": "text-transform: uppercase;",
+    #             # "placeholder": "Codice fiscale del defunto",
+    #             "oninput": "this.value = this.value.toUpperCase()"
+    #         }
+    #     )
+    # )
+
     class Meta:
         from .models import AnagraficaDefunto
         model = AnagraficaDefunto
-        exclude = ("id",)
+        exclude = AnagraficaDefunto.NON_USER_FIELDS
         # labels = {
         #     "name":"Nome",
         #     "full_address":"Indirizzo",
@@ -22,10 +37,123 @@ class DefuntoEditForm(forms.ModelForm):
         #     "country":"Stato",
         # }
         
-    ## Crispy forms helper for formatting staff
-    helper = FormHelper()
     def __init__(self, *args,**kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) 
+        
+        # Dividi i dati in categorie nel form di input
+        # self.helper.form_method = 'post'
+        fieldsets = []
+        for key,values in AnagraficaDefunto.FIELD_CATEGORIES.items():
+            fieldsets.append(
+                Fieldset(
+                    key,
+                    *[value for value in values],
+                )
+            )
+        self.helper.layout = Layout(*[fieldset for fieldset in fieldsets])
+
+        # Uso widget date e datetime picker
+        # self.fields["data_nascita"].widget = forms.SelectDateWidget(years=[y for y in range(1900,datetime.today().year)])comune_sepoltura
+        self.fields["data_nascita"].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields['data_doc_def'].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields['data_decesso'].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields["ora_decesso"].widget = forms.TextInput(attrs={'type': 'time'})
+        self.fields['data_nascita_parente'].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields['data_doc_par'].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields['data_ora_funerale'].widget = forms.TextInput(attrs={'type': 'datetime-local'})
+        self.fields['data_ora_partenza'].widget = forms.TextInput(attrs={'type': 'datetime-local'})
+        self.fields['data_incarico'].widget = forms.TextInput(attrs={'type': 'date'})
+        self.fields['data_firma'].widget = forms.TextInput(attrs={'type': 'date'})
+        # Inserimento in uppercase
+        self.fields['codice_fiscale'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['codice_fiscale_par'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_nascita'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_residenza'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_decesso'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_salma'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_chiesa'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['provincia_sepoltura'].widget.attrs['style'] = 'text-transform: uppercase;'
+        # Placeholders
+        self.fields['via_residenza'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        self.fields['via_decesso'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        self.fields['via_salma'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        self.fields['via_residenza_par'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        # self.fields['data_inumazione'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
+        # self.fields['ora_inumazione'].widget.attrs['placeholder'] = 'Es. 21:45'
+        self.fields['affissione_manifesti'].widget.attrs['placeholder'] = 'Esempio:\nRionero in Vulture\nBarile\necc.'
+        # aggiungo un onchange al select di stato_civile
+        self.fields['stato_civile'].widget.attrs.update({
+            'onchange': 'toggleConiugeFields(this.value);'
+        })
+        self.fields['tipo_luogo_salma'].widget.attrs.update({
+            'onchange': 'toggleLuogoSalmaFields(this.value);'
+        })
+        # # inizialmente nascondo i campi coniuge
+        # self.fields['cognome_coniuge'].widget.attrs.update({
+        #     'style': 'display:none;'
+        # })
+        # self.fields['nome_coniuge'].widget.attrs.update({
+        #     'style': 'display:none;'
+        # })
+
+    def clean_codice_fiscale(self):
+        value = self.cleaned_data["codice_fiscale"]
+        # Validazione sul numero di caratteri
+        if value is None:
+            return None
+        value = value.strip()
+        if len(value) != 16:
+            raise forms.ValidationError("Il codice fiscale deve avere esattamente 16 caratteri.")
+        # Salva in uppercase
+        value = value.upper()
+        return value
+
+    def clean_codice_fiscale_par(self):
+        value = self.cleaned_data["codice_fiscale_par"]
+        # Validazione sul numero di caratteri
+        if value is None:
+            return None
+        value = value.strip()
+        if len(value) != 16:
+            raise forms.ValidationError("Il codice fiscale deve avere esattamente 16 caratteri.")
+        # Salva in uppercase
+        value = value.upper()
+        return value
+    
+    def clean_provincia_nascita(self):
+        value = self.cleaned_data['provincia_nascita']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_residenza(self):
+        value = self.cleaned_data['provincia_residenza']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_decesso(self):
+        value = self.cleaned_data['provincia_decesso']
+        if value:
+            value = value.upper()
+        return value
+    def clean_provincia_salma(self):
+        value = self.cleaned_data['provincia_salma']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_chiesa(self):
+        value = self.cleaned_data['provincia_chiesa']
+        if value:
+            value = value.upper()
+        return value
+    
+    def clean_provincia_sepoltura(self):
+        value = self.cleaned_data['provincia_sepoltura']
+        if value:
+            value = value.upper()
+        return value
 
 class DynamicJsonConfigForm(forms.Form):
     """

@@ -1,0 +1,290 @@
+{% load static %}
+
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>{{doc_name}}</title>
+<style>
+  /* --- pagina A4 e stampa --- */
+  @page { size: A4; margin: 12mm 15mm; }
+  @media print { html, body { background: #fff; } }
+
+  body { 
+    font-family: "Times New Roman", Georgia, serif; 
+    color:#000; 
+    font-size: 14pt; 
+    text-align: justify; 
+    line-height:10mm
+  }
+  .sheet { 
+    width: 170mm; 
+    margin: 0 auto; 
+  }
+
+  h4.declaration {
+    display: block;
+    font-size: 14pt;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+    font-weight:700;
+  }
+  /* header */
+  .header { 
+    display:flex; 
+    align-items:top; 
+    justify-content:space-between; 
+    margin-bottom: 6mm; 
+  }
+  .logo {
+    text-align: center; 
+    margin-bottom: 0mm; 
+  }
+  .title { 
+    flex:1; 
+    text-align:center; 
+    font-size: 20pt; 
+    font-weight:700; 
+    letter-spacing: .3mm; 
+    color:rgb(0, 0, 0); 
+    margin-bottom: 5mm;
+  }
+
+  /* righe modulo */
+  div.recipient { 
+    text-align:right; 
+    font-size: 16pt; 
+    padding-top: 5mm; 
+    margin-bottom: 10mm;
+  }
+  .textbox {
+    display:block; 
+  }
+  .fill { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    border-bottom: 1px solid #000; 
+    padding-left: 2mm;
+    padding-right: 2mm;
+
+    width: fit-content;
+    text-align: center;   /* <-- centra inline e inline-block */
+    transform: translateY(-2.5mm);
+    box-sizing: border-box; /* così padding non si somma male */
+  }
+  .fill--xshort { 
+    min-width: 15mm;
+  }
+  .fill--short { 
+    min-width: 25mm;
+  }
+  .fill--mid   { 
+    min-width: 50mm; 
+  }
+  .fill--large   { 
+    min-width: 75mm; 
+  }
+  .fill--xlarge   { 
+    min-width: 100mm; 
+  }
+  .fill--xxlarge   { 
+    min-width: 120mm; 
+  }
+  .value { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    transform: translateY(1.5mm);
+  }
+  .spacer { 
+    flex:0 0 6mm; 
+  }
+
+  /* separatore a freccia */
+  .arrow-sep-svg {
+    display: block;
+    width: 100%;
+    height: 4px;      /* puoi aumentare se vuoi punte più grandi */
+    margin: 10mm 0;
+  }
+
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5mm;
+    gap: 30mm; /* space between date and signature */
+  }
+  .sign-block {
+    flex: 0 0 40%;
+    margin-top: 10mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sign-label {
+    margin-bottom: 0mm;
+  }
+  .sign-bar {
+    width: 30%;
+    border-bottom: 1.5px solid #000;
+    position: relative;
+    height: 13mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign-date {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 15pt;
+    transform: translate(-50%, -30%);
+    background: #ffffff00;
+    padding: 0 4mm;
+  }
+  .sign-img {
+    max-height: 18mm;
+    max-width: 80mm;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff00;
+    padding: 0 2mm;
+  }
+
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<div class="recipient">
+  <b>
+    <div>Spett.le</div>
+    <div>Onoranze Funebri</div>
+    <div>ARCHETTI</div>
+  </b>
+</div>
+
+<div class="textbox">
+  {% if defunto.sesso_par == 'M' %}
+    Il sottoscritto
+  {% elif defunto.sesso_par == 'F' %}
+    La sottoscritta
+  {% else %}
+    Il/La sottoscritto/a
+  {% endif %}
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.cognome_parente | default_if_none:"" }} {{ defunto.nome_parente | default_if_none:"" }}</span>
+  </div>
+  {% if defunto.sesso_par == 'M' %}
+    nato
+  {% elif defunto.sesso_par == 'F' %}
+    nata
+  {% else %}
+    nato/a
+  {% endif %}
+  a
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.comune_nascita_par | default_if_none:"" }} {% if defunto.provincia_nascita_par %}({{ defunto.provincia_nascita_par | default_if_none:"" }}){% endif %}</span>
+  </div>
+  il
+  <div class="fill fill--short">
+    <span class="value">{{ defunto.data_nascita_par | date:"d/m/Y"  }} </span>
+  </div>
+  residente a
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.comune_residenza_par | default_if_none:"" }} {% if defunto.provincia_residenza_par %}({{ defunto.provincia_residenza_par | default_if_none:"" }}){% endif %}</span>
+  </div>
+  in 
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.via_residenza_par | default_if_none:"" }} </span>
+  </div>
+  documento di riconoscimento
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.doc_ric_par | default_if_none:"" }} {{ defunto.n_doc_ric_par | default_if_none:"" }}</span>
+  </div>
+  rilasciato da
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.ente_doc_par | default_if_none:"" }} </span>
+  </div>
+  in data 
+  <div class="fill fill--short">
+    <span class="value">{{ defunto.data_doc_par | date:"d/m/Y"  }} </span>
+  </div>
+  in qualità di
+  <div class="fill fill--short">
+    <span class="value">{{ defunto.tipo_parente | default_if_none:"" }} </span>
+  </div>
+  {% if defunto.sesso_par == 'M' %}
+    del defunto
+  {% elif defunto.sesso_par == 'F' %}
+    della defunta
+  {% else %}
+    del/la defunto/a 
+  {% endif %}
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.cognome | default_if_none:"" }} {{ defunto.nome | default_if_none:"" }}</span>
+  </div>
+  {% if defunto.sesso == 'M' %}
+    nato
+  {% elif defunto.sesso == 'F' %}
+    nata
+  {% else %}
+    nato/a
+  {% endif %} 
+  a 
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.comune_nascita | default_if_none:"" }} {% if defunto.provincia_nascita %}({{ defunto.provincia_nascita | default_if_none:"" }}){% endif %}</span>
+  </div>
+  il 
+  <div class="fill fill--short">
+    <span class="value">{{ defunto.data_nascita|date:"d/m/Y" }}</span> 
+  </div>
+  e 
+  {% if defunto.sesso == 'M' %}
+    deceduto
+  {% elif defunto.sesso == 'F' %}
+    deceduta
+  {% else %}
+    deceduto/a
+  {% endif %} 
+  a
+  <div class="fill fill--mid">
+    <span class="value">{{ defunto.comune_decesso | default_if_none:"" }} {% if defunto.provincia_decesso %}({{ defunto.provincia_decesso | default_if_none:"" }}){% endif %}</span>
+  </div>
+  il 
+  <div class="fill fill--short">
+    <span class="value">{{ defunto.data_decesso|date:"d/m/Y" | default_if_none:"" }}</span> 
+  </div>
+
+  <h4 class="declaration">
+    INCARICA
+  </h4>
+
+  <div class="textbox" style="text-align: center; padding-top: 2mm;">
+    Il sig. NARDOZZA CARMINE nato a VENOSA (PZ) il 28/08/1976, residente
+    a RIONERO IN V.RE (PZ) in Via DEGLI ULIVI, 5 , titolare delle Onoranze
+    Funebri ARCHETTI p.iva 01842590760 autorizzato all’esercizio dell’attività 
+    funebre dal Comune di RIONERO IN V.RE all’espletamento dei servizi funebri 
+    del defunto sopra citato sia direttamente che tramite terzi.
+  </div>
+ 
+  <div class="sign-section">
+    <div class="sign-block">
+      <div class="sign-label">Data</div>
+      <div class="sign-bar">
+        <span class="sign-date">{{ defunto.data_firma|date:"d/m/Y" }}</span>
+      </div>
+    </div>
+    <div class="sign-block">
+      <div class="sign-label">Firma</div>
+      <div class="sign-bar">
+        
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

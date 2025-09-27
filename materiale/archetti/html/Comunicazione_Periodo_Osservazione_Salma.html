@@ -1,0 +1,251 @@
+{% load static %}
+
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>{{doc_name}}</title>
+<style>
+  /* --- pagina A4 e stampa --- */
+  @page { size: A4; margin: 12mm 15mm; }
+  @media print { html, body { background: #fff; } }
+
+  body { 
+    font-family: "Times New Roman", Georgia, serif; 
+    color:#000; 
+    font-size: 13pt; 
+    text-align: justify; 
+    line-height:8mm
+  }
+  h4.declaration {
+    display: block;
+    font-size: 14pt;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+    font-weight:700;
+  }
+  footer {
+    margin-top: 5mm;
+    margin-bottom: 1mm;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+  }
+  footer h4 {
+    font-size: 14pt;
+    font-weight:500;
+  }
+  .sheet { width: 170mm; margin: 0 auto; }
+
+  /* header */
+  .header { display:flex; align-items:top; justify-content:space-between; margin-bottom: 6mm; }
+  .logo {text-align: center; margin-bottom: 0mm; }
+  .title { flex:1; text-align:center; font-size: 20pt; font-weight:700; letter-spacing: .3mm; color:rgb(0, 0, 0); margin-bottom: 5mm;}
+
+  /* righe modulo */
+  div.recipient { 
+    text-align:right; 
+    font-size: 16pt; 
+    padding-top: 5mm; 
+    margin-bottom: 5mm;
+  }
+  .textbox {
+    display:block; 
+  }
+  .fill { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    border-bottom: 1px solid #000; 
+    padding-left: 2mm;
+    padding-right: 2mm;
+
+    width: fit-content;
+    text-align: center;   /* <-- centra inline e inline-block */
+    transform: translateY(-2.5mm);
+    box-sizing: border-box; /* così padding non si somma male */
+  }
+  .fill--short { 
+    min-width: 30mm;
+  }
+  .fill--mid   { 
+    min-width: 60mm; 
+  }
+  .value { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    transform: translateY(1.5mm);
+  }
+  .spacer { 
+    flex:0 0 6mm; 
+  }
+
+  /* separatore a freccia */
+  .arrow-sep-svg {
+    display: block;
+    width: 100%;
+    height: 4px;      /* puoi aumentare se vuoi punte più grandi */
+    margin: 10mm 0;
+  }
+
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5mm;
+    gap: 30mm; /* space between date and signature */
+  }
+  .sign-block {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sign-label {
+    font-size: 12pt;
+    margin-bottom: 0mm;
+  }
+  .sign-bar {
+    width: 30%;
+    border-bottom: 1.5px solid #000;
+    position: relative;
+    height: 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign-date {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13pt;
+    background: #ffffff00;
+    padding: 0 4mm;
+  }
+  .sign-img {
+    max-height: 18mm;
+    max-width: 80mm;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff00;
+    padding: 0 2mm;
+  }
+
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="recipient">
+    <span class="recipient">Spett.le Ufficio Sanitario</span>
+  </div>
+
+  <div class="textbox">
+      Il sottoscritto NARDOZZA CARMINE in qualità di titolare dell’Agenzia di
+      Onoranze e Trasporti Funebri Archetti P. Iva 01842590760 SUAP 1814 del
+      28/12/2012 del Comune di Rionero in V. presso il quale ha la sede legale e
+      commerciale, incaricato dai famigliari in data 
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_incarico|date:"d/m/Y" |default_if_none:"" }}</span>
+      </div>
+       a svolgere il servizio funebre 
+      {% if defunto.sesso == 'M' %}del{% elif defunto.sesso == 'F' %}della{% else %}del/della{% endif %} 
+      {% if defunto.sesso == 'M' %}sig.{% elif defunto.sesso == 'F' %}sig.ra{% else %}sig./sig.ra{% endif %} 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.cognome | default_if_none:"" }} {{ defunto.nome | default_if_none:"" }}</span>
+      </div>
+      {% if defunto.sesso == 'M' %}nato{% elif defunto.sesso == 'F' %}nata{% else %}nato/a{% endif %} 
+      a 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_nascita | default_if_none:"" }} {% if defunto.provincia_nascita %}({{ defunto.provincia_nascita | default_if_none:"" }}){% endif %}</span>
+      </div>
+      il 
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_nascita|date:"d/m/Y" |default_if_none:"" }}</span> 
+      </div>
+      e 
+      {% if defunto.sesso == 'M' %}deceduto{% elif defunto.sesso == 'F' %}deceduta{% else %}deceduto/a{% endif %} 
+      presso 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_decesso | default_if_none:"" }} {% if defunto.provincia_decesso %}({{ defunto.provincia_decesso | default_if_none:"" }}){% endif %}</span>
+      </div>
+      in 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.via_decesso | default_if_none:"" }}</span> 
+      </div>
+      il 
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_decesso|date:"d/m/Y" | default_if_none:"" }}</span> 
+      </div>
+  </div>
+  <h4 class="declaration">
+    COMUNICA CHE PER LA PRESCRITTA OSSERVAZIONE LA SALMA
+  </h4>
+
+  <div class="textbox">
+    si trova presso 
+    {% if defunto.tipo_luogo_salma == 'Abitazione privata' %}
+      abitazione privata situata a
+    {% elif defunto.tipo_luogo_salma == 'Istituto / Casa di riposo / Struttura obitoriale / Ospedale' %}
+      istituto / casa di riposo / struttura obitoriale / ospedale situata a
+    {% else %}
+      abitazione privata / istituto / casa di riposo / struttura obitoriale / ospedale situato a
+    {% endif %} 
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}</span>
+    </div>
+    in 
+    <div class="fill fill--mid">
+      <span class="value">{{ defunto.via_salma | default_if_none:"" }}</span> 
+    </div>
+  </div>
+
+  <svg class="arrow-sep-svg" viewBox="0 0 200 12" preserveAspectRatio="none"
+     role="img" aria-label="Separatore a doppia freccia">
+    <!-- linea -->
+    <line x1="50" y1="6" x2="150" y2="6" stroke="#333" stroke-width="3" />
+    <!-- punta sinistra -->
+    <polygon points="50,6 53,0 53,12" fill="#333" />
+    <!-- punta destra -->
+    <polygon points="150,6 147,0 147,12" fill="#333" />
+  </svg>
+
+  Il trasporto e corteo funebre sarà effettuato dopo il periodo di osservazione il giorno 
+  <div class="textbox">
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_ora_funerale |date:"d/m/Y" }}</span> 
+    </div>
+    alle ore 
+    <div class="fill fill--short">
+      <span class="value">{{ defunto.data_ora_funerale |date:"H:i" }}</span>
+    </div>
+    . 
+  </div>
+ 
+  <div class="sign-section">
+    <div class="sign-block">
+      <div class="sign-label">Data</div>
+      <div class="sign-bar">
+        <span class="sign-date">{{ defunto.data_firma|date:"d/m/Y" }}</span>
+      </div>
+    </div>
+    <div class="sign-block">
+      <div class="sign-label">Firma</div>
+      <div class="sign-bar">
+        <img class="sign-img" src="{{user.profile.signature.url}}" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <!-- <footer>
+    <h5>
+      LA COMUNICAZIONE VIENE PRESENTATA IN OSSERVANZA ALLE DISPOSIZIONI DELLA LEGGE REGIONALE n. 11/2016
+    </h5>
+  </footer> -->
+
+</div>
+</body>
+</html>

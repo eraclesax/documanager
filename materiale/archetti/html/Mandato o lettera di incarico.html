@@ -1,0 +1,712 @@
+{% load static %}
+
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Mandato o Lettera di Incarico</title>
+<style>
+  /* --- pagina A4 e stampa --- */
+  @page { size: A4; margin: 25mm 15mm; }
+  @media print { 
+    html, body { background: #fff; }
+   .page, .page-break { break-after: page; }
+  }
+
+  body { 
+    font-family: "Times New Roman", Georgia, serif; 
+    color:#000; 
+    font-size: 14pt; 
+    text-align: justify; 
+    line-height:10mm
+  }
+  h4.declaration {
+    display: block;
+    font-size: 12pt;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+    font-weight:700;
+  }
+  .sheet { 
+    display: block;
+    width: 170mm; 
+    margin: 0 auto; 
+    padding-top: 6mm;
+  }
+
+  /* header */
+  .header { 
+    display:flex; 
+    align-items:top; 
+    justify-content:space-between; 
+    margin-bottom: 6mm; 
+  }
+  .logo {
+    text-align: center; 
+    margin-bottom: 0mm; 
+  }
+  .title { 
+    text-align:center; 
+    font-size: 12pt; 
+    font-weight:700; 
+    line-height:1mm;
+    color:rgb(0, 0, 0); 
+    margin-bottom: 8mm;
+  }
+
+  /* righe modulo */
+  div.recipient { 
+    text-align:right; 
+    font-size: 16pt; 
+    padding-top: 5mm; 
+    margin-bottom: 5mm;
+  }
+  .row { 
+    display:flex; 
+    align-items:flex-end; 
+    flex-wrap:nowrap; 
+    gap: 3mm; 
+    margin-bottom: 2mm; 
+  }
+  .textbox {
+    display:block; 
+    font-size: 12pt;
+    line-height: 5mm;
+  }  
+  .textbox-end {
+    display:block; 
+    font-size: 12pt;
+    line-height: 5mm;
+    text-align: left;
+  }
+  .fill { 
+    display: inline-block; /* o block, dipende dal contesto */ 
+    border-bottom: 1px solid #000;
+    padding-left: 2mm;
+    padding-right: 2mm;
+    margin-top: 2.50mm;
+
+    width: fit-content;
+    text-align: center;   /* <-- centra inline e inline-block */
+    transform: translateY(-1.3mm);
+    box-sizing: border-box; /* così padding non si somma male */
+  }
+  #footer .fill { 
+    margin-top: 4mm;
+    transform: translateY(-1.3mm);
+  }
+  .fill--xshort { 
+    min-width: 15mm;
+  }
+  .fill--short { 
+    min-width: 25mm;
+  }
+  .fill--mid   { 
+    min-width: 50mm; 
+  }
+  .fill--large   { 
+    min-width: 75mm; 
+  }
+  .fill--xlarge   { 
+    min-width: 100mm; 
+  }
+  .fill--xxlarge   { 
+    min-width: 120mm; 
+  }
+  .fill--all { 
+    min-width: 166mm; 
+  }
+  .value { 
+    display:inline-block; /* o block, dipende dal contesto */ 
+    transform: translateY(0.5mm);
+  }
+  .spacer { 
+    flex:0 0 6mm; 
+  }
+  .tab {
+      padding-left:5em;
+  }
+  .inline-sign-img {
+    max-height: 14mm;
+    max-width: 62mm;
+    transform: translate(0%, 30%);
+    margin-top: -15px;
+    background: #ffffff00;
+  }
+  /* separatore a freccia */
+  .arrow-sep-svg {
+    display: block;
+    width: 100%;
+    height: 4px;      /* puoi aumentare se vuoi punte più grandi */
+    margin: 10mm 0;
+  }
+  /* end page text */
+  .entire-page {
+    display: flex;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+  }
+  .endpage {
+    margin-top: auto;
+    padding-left: 5mm;
+    padding-right: 5mm;
+    padding-bottom: 20px;
+  }
+
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between; /* Data a sinistra, Firma a destra */
+    margin-top: 10mm;               /* spazio prima della sezione */
+  }
+
+  .field {
+    flex: 0 0 40%;                  /* larghezza: 40% ciascuno (puoi variare) */
+    text-align: center;             /* testo centrato sopra la linea */
+    border-bottom: 1px solid #000;  /* linea continua per scrivere */
+    padding-bottom: 7mm;            /* spazio sotto al testo */
+    font-size: 12pt;
+  }
+  /* caselle */
+  .todo { 
+    list-style: none; 
+    padding: 0; 
+    margin: 6px 0px; 
+    font-size: 12pt;
+    line-height: 5mm;
+  }
+  .todo li { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    border-bottom: 0px solid #eee; 
+  }
+  .todo.p0 li {
+    padding: 0px 6px; 
+  }
+  .todo.p1 li {
+    padding: 6px 6px; 
+  }
+  .todo label { 
+    cursor: pointer; 
+    flex: 1; 
+  }
+  .todo input[type="checkbox"] { 
+    width: 9px; 
+    height: 9px; 
+  }
+  /* strike-through quando checked */
+  /* .todo input[type="checkbox"]:checked + label { 
+    text-decoration: line-through; */
+    /* opacity: 0.6;
+  }  */
+  .sigillo { 
+    display: inline-block;
+    height: 10mm;
+    width: 30mm;
+    margin-left: 120mm;
+    margin-top: 15mm;
+    text-align: center;
+    border: 1px solid #000000;; 
+    }
+  /* Sign footer */
+  .sign-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5mm;
+    gap: 30mm; /* space between date and signature */
+  }
+  .sign-block {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sign-label {
+    font-size: 12pt;
+    margin-bottom: 0mm;
+  }
+  .sign-bar {
+    width: 30%;
+    border-bottom: 1.5px solid #000;
+    position: relative;
+    height: 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign-date {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13pt;
+    background: #ffffff00;
+    padding: 0 4mm;
+  }
+  .sign-img {
+    max-height: 18mm;
+    max-width: 80mm;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff00;
+    padding: 0 2mm;
+  }
+
+  .fact-box {
+    border: 1px solid #000;
+    margin: 2.5mm;
+    padding: 2.5mm;
+  }
+
+</style>
+</head>
+<body>
+
+
+  <div class="sheet">
+
+    <div class="textbox">
+      {% if defunto.sesso_par == 'M' %}
+        Il sottoscritto
+      {% elif defunto.sesso_par == 'F' %}
+        La sottoscritta
+      {% else %}
+        Il/La sottoscritto/a
+      {% endif %}
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.cognome_parente | default_if_none:"" }} {{ defunto.nome_parente | default_if_none:"" }}</span>
+      </div>
+      {% if defunto.sesso_par == 'M' %}
+        nato
+      {% elif defunto.sesso_par == 'F' %}
+        nata
+      {% else %}
+        nato/a
+      {% endif %} 
+      il 
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_nascita_parente|date:"d/m/Y" |default_if_none:"" }}</span> 
+      </div>
+      a 
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_nascita_par | default_if_none:"" }} {% if defunto.provincia_nascita_par %}({{ defunto.provincia_nascita_par | default_if_none:"" }}){% endif %}</span>
+      </div>
+      residente a
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_residenza_par | default_if_none:"" }} {% if defunto.provincia_residenza_par %}({{ defunto.provincia_residenza_par | default_if_none:"" }}){% endif %}</span>
+      </div>
+      in
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.via_residenza_par | default_if_none:"" }}</span> 
+      </div>
+      recapito telefonico
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.tel_famiglia | default_if_none:"" }}</span> 
+      </div>
+      C. Fiscale
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.codice_fiscale_par | default_if_none:"" }}</span> 
+      </div>
+      documento di riconoscimento
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.doc_ric_par | default_if_none:"" }} {{ defunto.n_doc_ric_par | default_if_none:"" }}</span> 
+      </div>
+      rilasciato da
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.ente_doc_par | default_if_none:"" }}</span> 
+      </div>
+      in data
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_doc_par|date:"d/m/Y" }}</span> 
+      </div>
+      in qualità di
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.tipo_parente|date:"d/m/Y" }}</span> 
+      </div>
+      {% if defunto.sesso == 'M' %}
+        del defunto
+      {% elif defunto.sesso == 'F' %}
+        della defunta
+      {% else %}
+        del/la defunto/a
+      {% endif %} 
+      :
+    </div>
+
+    <div class="textbox" style="color:#1f497d; margin-top: 2mm;">
+      Nome e cognome
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.nome | default_if_none:"" }} {{ defunto.cognome | default_if_none:"" }}</span> 
+      </div>
+      di anni
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.get_age | default_if_none:"" }}</span> 
+      </div>
+      cittadinanza
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.cittadinanza | default_if_none:"" }}</span> 
+      </div>
+      {% if defunto.sesso == 'M' %}
+        deceduto
+      {% elif defunto.sesso == 'F' %}
+        deceduta
+      {% else %}
+        deceduto/a
+      {% endif %} 
+      alle ore
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.ora_decesso | date:"H:i" }}</span> 
+      </div>
+      del giorno
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_decesso | date:"d/m/Y" }}</span> 
+      </div>
+      presso
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.tipo_luogo_salma | default_if_none:"" }}</span> 
+      </div>
+      {% if defunto.sesso == 'M' %}
+        nato
+      {% elif defunto.sesso == 'F' %}
+        nata
+      {% else %}
+        nato/a
+      {% endif %} 
+      il
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_nascita | date:"d/m/Y" }}</span> 
+      </div>
+      a
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_nascita | default_if_none:"" }}</span> 
+      </div>
+      documento di riconoscimento
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.doc_ric_def | default_if_none:"" }}</span> 
+      </div>
+      N°
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.n_doc_ric_def | default_if_none:"" }}</span> 
+      </div>
+      rilasciato da
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.ente_doc_def | default_if_none:"" }}</span> 
+      </div>
+      il
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_doc_def | date:"d/m/Y" }}</span> 
+      </div>
+      residente in vita a
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.comune_residenza | default_if_none:"" }} {% if defunto.provincia_residenza %}({{ defunto.provincia_residenza | default_if_none:"" }}){% endif %}</span> 
+      </div>
+      in
+      <div class="fill fill--mid">
+        <span class="value">{{ defunto.via_residenza | default_if_none:"" }}</span> 
+      </div>
+    </div>
+
+    <div class="textbox" style="color:#1f497d; margin-top: 2mm;">
+      Stato civile:
+      <ul class="todo p0" aria-label="Lista attività">
+        <li>
+          {% if defunto.stato_civile == "Celibe / nubile"%}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Celibe / nubile
+          </label>
+        </li>
+        <li>
+          {% if defunto.stato_civile == "Coniugato / unito civilmente" %}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Coniugato /a - unito/a civilmente con
+            <div class="fill fill--large" style="border-bottom-color:#1f497d">
+              <span class="value">
+                {% if defunto.stato_civile == "Coniugato / unito civilmente"%}
+                  {{ defunto.cognome_coniuge | default_if_none:"" }} {{ defunto.nome_coniuge | default_if_none:"" }}
+                {% endif %}
+              </span>
+            </div>
+          </label>
+        </li>
+        <li>
+          {% if defunto.stato_civile == "Vedovo" %}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Vedovo /a di
+            <div class="fill fill--large" style="border-bottom-color:#1f497d">
+              <span class="value">
+                {% if defunto.stato_civile == "Vedovo"%}
+                  {{ defunto.cognome_coniuge | default_if_none:"" }} {{ defunto.nome_coniuge | default_if_none:"" }}
+                {% endif %}
+              </span>
+            </div>
+          </label>
+        </li>
+        <li>
+          {% if defunto.stato_civile == "Già coniugato / unito civolmente" %}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Già coniugato/a - unito/a civilmente con
+            <div class="fill fill--large" style="border-bottom-color:#1f497d">
+              <span class="value">
+                {% if defunto.stato_civile == "Già coniugato / unito civolmente"%}
+                  {{ defunto.cognome_coniuge | default_if_none:"" }} {{ defunto.nome_coniuge | default_if_none:"" }}
+                {% endif %}
+              </span>
+            </div>
+          </label>
+        </li>
+      </ul>
+      
+    </div>
+
+    <h4 class="declaration">
+      INCARICO la Ditta “Archetti Ag.di On. e Trasporti Funebri”
+    </h4>
+
+    <div class="textbox">
+      ad espletare le pratiche sia direttamente che tramite terzi, compresa eventuale cremazione, e ad
+      anticipare, a mio nome e per mio conto, tutte le spese relative all’organizzazione del servizio
+      funebre per il/la suddetto/a defunto/a attenendosi a quanto stabilito nel preventivo allegato.
+    </div>
+
+    <div class="textbox">
+      In particolare:
+    </div>
+
+    <div class="textbox">
+      il trasporto funebre avrà inizio il giorno
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_ora_partenza | date:"d/m/Y" }}</span> 
+      </div>
+      alle ore
+      <div class="fill fill--xshort">
+        <span class="value">{{ defunto.data_ora_partenza | date:"H:i" }}</span> 
+      </div>
+      con partenza da
+      <div class="fill fill--mid">
+        <span class="value">
+          {{ defunto.comune_decesso | default_if_none:"" }} 
+          {% if defunto.provincia_decesso %}
+            ({{ defunto.provincia_decesso | default_if_none:"" }})
+          {% endif %}
+        </span>
+      </div>
+      sosta alle ore
+      <div class="fill fill--xshort">
+        <span class="value">{{ defunto.data_ora_funerale | date:"H:i" }}</span> 
+      </div>
+      presso
+      <div class="fill fill--large">
+        <span class="value">
+          {{ defunto.chiesa | default_if_none:"" }} 
+          di
+          {% if defunto.chiesa %}
+            {{ defunto.comune_chiesa | default_if_none:"" }}
+            {% if defunto.provincia_chiesa %}
+              ({{ defunto.provincia_chiesa | default_if_none:"" }})
+            {% endif %}
+          {% endif %}
+        </span>
+      </div>
+      per lo svolgimento del rito religioso/civile e destinazione finale fino al Cimitero di
+      <div class="fill fill--mid">
+        <span class="value">
+          {% if defunto.processo_sepoltura == "Tradizionale"  %}
+            {{ defunto.comune_sepoltura | default_if_none:"" }} 
+            {% if defunto.provincia_sepoltura %}
+              ({{ defunto.provincia_sepoltura | default_if_none:"" }})
+            {% endif %}
+          {% endif %}
+        </span>
+      </div>
+      o Forno Crematorio di
+      <div class="fill fill--mid">
+        <span class="value">
+          {% if defunto.processo_sepoltura == "Cremazione" %}
+            {{ defunto.comune_sepoltura | default_if_none:"" }} 
+            {% if defunto.provincia_sepoltura %}
+              ({{ defunto.provincia_sepoltura | default_if_none:"" }})
+            {% endif %}
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    <div class="entire-page">
+      <div class="endpage" id="footer">
+        <div class="textbox">
+          (pag.1)
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="page-break"></div>
+
+  <div class="sheet">
+
+    <div class="textbox">
+      il cadavere è destinato ad essere:
+      <ul class="todo p1" aria-label="Lista attività">
+        <li>
+          {% if defunto.processo_sepoltura == 'Tradizionale' and defunto.ubicazione_feretro == "Inumazione" %}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Inumato nel suindicato Cimitero.
+          </label>
+        </li>
+        <li>
+          {% if defunto.processo_sepoltura == 'Tradizionale' and defunto.ubicazione_feretro == "Cappella" %}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Tumulato nella Tomba già esistente (concessione tipo
+            <div class="fill fill--short">
+              <span class="value"></span>
+            </div>
+            n.
+            <div class="fill fill--short">
+              <span class="value"></span>
+            </div>
+            )
+          </label>
+        </li>
+        <li>
+          {% if defunto.processo_sepoltura == "Tradizionale" and defunto.ubicazione_feretro == "Tumulazione" %}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Tumulato in sepoltura da prenotare, per la quale diamo specifico mandato.
+          </label>
+        </li>
+        <li>
+          {% if defunto.processo_sepoltura == "Cremazione" %}
+            <input type="checkbox" checked='checked'>
+          {% else %}
+            <input type="checkbox">
+          {% endif %}
+          <label>
+            Cremato con destinazione delle ceneri
+            <div class="fill fill--large">
+              <span class="value"></span>
+            </div>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <div class="textbox">
+      Vogliate intestare la fattura e/o ogni certificazione fiscale inerente al funerale commissionatovi a:
+    </div>
+
+    <div class="fact-box">
+      <div class="textbox">
+        Cognome / Nome
+        <div class="fill fill--xxlarge">
+          <span class="value"></span>
+        </div>
+        Residente a
+        <div class="fill fill--large">
+          <span class="value"></span>
+        </div>
+        Cap
+        <div class="fill fill--short">
+          <span class="value"></span>
+        </div>
+        in Via
+        <div class="fill fill--mid">
+          <span class="value"></span>
+        </div>
+        Recapito telefonico
+        <div class="fill fill--mid">
+          <span class="value"></span>
+        </div>
+        Codice fiscale
+        <div class="fill fill--large">
+          <span class="value"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="textbox" style="padding-top: 2mm;">
+      Rionero in V.re,
+      <div class="fill fill--short">
+        <span class="value">{{ defunto.data_firma | date:"d/m/Y" }}</span>
+      </div>
+      &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+      Firma
+      <div class="fill fill--large">
+        <span class="value"></span>
+      </div>
+
+    </div>
+
+    <div class="textbox" style="margin-top: 5mm; margin-bottom: 5mm;">
+      Per accettazione e per dichiarazione, ai sensi del D.LGS. N. 196/2003 sulla tutela della privacy, di
+      utilizzare i seguenti dati esclusivamente ai fini del servizio funerario commissionato.
+    </div>
+
+    <div class="textbox" style="margin-top: 5mm; margin-bottom: 5mm;">
+      L’impresa “Agenzia di Onoranze e Trasporti Funebri Archetti
+      &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+      &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+      in fede
+    </div>
+
+    <div class="textbox" style="text-align: right;">
+      <div class="fill fill--mid">
+        <span class="value">
+          <img class="inline-sign-img" src="{{user.profile.signature.url}}" alt="" />
+        </span> 
+      </div>
+    </div>
+
+    <div class="textbox" style="margin-top: 10mm; margin-bottom: 5mm;">
+      P.Iva 01842590760 - Codice Fiscale NRD CMN 76M 28L 738H - SUAP 1814 del 28/12/2012 -
+      Numero REA PZ - 138545 del 28/12/2012 -
+    </div>
+
+    <div class="entire-page">
+      <div class="endpage" id="footer">
+        <div class="textbox">
+          (pag.2)
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,91 +1,257 @@
 from datetime import date, time, datetime
 from docdefunto.models import AnagraficaDefunto
+from django.contrib.auth import get_user_model
+from app.models import Organization, User, Profile
 
-def crea_defunto_di_test():
+## DEV SETUP ## 
+
+def setup_superuser(username="admin", password="admin", email="admin@admin.com"):
+    """
+    Crea un superuser e un'organizzazione 'Superusers', e li collega tra loro.
+    Se già esistono, li recupera senza duplicarli.
+    """
+
+    # Crea o recupera l'organizzazione
+    org, org_created = Organization.objects.get_or_create(
+        tag="superusers",
+        # defaults={
+        #     "name": "Superusers", 
+        #     "email": "superusers@admin.com", 
+        #     "domain": "superuser.ade.it",}
+    )
+    if org_created:
+        print("✅ Organizzazione 'Superusers' creata.")
+    else:
+        print("ℹ️ Organizzazione 'Superusers' già esistente.")
+
+    # Crea o recupera il superuser
+    user, created = User.objects.get_or_create(
+        username=username,
+        defaults={
+            "email": email, 
+            "is_superuser": True, 
+            "is_staff": True,}
+    )
+    if created:
+        user.set_password(password)
+        user.save()
+        user.profile, create = Profile.objects.get_or_create(user=user,
+                                             defaults={
+                                                 "organization":org,
+                                             })
+        print(f"✅ Superuser '{username}' creato.")
+    else:
+        print(f"ℹ️ Superuser '{username}' già esistente.")
+        user.profile.organization = org
+        user.profile.save()
+    print(f"✅ Assegnata organizzazione '{org}' a '{username}'.")
+
+    return user, org
+
+def crea_defunto_di_test(username="admin"):
     """
     Crea e salva un'istanza di AnagraficaDefunto con dati fittizi
     per scopi di test. Ritorna l'istanza salvata.
     """
+    user = User.objects.get(username=username)
     defunto = AnagraficaDefunto.objects.create(
+        created_by = user,
+        organization = user.profile.organization,
+        relative_id=1,
+
         # Dati anagrafici
         cognome="Rossi",
         nome="Mario",
         sesso="M",
         cittadinanza="Italiana",
-        comune_nascita="Trieste",
-        provincia_nascita="TS",
-        data_nascita=date(1950, 5, 12),
-        comune_residenza="Trieste",
-        provincia_residenza="TS",
-        via_residenza="Via Roma 1",
-        codice_fiscale="RSSMRA50E12L424Z",
-        doc_ric_def="Carta d'Identità",
-        ente_doc_def="Comune di Trieste",
-        data_doc_def=date(2010, 4, 20),
+        comune_nascita="Napoli",
+        provincia_nascita="NA",
+        data_nascita=date(1950, 5, 20),
+        comune_residenza="Roma",
+        provincia_residenza="RM",
+        via_residenza="Via Garibaldi 10",
+        codice_fiscale="RSSMRA50E20H501X",
+        doc_ric_def="C.I.",
+        n_doc_ric_def="AA1234567",
+        ente_doc_def="Comune di Roma",
+        data_doc_def=date(2010, 6, 15),
 
         # Decesso
-        comune_decesso="Trieste",
-        provincia_decesso="TS",
-        via_decesso="Via Milano 10",
-        ospedale="Ospedale Maggiore",
-        reparto_ospedaliero="Cardiologia",
-        data_morte=date(2023, 3, 15),
-        ora_morte=time(14, 30),
-        tipo_luogo_salma=1,
-        comune_salma="Trieste",
-        provincia_salma="TS",
-        via_salma="Via San Marco 7",
+        comune_decesso="Roma",
+        provincia_decesso="RM",
+        via_decesso="Via Appia 123",
+        data_decesso=date(2025, 1, 1),
+        ora_decesso=time(14, 30),
 
-        # Stato civile e famiglia
-        professione="Pensionato",
-        stato_civile="Coniugato",
-        cognome_parente="Bianchi",
-        nome_parente="Lucia",
-        data_nascita_parente=date(1955, 8, 21),
-        doc_ric_par="Carta d'Identità",
-        ente_doc_par="Comune di Trieste",
-        data_doc_par=date(2015, 9, 10),
+        # Osservazione salma
+        comune_salma="Roma",
+        provincia_salma="RM",
+        tipo_luogo_salma="Ospedale",
+        ospedale="Policlinico Umberto I",
+        reparto_ospedaliero="Cardiologia",
+        via_salma="Via del Policlinico 1",
+
+        # Stato civile
+        professione="Impiegato",
+        stato_civile="Coniugato / unito civilmente",
+        cognome_coniuge="Bianchi",
+        nome_coniuge="Anna",
+
+        # Parente
+        tipo_parente="Figlio",
+        cognome_parente="Rossi",
+        nome_parente="Luca",
+        sesso_par="M",
+        comune_nascita_par="Roma",
+        provincia_nascita_par="RM",
+        data_nascita_parente=date(1980, 7, 15),
+        comune_residenza_par="Roma",
+        provincia_residenza_par="RM",
+        via_residenza_par="Via Milano 45",
+        codice_fiscale_par="RSSLCU80L15H501X",
+        doc_ric_par="C.I.",
+        n_doc_ric_par="BB7654321",
+        ente_doc_par="Comune di Roma",
+        data_doc_par=date(2015, 3, 10),
 
         # Contatti
-        tel_famiglia="040123456",
+        tel_famiglia="061234567",
         email="famiglia.rossi@example.com",
-        altro="Note aggiuntive di test.",
+        altro="Note varie per i test.",
 
         # Funerale
-        chiesa="Chiesa di San Giusto",
-        comune_chiesa="Trieste",
-        provincia_chiesa="TS",
-        data_ora_funerale=datetime(2023, 3, 20, 10, 30),
-        data_inumazione=date(2023, 3, 20),
-        ora_inumazione=time(11, 30),
-        comune_inumazione="Trieste",
-        provincia_inumazione="TS",
-        ubicazione_feretro="Cimitero di Sant'Anna, loculo 23",
-        affissione_manifesti=True,
-        medico_curante="Dott. Verdi",
-        fioraio="Fioraio Bella Rosa",
+        data_ora_partenza=datetime(2025, 1, 3, 9, 0),
+        chiesa="Chiesa San Pietro",
+        comune_chiesa="Roma",
+        provincia_chiesa="RM",
+        data_ora_funerale=datetime(2025, 1, 3, 10, 30),
+        comune_sepoltura="Rionero in Vulture",
+        provincia_sepoltura="PZ",
+        processo_sepoltura="Tradizionale",
+        ubicazione_feretro="Tumulazione",
+        affissione_manifesti="Roma, Napoli",
+        medico_curante="Dr. Verdi",
+        fioraio="Fiori Rossi",
 
         # Servizi funebri
         lutto_casa=True,
         corteo_da_casa=True,
-        corteo_da_ospedale=False,
-        pass_solo_auto=False,
-        pass_casa_per_corteo=True,
         dirett_in_chiesa=False,
         sala_commiato=False,
         tutto_in_auto=False,
         auto_chiesa_cimitero=True,
 
         # Servizi economici e logistici
-        data_incarico=date(2023, 3, 16),
+        data_incarico=date(2024, 12, 30),
         necrofori=4,
-        fattura_n="123/2023",
-        articolo_cofano_funebre="Cofano in legno rovere",
+        fattura_n="FATT-2025-001",
+        articolo_cofano_funebre="Cofano in legno pregiato",
         targa_autofunebre="AB123CD",
-        altro_servizi="Servizio aggiuntivo: trasporto floreale",
+        altro_servizi="Servizio musicale durante la cerimonia.",
+
+        # Data e firma
+        firmato=True,
+        data_firma=date(2025, 1, 2)
     )
+
     return defunto
 
+## PROD SETUP ##
+
+# def setup_prod_archetti():
+#     """
+#     Funzione di inizializzazione dati di produzione:
+#     - Crea una organizzazione
+#     - Crea utenti e relativi profili (con firma e immagine)
+#     - Crea documenti associati all'organizzazione
+#     """
+#     tag = "archetti"
+
+#     # 1. Creazione o recupero Organizzazione
+#     org, created = Organization.objects.get_or_create(
+#         tag=tag,
+#         defaults={
+#             "name": "Onoranze Funebri Archetti",
+#             "email": "infoarchetti@libero.it",
+#             "tel": "+39 3471703635",
+#             "domain": "archetti.ade.it",
+#             "is_active": True,
+#         },
+#     )
+
+#     if created:
+#         print(f"Organizzazione '{org.name}' creata.")
+#     else:
+#         print(f"Organizzazione '{org.name}' già esistente.")
+
+#     # 2. Creazione utenti e profili
+#     utenti = [
+#         {"username": "Carmine", "email": "infoarchetti@libero.it"},
+#     ]
+
+#     for utente in utenti:
+#         user, created = User.objects.get_or_create(
+#             username=utente["username"],
+#             defaults={
+#                 "email": utente["email"],
+#                 "is_staff": False,
+#                 "is_superuser": False,
+#             },
+#         )
+#         if created:
+#             user.set_password("changeme123")  
+#             user.save()
+#             print(f"Utente '{user.username}' creato.")
+#         else:
+#             print(f"Utente '{user.username}' già esistente.")
+
+#         # Associazione o creazione profilo
+#         profilo, created = Profile.objects.get_or_create(
+#             user=user,
+#             defaults={
+#                 "organization": org,
+#                 "theme": Profile.light_theme,
+#             },
+#         )
+
+#         if created:
+#             # Esempio: assegno firma e immagine vuoti/dummy
+#             profilo.signature.save(
+#                 f"firma_{user.username}.png",
+#                 ContentFile(b"fake-signature-binary"),
+#             )
+#             profilo.img.save(
+#                 f"avatar_{user.username}.png",
+#                 ContentFile(b"fake-avatar-binary"),
+#             )
+#             profilo.save()
+#             print(f"Profilo per '{user.username}' creato.")
+#         else:
+#             print(f"Profilo per '{user.username}' già esistente.")
+
+#     # 3. Creazione documenti associati all'organizzazione
+#     docs = [
+#         {"nome": "Contratto", "filename": "contratto.pdf"},
+#         {"nome": "Regolamento", "filename": "regolamento.pdf"},
+#     ]
+
+#     for i, d in enumerate(docs, start=1):
+#         doc, created = Documento.objects.get_or_create(
+#             nome=d["nome"],
+#             organization=org,
+#             defaults={
+#                 "order_number": i,
+#             },
+#         )
+#         if created:
+#             doc.file.save(d["filename"], ContentFile(b"fake-pdf-binary"))
+#             doc.save()
+#             print(f"Documento '{doc.nome}' creato.")
+#         else:
+#             print(f"Documento '{doc.nome}' già esistente.")
+
+
+################
 # def generate_filled_pdf(template_pdf_file, fields):
 #     """
 #     Genera un PDF in memoria con i campi riempiti.

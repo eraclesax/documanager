@@ -58,8 +58,8 @@
                       <td scope="row" data-order="{{item.data_nascita|date:'d/m/Y'}}">
                         <span>{{item.data_nascita|date:'d/m/Y'}}</span>
                       </td>
-                      <td scope="row" data-order="{{item.data_morte|date:'d/m/Y'}}">
-                        <span>{{item.data_morte|date:'d/m/Y'}}</span>
+                      <td scope="row" data-order="{{item.data_decesso|date:'d/m/Y'}}">
+                        <span>{{item.data_decesso|date:'d/m/Y'}}</span>
                       </td>
 
                       <td scope="row">
@@ -147,7 +147,7 @@
             "responsive": true,
             "paging":   true,
             "pageLength" : 50,
-            // "aaSorting": [[0,"asc"],[3,"des"]],
+            "aaSorting": [[0,"des"],],
             "lengthChange": false,
             "autoWidth": false,
             "language": {

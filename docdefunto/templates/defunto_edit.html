@@ -24,7 +24,8 @@
             <div class="row align-items-center">
               <div class="col-8">
                 {% if form.instance %}
-                  <h3 class="mb-0">Modifica Scheda Defunto "{{form.instance}}"</h3>
+                  <h3>Modifica Scheda Defunto "{{form.instance}}"</h3>
+                  <p class="mb-0">I campi contrassegnati con <b>*</b> sono obbligatori</p>
                 {% else %}
                   <h3 class="mb-0">Crea nuova Scheda Defunto</h3>
                 {% endif %}
@@ -59,13 +60,69 @@
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
 <script>
+  // Queste funzioni sono collegate agli input fields direttamente in forms.py
+  // Oscura i campi nome coniuge e cognome coniuge se stato civile è "celibe/nubile"
+  function toggleConiugeFields(value) {
+      const cognome = document.getElementById("id_cognome_coniuge");
+      const nome = document.getElementById("id_nome_coniuge");
+      const cognomeDiv = document.getElementById("div_id_cognome_coniuge");
+      const nomeDiv = document.getElementById("div_id_nome_coniuge");
+
+      if (value === "Coniugato / unito civilmente" || value === "Vedovo" || value === "Già coniugato / unito civolmente") { 
+          cognomeDiv.style.display = "";
+          nomeDiv.style.display = "";
+      } else {
+          cognomeDiv.style.display = "none";
+          nomeDiv.style.display = "none";
+          cognome.value = "";
+          nome.value = "";
+      }
+  }
+  // Oscura i campi ospedale o via a seconda del valore di tipo_luogo_salma
+  function toggleLuogoSalmaFields(value) {
+      const viaSalma = document.getElementById("id_via_salma");
+      const ospedale = document.getElementById("id_ospedale");
+      const repartoOspedaliero = document.getElementById("id_reparto_ospedaliero");
+      const viaSalmaDiv = document.getElementById("div_id_via_salma");
+      const ospedaleDiv = document.getElementById("div_id_ospedale");
+      const viaRepartoOspedaliero = document.getElementById("div_id_reparto_ospedaliero");
+
+      if (value === "Abitazione privata") {  
+          viaSalmaDiv.style.display = "";
+          ospedaleDiv.style.display = "none";
+          viaRepartoOspedaliero.style.display = "none";
+          ospedale.value = "";
+          repartoOspedaliero.value = "";
+      } else if (value === "Istituto / Casa di riposo / Struttura obitoriale / Ospedale") {
+          viaSalmaDiv.style.display = "none";
+          ospedaleDiv.style.display = "";
+          viaRepartoOspedaliero.style.display = "";
+          viaSalma.value = "";
+      } else {
+          viaSalmaDiv.style.display = "none";
+          ospedaleDiv.style.display = "none";
+          viaRepartoOspedaliero.style.display = "none";
+          ospedale.value = "";
+          repartoOspedaliero.value = "";
+          viaSalma.value = "";
+      }
+  }
+  // Inizializza i campi oscurati
+  document.addEventListener("DOMContentLoaded", function() {
+      const statoCivile = document.getElementById("id_stato_civile");
+      const tipoLuogoSalma = document.getElementById("id_tipo_luogo_salma");
+      toggleConiugeFields(statoCivile.value);
+      toggleLuogoSalmaFields(tipoLuogoSalma.value);
+  });
+
+// Questa funzione semplifica la compilazione riempiendo i campi successivi in maniera statisticamente valida
 document.addEventListener("DOMContentLoaded", function () {
   const comune_residenza = document.getElementById("id_comune_residenza");
   
   const comune_decesso = document.getElementById("id_comune_decesso");
   const comune_salma = document.getElementById("id_comune_salma");
   const comune_chiesa = document.getElementById("id_comune_chiesa");
-  const comune_inumazione = document.getElementById("id_comune_inumazione");
+  const comune_sepoltura = document.getElementById("id_comune_sepoltura");
 
   comune_residenza.addEventListener("blur", function () {
     if (comune_decesso.value.trim() === "" && comune_residenza.value.trim() !== "") {
@@ -77,8 +134,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (comune_chiesa.value.trim() === "" && comune_residenza.value.trim() !== "") {
       comune_chiesa.value = comune_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
     }
-    if (comune_inumazione.value.trim() === "" && comune_residenza.value.trim() !== "") {
-      comune_inumazione.value = comune_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
+    if (comune_sepoltura.value.trim() === "" && comune_residenza.value.trim() !== "") {
+      comune_sepoltura.value = comune_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
     }
   });
 
@@ -87,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const provincia_decesso = document.getElementById("id_provincia_decesso");
   const provincia_salma = document.getElementById("id_provincia_salma");
   const provincia_chiesa = document.getElementById("id_provincia_chiesa");
-  const provincia_inumazione = document.getElementById("id_provincia_inumazione");
+  const provincia_sepoltura = document.getElementById("id_provincia_sepoltura");
 
   provincia_residenza.addEventListener("blur", function () {
     if (provincia_decesso.value.trim() === "" && provincia_residenza.value.trim() !== "") {
@@ -99,8 +156,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (provincia_chiesa.value.trim() === "" && provincia_residenza.value.trim() !== "") {
       provincia_chiesa.value = provincia_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
     }
-    if (provincia_inumazione.value.trim() === "" && provincia_residenza.value.trim() !== "") {
-      provincia_inumazione.value = provincia_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
+    if (provincia_sepoltura.value.trim() === "" && provincia_residenza.value.trim() !== "") {
+      provincia_sepoltura.value = provincia_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
     }
   });
 });

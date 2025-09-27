@@ -15,8 +15,6 @@ from django.utils.decorators import method_decorator
 from django.template import Template, Context
 from django.conf import settings
 from django.http import HttpResponse
-
-from app.models import AppUser
 from .models import *
 from .forms import *
 
@@ -49,8 +47,7 @@ class DefuntiListView(View):
         return self.GET_render(request,*args, **kwargs)
 
     def GET_render(self,request,*args, **kwargs):
-
-        defunti = AnagraficaDefunto.objects.all().order_by('-id')
+        defunti = AnagraficaDefunto.objects.filter(organization=request.user.profile.organization).order_by('-relative_id')
         return render(request, self.template_name, {
             "defunti":defunti,
         })
@@ -71,15 +68,19 @@ class DefuntoView(View):
 
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
+        # Determina le categorie per ciascun campo
         defunto_fields = {}
         for category,field_names in defunto.FIELD_CATEGORIES.items():
             defunto_fields[category] = []
             for field_name in field_names:
                 field = AnagraficaDefunto._meta.get_field(field_name)
+                verbose_name = field.verbose_name
+                value = getattr(defunto, field_name)
+                if type(value) == bool:
+                    value = "Sì" if value else "No"
                 defunto_fields[category].append({
-                    "name":field_name,
-                    "verbose_name":field.verbose_name,
-                    "value": getattr(defunto, field_name),
+                    "verbose_name":verbose_name,
+                    "value": value,
                     })
         return render(request, self.template_name, {
             "defunto":defunto,
@@ -124,8 +125,8 @@ class DefuntoEditView(View):
     def post(self, request, *args, **kwargs):
         from .forms import DefuntoEditForm
         from django.contrib import messages
-        from app.models import AppUser
         id = kwargs.get("id", None)
+        user = request.user
         if id is not None:
             obj = get_object_or_404(AnagraficaDefunto,pk=id)
         else:
@@ -136,12 +137,33 @@ class DefuntoEditView(View):
             instance = obj,
         )
         if form.is_valid():
-            obj = form.save()
-            messages.add_message(request, messages.SUCCESS, _('Anagrafica "%s" salvata con successo!'%(obj)))
+            obj = form.save(commit=False)
+            obj.created_by = user
+            obj.organization = user.profile.organization
+            obj.save()
+            messages.add_message(
+                request, 
+                messages.SUCCESS, 
+                _('Anagrafica "%s" salvata con successo!'%(obj)))
             return HttpResponseRedirect(reverse('defunti'))
         else:
             kwargs["form"] = form
             kwargs["has_error"] = True
+            for field, errors in form.errors.items():
+                # Recupera la label leggibile (o il nome campo se non c'è)
+                label = form.fields[field].label if field in form.fields else field
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    _('%s: %s' % (label, errors[0]))
+                )
+
+            for error in form.non_field_errors():
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    '%s' % (error)
+                )
             return self.GET_render(request, *args, **kwargs)
 
 class AnagraficaDefuntoDeleteView(DeleteView):
@@ -165,7 +187,7 @@ class DefuntoDocsView(View):
 
         id = kwargs.get("id", None)
         defunto = get_object_or_404(AnagraficaDefunto,pk=id)
-        documenti = Documento.objects.all()
+        documenti = Documento.objects.all().order_by('order_number')
 
         return render(request, self.template_name, {
             "defunto":defunto,
@@ -183,7 +205,7 @@ class GetDocView(View):
         def_id = kwargs.get("def_id", None)
         doc_id = kwargs.get("doc_id", None)
         action = kwargs.get("action", "open")
-
+        user = request.user
         doc = get_object_or_404(Documento, id=doc_id)
         defunto = get_object_or_404(AnagraficaDefunto, id=def_id)
 
@@ -194,7 +216,9 @@ class GetDocView(View):
         # renderizzo il template con i dati
         template = Template(template_string)
         context = Context({
+            "user": user,
             "defunto": defunto,
+            "doc_name": doc.nome,
         })
         contenuto_html = template.render(context)
         #TODO: Check se è inumazione altro comune che ci sia il comune
@@ -211,23 +235,34 @@ class GetDocView(View):
                 base_url=request.build_absolute_uri('/')
                 ).write_pdf()
 
-            if doc.foglio_intestato and contenuto_pdf_bytes:
+            if doc.background and contenuto_pdf_bytes:
                 contenuto_pdf = PdfReader(io.BytesIO(contenuto_pdf_bytes))
                 # 2. Carica il foglio intestato (da FileField di Django)
-                foglio_file = doc.foglio_intestato.open("rb")  # assicura apertura
-                foglio_pdf = PdfReader(foglio_file)
-                writer = PdfWriter()
+                bg_file = doc.background.open("rb")  # assicura apertura
+                bg_pdf = PdfReader(bg_file)
+                pdf_writer = PdfWriter()
                 # 3. Sovrapponi contenuto alle pagine del foglio intestato
+                output_buffer = io.BytesIO()
                 for page in contenuto_pdf.pages:
-                    background_page = foglio_pdf.pages[0]  # usa la prima pagina come sfondo
-                    print(background_page)
-                    page.merge_page(background_page)           # unisce il contenuto sopra lo sfondo
-                    print(background_page)
-                    writer.add_page(page)
-                    # 4. Salva in memoria il PDF finale
-                    output_buffer = io.BytesIO()
-                    writer.write(output_buffer)
-                    output_buffer.seek(0)
+                    bg_page = bg_pdf.pages[0]  # usa la prima pagina come sfondo
+                    page.merge_page(bg_page)           # unisce il contenuto sopra lo sfondo
+                    pdf_writer.add_page(page)
+                # 4. Salva in memoria il PDF finale
+                pdf_writer.add_metadata({
+                    '/Author': str(user.profile.organization),
+                    '/Title': str(doc.nome)
+                })
+                pdf_writer.write(output_buffer)
+                output_buffer.seek(0)
+
+                # for page in contenuto_pdf.pages:
+                #     background_page = foglio_pdf.pages[0]  # usa la prima pagina come sfondo
+                #     page.merge_page(background_page)           # unisce il contenuto sopra lo sfondo
+                #     writer.add_page(page)
+                #     # 4. Salva in memoria il PDF finale
+                #     output_buffer = io.BytesIO()
+                #     writer.write(output_buffer)
+                #     output_buffer.seek(0)
                 response = HttpResponse(output_buffer, content_type="application/pdf")
             else:
                 response = HttpResponse(contenuto_pdf_bytes, content_type="application/pdf")
