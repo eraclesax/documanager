@@ -521,8 +521,17 @@ echo "__pycache__/" >> .gitignore
 git rm -r --cached docdefunto/__pycache__/
 
 
+
+
+
+## DATABASE SETTING UP
+sudo -u postgres psql
+
+CREATE DATABASE myproject;
+CREATE USER myprojectuser WITH PASSWORD 'password';
 ALTER ROLE eifuprod_dbuser SET client_encoding TO 'utf8';
 ALTER ROLE eifuprod_dbuser SET default_transaction_isolation TO 'read committed';
 ALTER ROLE eifuprod_dbuser SET timezone TO 'UTC';
-
 GRANT ALL PRIVILEGES ON DATABASE eifuprod_db TO eifuprod_dbuser;
+\c eifuprod_db postgres
+GRANT ALL ON SCHEMA public TO eifuprod_dbuser;

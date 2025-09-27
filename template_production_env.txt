@@ -1,6 +1,7 @@
 ALLOWED_HOST=16.171.113.111
 DEBUG=False
 STATIC_ROOT=/var/www/documanager/static
+SECRET_KEY=...
 # DATABASE #
 DB_IS_SQLITE=False
 DB_ENGINE=django.db.backends.postgresql_psycopg2
