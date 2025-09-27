@@ -37,11 +37,18 @@ DEBUG = env('DEBUG',cast=bool,default=True)
 # SECURITY WARNING: Do not use * in production.
 ALLOW_EVERY_HOST = env('ALLOW_EVERY_HOST',cast=bool,default=False)
 ALLOW_LOCAL_HOSTS = env('ALLOW_LOCAL_HOSTS',cast=bool,default=False)
-ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST'),]
+ALLOW_PRODUCTION_HOSTS = env('ALLOW_PRODUCTION_HOSTS',cast=bool,default=False)
+ENV_ALLOWED_HOST = env('ALLOWED_HOST',cast=str,default='')
+
+ALLOWED_HOSTS = []
+if ENV_ALLOWED_HOST:
+    ALLOWED_HOSTS += [ENV_ALLOWED_HOST,]
+if ALLOW_PRODUCTION_HOSTS:
+    ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
 if ALLOW_EVERY_HOST:
-    ALLOWED_HOSTS.extend(['*',])
+    ALLOWED_HOSTS += ['*',]
 if ALLOW_LOCAL_HOSTS:
-    ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost',])
+    ALLOWED_HOSTS += ['127.0.0.1', 'localhost',]
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,6 +82,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'logger.middlewares.CurrentUserMiddleware',
     'logger.middlewares.ErrorMiddleware',
+    'docdefunto.middlewares.OrganizationMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -95,6 +103,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.cms_context',
+                'docdefunto.context_processors.organization_context',
                 # 'django.template.context_processors.media', # add media context processor
             ],
         },

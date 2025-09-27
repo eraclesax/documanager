@@ -224,7 +224,7 @@ Controlla i permessi:
 Dovresti vedere qualcosa tipo:
     drwxr-sr-x 2 deployuser www-data 4096 ago 21 15:00 static
 Creo il file di configurazione (ATTENTO! Se la cartella sites-available non esiste
-è probabile che nginx usi una convensione diversa per i file di configurazione).
+è probabile che nginx usi una convenzione diversa per i file di configurazione).
 Convenzione di ubuntu:
     sudo nano /etc/nginx/sites-available/documanager
 Convenzione amazon linux:
@@ -236,12 +236,12 @@ server {
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        root /var/www/documanager/static/;
+        alias /var/www/documanager/static/;
     }
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/run/gunicorn.sock;
+        proxy_pass http://unix:/run/gunicorn/documanager.sock;
     }
 }
 contenuto per Amazon Linux (vedi chat con ChatGPT5, è stato difficilissimo, sono stato 3 giorni):
@@ -379,6 +379,18 @@ dentro ci metto
 L'host è quello pubblico dichiarato dal provider
 L'ultima opzione serve per Nginx, è la cartella dove andrà a prendersi i file statici
 
+test fin qui: lancia
+    python manage.py runserver 0.0.0.0:8000
+    e vedi su 
+    http://13.53.205.189:8000
+    se ti esce l'app. Se non ti esce assicurati che il security group di Amazon AWS abbia la porta 
+    8000 aperta.
+    Se continua  a non andare:
+    Se stai usando Linux, controlla ufw (che è il firewall) o iptables. Ad esempio:
+    sudo ufw status
+    Se è attivo, apri la porta 8000:
+    sudo ufw allow 8000/tcp
+
 Installo Gunicorn (nel venv)
     pip install gunicorn
 Ne testo il funzionamento
@@ -400,23 +412,23 @@ contenuto:
     [Install]
     WantedBy=multi-user.target
 Una versione modificata che esplicita una variabile d'ambiente e l'indirizzo del file .env
-    [Unit]
-    Description=Gunicorn daemon for Django project
-    After=network.target
+[Unit]
+Description=Gunicorn daemon for Django project
+After=network.target
 
-    [Service]
-    User=ec2-user
-    Group=nginx
-    WorkingDirectory=/home/ec2-user/documanager
-    ExecStart=/home/ec2-user/documanager/venv/bin/gunicorn \
-            --workers 3 \
-            --bind unix:/run/gunicorn/documanager.sock \
-            core.wsgi:application
-    Environment="DJANGO_SETTINGS_MODULE=core.settings"
-    EnvironmentFile=/home/ec2-user/documanager/.env
+[Service]
+User=ec2-user
+Group=nginx
+WorkingDirectory=/home/ec2-user/documanager
+ExecStart=/home/ec2-user/documanager/venv/bin/gunicorn \
+        --workers 3 \
+        --bind unix:/run/gunicorn/documanager.sock \
+        core.wsgi:application
+Environment="DJANGO_SETTINGS_MODULE=core.settings"
+EnvironmentFile=/home/ec2-user/documanager/.env
 
-    [Install]
-    WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
 
 Creo la cartella in cui andrò a mettere il socket. Deve essere accessibile di nginx:
     sudo mkdir -p /run/gunicorn
