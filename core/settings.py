@@ -110,13 +110,25 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(CORE_DIR, 'db.sqlite3'),
+DB_IS_SQLITE = env('DB_IS_SQLITE',cast=bool,default=True)
+if DB_IS_SQLITE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(CORE_DIR, 'db.sqlite3'),
+        }
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': env('DB_ENGINE',cast=str,default=''),
+            'NAME': env('DB_NAME',cast=str,default=''),
+            'USER': env('DB_USER',cast=str,default=''),
+            'PASSWORD': env('DB_PASSWORD',cast=str,default=''),
+            'HOST': env('DB_HOST',cast=str,default=''),
+            'PORT': env('DB_PORT',cast=str,default=''),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

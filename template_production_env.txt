@@ -1,3 +1,10 @@
 ALLOWED_HOST=16.171.113.111
 DEBUG=False
 STATIC_ROOT=/var/www/documanager/static
+# DATABASE #
+DB_ENGINE=django.db.backends.postgresql_psycopg2
+DB_NAME=eifuprod_db
+DB_USER=eifuprod_dbuser
+DB_PASSWORD=...
+DB_HOST=localhost
+DB_PORT=
