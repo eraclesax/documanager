@@ -3,6 +3,8 @@ from docdefunto.models import AnagraficaDefunto
 from django.contrib.auth import get_user_model
 from app.models import Organization, User, Profile
 
+## DEV SETUP ## 
+
 def setup_superuser(username="admin", password="admin", email="admin@admin.com"):
     """
     Crea un superuser e un'organizzazione 'Superusers', e li collega tra loro.
@@ -154,7 +156,102 @@ def crea_defunto_di_test(username="admin"):
 
     return defunto
 
+## PROD SETUP ##
 
+# def setup_prod_archetti():
+#     """
+#     Funzione di inizializzazione dati di produzione:
+#     - Crea una organizzazione
+#     - Crea utenti e relativi profili (con firma e immagine)
+#     - Crea documenti associati all'organizzazione
+#     """
+#     tag = "archetti"
+
+#     # 1. Creazione o recupero Organizzazione
+#     org, created = Organization.objects.get_or_create(
+#         tag=tag,
+#         defaults={
+#             "name": "Onoranze Funebri Archetti",
+#             "email": "infoarchetti@libero.it",
+#             "tel": "+39 3471703635",
+#             "domain": "archetti.ade.it",
+#             "is_active": True,
+#         },
+#     )
+
+#     if created:
+#         print(f"Organizzazione '{org.name}' creata.")
+#     else:
+#         print(f"Organizzazione '{org.name}' già esistente.")
+
+#     # 2. Creazione utenti e profili
+#     utenti = [
+#         {"username": "Carmine", "email": "infoarchetti@libero.it"},
+#     ]
+
+#     for utente in utenti:
+#         user, created = User.objects.get_or_create(
+#             username=utente["username"],
+#             defaults={
+#                 "email": utente["email"],
+#                 "is_staff": False,
+#                 "is_superuser": False,
+#             },
+#         )
+#         if created:
+#             user.set_password("changeme123")  
+#             user.save()
+#             print(f"Utente '{user.username}' creato.")
+#         else:
+#             print(f"Utente '{user.username}' già esistente.")
+
+#         # Associazione o creazione profilo
+#         profilo, created = Profile.objects.get_or_create(
+#             user=user,
+#             defaults={
+#                 "organization": org,
+#                 "theme": Profile.light_theme,
+#             },
+#         )
+
+#         if created:
+#             # Esempio: assegno firma e immagine vuoti/dummy
+#             profilo.signature.save(
+#                 f"firma_{user.username}.png",
+#                 ContentFile(b"fake-signature-binary"),
+#             )
+#             profilo.img.save(
+#                 f"avatar_{user.username}.png",
+#                 ContentFile(b"fake-avatar-binary"),
+#             )
+#             profilo.save()
+#             print(f"Profilo per '{user.username}' creato.")
+#         else:
+#             print(f"Profilo per '{user.username}' già esistente.")
+
+#     # 3. Creazione documenti associati all'organizzazione
+#     docs = [
+#         {"nome": "Contratto", "filename": "contratto.pdf"},
+#         {"nome": "Regolamento", "filename": "regolamento.pdf"},
+#     ]
+
+#     for i, d in enumerate(docs, start=1):
+#         doc, created = Documento.objects.get_or_create(
+#             nome=d["nome"],
+#             organization=org,
+#             defaults={
+#                 "order_number": i,
+#             },
+#         )
+#         if created:
+#             doc.file.save(d["filename"], ContentFile(b"fake-pdf-binary"))
+#             doc.save()
+#             print(f"Documento '{doc.nome}' creato.")
+#         else:
+#             print(f"Documento '{doc.nome}' già esistente.")
+
+
+################
 # def generate_filled_pdf(template_pdf_file, fields):
 #     """
 #     Genera un PDF in memoria con i campi riempiti.
