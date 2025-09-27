@@ -66,6 +66,7 @@ class DefuntoEditForm(forms.ModelForm):
         self.fields['data_firma'].widget = forms.TextInput(attrs={'type': 'date'})
         # Inserimento in uppercase
         self.fields['codice_fiscale'].widget.attrs['style'] = 'text-transform: uppercase;'
+        self.fields['codice_fiscale_par'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_nascita'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_residenza'].widget.attrs['style'] = 'text-transform: uppercase;'
         self.fields['provincia_decesso'].widget.attrs['style'] = 'text-transform: uppercase;'
@@ -97,6 +98,18 @@ class DefuntoEditForm(forms.ModelForm):
 
     def clean_codice_fiscale(self):
         value = self.cleaned_data["codice_fiscale"]
+        # Validazione sul numero di caratteri
+        if value is None:
+            return None
+        value = value.strip()
+        if len(value) != 16:
+            raise forms.ValidationError("Il codice fiscale deve avere esattamente 16 caratteri.")
+        # Salva in uppercase
+        value = value.upper()
+        return value
+
+    def clean_codice_fiscale_par(self):
+        value = self.cleaned_data["codice_fiscale_par"]
         # Validazione sul numero di caratteri
         if value is None:
             return None

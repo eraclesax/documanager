@@ -86,7 +86,7 @@ class AnagraficaDefunto(models.Model):
     comune_residenza_par = models.CharField(verbose_name="Comune di residenza parente", blank=True, null=True, max_length=255)
     provincia_residenza_par = models.CharField(verbose_name="Provincia di residenza parente (sigla)", blank=True, null=True, max_length=2)
     via_residenza_par = models.CharField(verbose_name="Via di residenza parente", blank=True, null=True, max_length=255)
-
+    codice_fiscale_par = models.CharField(verbose_name="Codice Fiscale parente", blank=True, null=True, max_length=16)
     doc_ric_par = models.CharField(verbose_name="Documento di Riconoscimento Parente", blank=True, null=True, max_length=10,
                                    choices=[
                                        ("C.I.", "Carta di Identità"),
@@ -182,7 +182,7 @@ class AnagraficaDefunto(models.Model):
         "Stato civile":('professione', 'stato_civile','cognome_coniuge','nome_coniuge',), 
         "Parente": ('tipo_parente', 'cognome_parente', 'nome_parente', 'sesso_par','comune_nascita_par', 
                     'provincia_nascita_par', 'data_nascita_parente', 
-                    'comune_residenza_par', 'provincia_residenza_par', 'via_residenza_par',
+                    'comune_residenza_par', 'provincia_residenza_par', 'via_residenza_par','codice_fiscale_par',
                     'doc_ric_par', 'n_doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
         "Funerale":('data_ora_partenza', 'chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  

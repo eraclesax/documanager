@@ -102,6 +102,7 @@ def crea_defunto_di_test(username="admin"):
         cognome_parente="Bianchi",
         nome_parente="Lucia",
         data_nascita_parente=date(1955, 8, 21),
+        codice_fiscale_par="PPPMRA50E12L424Z",
         doc_ric_par="Patente",
         n_doc_ric_par="CD66336DF",
         ente_doc_par="Comune di Trieste",
