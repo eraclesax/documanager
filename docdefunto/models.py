@@ -29,7 +29,7 @@ class AnagraficaDefunto(models.Model):
     provincia_residenza = models.CharField(verbose_name="Provincia di Residenza (sigla)", blank=True, null=True, max_length=2)
     via_residenza = models.CharField(verbose_name="Via di Residenza", blank=True, null=True, max_length=255)
     codice_fiscale = models.CharField(verbose_name="Codice Fiscale", blank=True, null=True, max_length=16)
-    doc_ric_def = models.CharField(verbose_name="Tipo Documento di Riconoscimento Defunto", blank=True, null=True, max_length=10, 
+    doc_ric_def = models.CharField(verbose_name="Tipo Documento di Riconoscimento Defunto", blank=True, null=True, 
                                    choices=[
                                        ("C.I.", "Carta di Identità"),
                                        ("Patente", "Patente"),
@@ -61,7 +61,7 @@ class AnagraficaDefunto(models.Model):
 
     # Stato civile
     professione = models.CharField(verbose_name="Professione", blank=True, null=True, max_length=255)
-    stato_civile = models.CharField(verbose_name="Stato Civile", blank=True, null=True, max_length=63,
+    stato_civile = models.CharField(verbose_name="Stato Civile", blank=True, null=True,
                                     choices=[
                                         ("Celibe / nubile", "Celibe / nubile"),
                                         ("Coniugato / unito civilmente", "Coniugato / unito civilmente con"),
@@ -112,12 +112,17 @@ class AnagraficaDefunto(models.Model):
     comune_sepoltura = models.CharField(verbose_name="Comune di sepoltura", blank=False, null=True, max_length=255)
     # altro_comune = models.BooleanField(verbose_name="Comune diverso da Rionero in Vulture", default=False)
     provincia_sepoltura = models.CharField(verbose_name="Provincia di sepoltura (sigla)", blank=True, null=True, max_length=2)
-    ubicazione_feretro = models.CharField(verbose_name="Ubicazione Feretro", blank=True, null=True, max_length=11,
+    processo_sepoltura = models.CharField(verbose_name="Processo Sepoltura", blank=True, null=True,
+                                      choices=[
+                                       ("Cremazione", "Cremazione"),
+                                       ("Tradizionale", "Tradizionale"),], 
+                                   )
+    ubicazione_feretro = models.CharField(verbose_name="Ubicazione Feretro", blank=True, null=True,
                                       choices=[
                                        ("Cappella", "Cappella"),
                                        ("Inumazione", "Inumazione"),
                                        ("Tumulazione", "Tumulazione")], 
-                                   ) 
+                                   )
     affissione_manifesti = models.TextField(verbose_name="Comuni affissione manifesti", blank=True, null=True)
     medico_curante = models.CharField(verbose_name="Medico Curante", blank=True, null=True, max_length=255)
     fioraio = models.CharField(verbose_name="Fioraio", blank=True, null=True, max_length=255)
@@ -146,7 +151,7 @@ class AnagraficaDefunto(models.Model):
     data_firma = models.DateField(verbose_name="Firma documenti in data", blank=True, null=True)
 
     @property
-    def get_eta(self):
+    def get_age(self):
         if self.data_nascita and self.data_decesso:
             years_delta = self.data_decesso.year - self.data_nascita.year
             months_delta = self.data_decesso.month - self.data_nascita.month
@@ -186,7 +191,7 @@ class AnagraficaDefunto(models.Model):
                     'doc_ric_par', 'n_doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
         "Funerale":('data_ora_partenza', 'chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  
-                    'comune_sepoltura','provincia_sepoltura', 'ubicazione_feretro', 
+                    'comune_sepoltura','provincia_sepoltura','processo_sepoltura', 'ubicazione_feretro', 
                     'affissione_manifesti', 'medico_curante', 'fioraio', ),
         "Servizi funebri":('lutto_casa', 'corteo_da_casa', 'corteo_da_ospedale', 'pass_solo_auto', 
                            'pass_casa_per_corteo', 'dirett_in_chiesa', 'sala_commiato', 'tutto_in_auto', 

@@ -123,6 +123,7 @@ def crea_defunto_di_test(username="admin"):
         # ora_inumazione=time(11, 30),
         comune_sepoltura="Pordenone",
         provincia_sepoltura="PN",
+        processo_sepoltura="Tradizionale",
         ubicazione_feretro="Cappella",
         affissione_manifesti=True,
         medico_curante="Dott. Verdi",
