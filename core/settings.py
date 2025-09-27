@@ -121,12 +121,12 @@ if DB_IS_SQLITE:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': env('DB_ENGINE',cast=str,default=''),
-            'NAME': env('DB_NAME',cast=str,default=''),
-            'USER': env('DB_USER',cast=str,default=''),
-            'PASSWORD': env('DB_PASSWORD',cast=str,default=''),
-            'HOST': env('DB_HOST',cast=str,default=''),
-            'PORT': env('DB_PORT',cast=str,default=''),
+            'ENGINE': env('DB_ENGINE',cast=str,default='django.db.backends.postgresql'),
+            'NAME': env('DB_NAME',cast=str,default='your_database_name'),
+            'USER': env('DB_USER',cast=str,default='your_username'),
+            'PASSWORD': env('DB_PASSWORD',cast=str,default='your_password'),
+            'HOST': env('DB_HOST',cast=str,default='localhost'),
+            'PORT': env('DB_PORT',cast=str,default='5432'),
         }
     }
 
