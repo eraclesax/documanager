@@ -427,6 +427,9 @@ ExecStart=/home/ec2-user/documanager/venv/bin/gunicorn \
 Environment="DJANGO_SETTINGS_MODULE=core.settings"
 EnvironmentFile=/home/ec2-user/documanager/.env
 
+RuntimeDirectory=gunicorn
+RuntimeDirectoryMode=0755
+
 [Install]
 WantedBy=multi-user.target
 
@@ -469,7 +472,20 @@ contenuto:
             include proxy_params;
             proxy_pass http://unix:/run/gunicorn/documanager/documanager.sock;
         }
+
+        location /media/ {
+                alias /var/www/documanager/media/;
+        }
+
+
     }
+
+    (nota, la cartella media deve essere MEDIA_ROOT di django)
+    ( controlla se nginx ha accesso alla cartella static e a media
+        sudo mkdir -p /var/www/documanager/media
+        sudo mv /home/ubuntu/documanager/media/* /var/www/documanager/media/
+        sudo chown -R www-data:www-data /var/www/documanager/media
+    )
 Attiva la config:
     sudo ln -s /etc/nginx/sites-available/documanager /etc/nginx/sites-enabled
     sudo nginx -t

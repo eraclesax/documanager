@@ -204,7 +204,9 @@ STATICFILES_DIRS = (
 )
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #.replace('\\', '/')
+MEDIA_ROOT = env('MEDIA_ROOT',cast=str,default='')
+if not MEDIA_ROOT:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #.replace('\\', '/')
 
 #############################################################
 #############################################################
