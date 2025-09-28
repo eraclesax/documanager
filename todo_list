@@ -31,6 +31,7 @@ Riavviare i servizi
 File di log di Nginx e Gunicorn
     sudo tail -f /var/log/nginx/error.log
     sudo journalctl -u gunicorn --since "5 minutes ago"
+    journalctl -u gunicorn -n 200 > gunicorn.logs
     sudo systemctl status gunicorn
 
 Scopri se gunicorn legge l'environment:

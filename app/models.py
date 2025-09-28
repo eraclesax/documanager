@@ -38,9 +38,9 @@ class Organization(models.Model):
         return f"{self.name}"
         
 def user_signature_path(instance, filename):
-    return f"{instance.organization.tag}/signature/{filename}"
+    return f"{instance.organization.tag}/users/{instance.user.username}/signature/{filename}"
 def user_imgs_path(instance, filename):
-    return f"{instance.organization.tag}/imgs/{filename}"
+    return f"{instance.organization.tag}/users/{instance.user.username}/imgs/{filename}"
 class Profile(models.Model):
     """
     This is the base user of this app. It inherit from User, so all the functionality
