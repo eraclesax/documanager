@@ -186,8 +186,6 @@ class DefuntoDocsView(View):
         })
 
 class GetDocView(View):
-    from weasyprint import HTML
-    from PyPDF2 import PdfReader, PdfWriter
     template_name = 'defunto_docs.html'
 
     @method_decorator(login_required(login_url="/login/"))
@@ -195,6 +193,8 @@ class GetDocView(View):
         return self.GET_render(request, *args, **kwargs)
 
     def GET_render(self, request, *args, **kwargs):
+        from weasyprint import HTML
+        from PyPDF2 import PdfReader, PdfWriter
         def_id = kwargs.get("def_id", None)
         doc_id = kwargs.get("doc_id", None)
         action = kwargs.get("action", "open")

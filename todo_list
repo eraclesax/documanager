@@ -418,8 +418,9 @@ Description=Gunicorn daemon for Django project
 After=network.target
 
 [Service]
-User=ec2-user
-Group=nginx
+User=ec2-user o www-data in ubuntu o ubuntu (meglio www-data)
+Group=nginx o www-data in ubuntu
+UMask=0002
 WorkingDirectory=/home/ec2-user/documanager
 ExecStart=/home/ec2-user/documanager/venv/bin/gunicorn \
         --workers 3 \
@@ -486,6 +487,7 @@ contenuto:
         sudo mkdir -p /var/www/documanager/media
         sudo mv /home/ubuntu/documanager/media/* /var/www/documanager/media/
         sudo chown -R www-data:www-data /var/www/documanager/media
+        sudo chmod -R 775 /var/www/documanager/media
     )
 Attiva la config:
     sudo ln -s /etc/nginx/sites-available/documanager /etc/nginx/sites-enabled
