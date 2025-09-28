@@ -34,21 +34,22 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-6@&(ti2fkhl&g0$ar)&wv=04+@6-lo8%l17@a(-0s4s&rf4oci')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG',cast=bool,default=True)
+DEBUG_ORGANIZATION = env('DEBUG_ORGANIZATION',cast=str,default='archetti')
 # SECURITY WARNING: Do not use * in production.
+ALLOW_LOCAL_HOSTS = env('ALLOW_LOCAL_HOSTS',cast=bool,default=True)
 ALLOW_EVERY_HOST = env('ALLOW_EVERY_HOST',cast=bool,default=False)
-ALLOW_LOCAL_HOSTS = env('ALLOW_LOCAL_HOSTS',cast=bool,default=False)
 ALLOW_PRODUCTION_HOSTS = env('ALLOW_PRODUCTION_HOSTS',cast=bool,default=False)
 ENV_ALLOWED_HOST = env('ALLOWED_HOST',cast=str,default='')
 
 ALLOWED_HOSTS = []
 if ENV_ALLOWED_HOST:
     ALLOWED_HOSTS += [ENV_ALLOWED_HOST,]
-if ALLOW_PRODUCTION_HOSTS:
-    ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
-if ALLOW_EVERY_HOST:
-    ALLOWED_HOSTS += ['*',]
 if ALLOW_LOCAL_HOSTS:
     ALLOWED_HOSTS += ['127.0.0.1', 'localhost',]
+if ALLOW_EVERY_HOST:
+    ALLOWED_HOSTS += ['*',]
+if ALLOW_PRODUCTION_HOSTS:
+    ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
 # Application definition
 
 INSTALLED_APPS = [
