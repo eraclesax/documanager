@@ -257,18 +257,37 @@ DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 DEEP_LOGS = env("DEEP_LOGS",cast=bool, default=False)
 if DEEP_LOGS:
     LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': '/var/log/django/debug.log',
             },
         },
-        "root": {
-            "handlers": ["console"],
-            "level": "DEBUG",
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
         },
     }
+    
+    # LOGGING = {
+    #     "version": 1,
+    #     "disable_existing_loggers": False,
+    #     "handlers": {
+    #         "console": {
+    #             "class": "logging.StreamHandler",
+    #         },
+    #     },
+    #     "root": {
+    #         "handlers": ["console"],
+    #         "level": "DEBUG",
+    #     },
+    # }
 
 ## DOCUDEFUNTO APP CONFIG
 BUILDING_DOCUMENTS_LAYOUT = env("BUILDING_DOCUMENTS_LAYOUT",cast=bool, default=False)
