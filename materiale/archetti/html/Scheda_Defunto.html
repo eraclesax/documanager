@@ -9,8 +9,12 @@
   /* --- pagina A4 e stampa --- */
   @page { size: A4; margin: 12mm 15mm; }
   @media print { html, body { background: #fff; } }
+  @font-face {
+    font-family: "Liberation Serif";
+    src: url("{% static 'fonts/liberation/LiberationSerif-Regular.ttf' %}") format("truetype");
+  }
 
-  body { font-family: "Times New Roman", Georgia, serif; color:#000; }
+  body { font-family: "Liberation Serif", "Regular", serif; color:#000; }
   .sheet { width: 180mm; margin: 0 auto; }
 
   /* header */

@@ -9,9 +9,13 @@
   /* --- pagina A4 e stampa --- */
   @page { size: A4; margin: 12mm 15mm; }
   @media print { html, body { background: #fff; } }
+  @font-face {
+    font-family: "Liberation Serif";
+    src: url("{% static 'fonts/liberation/LiberationSerif-Regular.ttf' %}") format("truetype");
+  }
 
   body { 
-    font-family: "Times New Roman", Georgia, serif; 
+    font-family: "Liberation Serif", "Regular", serif;
     color:#000; 
     font-size: 12pt; 
     text-align: justify; 
@@ -191,7 +195,7 @@
       </div>
       cittadinanza
       <div class="fill fill--short">
-        <span class="value">{{ defunto.cittadinanza }}</span>
+        <span class="value">{{ defunto.cittadinanza | default_if_none:"" }}</span>
       </div>
       abitante in vita a
       <div class="fill fill--mid">
@@ -364,7 +368,9 @@
       <div class="sign-block">
         <div class="sign-label">Firma</div>
         <div class="sign-bar">
-          <img class="sign-img" src="{{user.profile.signature.url}}" alt="" />
+          {% if defunto.firmato %}
+            <img class="sign-img" src="{{user.profile.signature.url}}" alt="" />
+          {% endif %}
         </div>
       </div>
     </div>

@@ -12,9 +12,13 @@
     html, body { background: #fff; }
    .page, .page-break { break-after: page; }
   }
+  @font-face {
+    font-family: "Liberation Serif";
+    src: url("{% static 'fonts/liberation/LiberationSerif-Regular.ttf' %}") format("truetype");
+  }
 
   body { 
-    font-family: "Times New Roman", Georgia, serif; 
+    font-family: "Liberation Serif", "Regular", serif; 
     color:#000; 
     font-size: 14pt; 
     text-align: justify; 
@@ -688,7 +692,9 @@
     <div class="textbox" style="text-align: right;">
       <div class="fill fill--mid">
         <span class="value">
-          <img class="inline-sign-img" src="{{user.profile.signature.url}}" alt="" />
+          {% if defunto.firmato %}
+            <img class="inline-sign-img" src="{{user.profile.signature.url}}" alt="" />
+          {% endif %}
         </span> 
       </div>
     </div>
