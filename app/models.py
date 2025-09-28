@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 def org_logo_path(instance, filename):
-    return f"{instance.organization.tag}/logo/{filename}"
+    return f"{instance.tag}/logo/{filename}"
 class Organization(models.Model):
     tag = models.CharField(verbose_name="Tag Organizzazione", blank=False, null=False, unique=True, max_length=255) #Usato per nome cartelle ecc.
     name = models.CharField(verbose_name="Nome Organizzazione", blank=False, null=False, max_length=255)

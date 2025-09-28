@@ -41,18 +41,9 @@
         <div class="header-body text-center mb-5">
           <div class="row justify-content-center">
             <div class="col-lg-3 col-md-3">
-              {% comment %} <h1 class="text-white">
-                <a target="_blank" class="text-white" href="https://www.creative-tim.com/product/argon-dashboard-django">Pad Med Dashboard</a>
-                   Pad Med Dashboard
-              </h1> {% endcomment %}
               <a href="/">
-                <img class="img-fluid" src="{% static 'assets/img/brand/logo-white.png' %}" alt="...">
+                <img class="img-fluid" src="{{organization.logo.url}}" alt="logo">
               </a> 
-              {% comment %} <p class="text-lead text-light">
-                UI-Ready open-source admin panel enhanced with database and authentication - 
-                Coded by <a target="_blank" class="text-white" href="https://www.creative-tim.com/">Creative-Tim</a> 
-                and <a target="_blank" class="text-white" href="https://appseed.us">AppSeed</a>.  
-              </p> {% endcomment %}
             </div>
           </div>
         </div>
