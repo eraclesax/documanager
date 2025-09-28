@@ -1,15 +1,11 @@
-import datetime
 import io
 
 from django.shortcuts import render,redirect,get_object_or_404
-from django.utils import timezone
 from django.urls import reverse, reverse_lazy
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context_processors import csrf
 from django.views.generic import View, DeleteView
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import PermissionDenied
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.template import Template, Context
@@ -17,11 +13,6 @@ from django.conf import settings
 from django.http import HttpResponse
 from .models import *
 from .forms import *
-
-from crispy_forms.utils import render_crispy_form
-from rest_framework.views import APIView
-from weasyprint import HTML
-from PyPDF2 import PdfReader, PdfWriter
 # from reportlab.pdfgen import canvas
 
 
@@ -195,6 +186,8 @@ class DefuntoDocsView(View):
         })
 
 class GetDocView(View):
+    from weasyprint import HTML
+    from PyPDF2 import PdfReader, PdfWriter
     template_name = 'defunto_docs.html'
 
     @method_decorator(login_required(login_url="/login/"))
