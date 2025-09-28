@@ -4,10 +4,12 @@ from django.conf import settings
 
 class OrganizationMiddleware(MiddlewareMixin):
     def process_request(self, request):
+        import re
         if settings.DEBUG_DOMAIN:
             host = settings.DEBUG_DOMAIN
         else:
             host = request.get_host().lower().split(":")[0]  # togli eventuale porta
+            host = re.sub(r"^www\d*\.", "", host)  # togli eventuale www, www2, ecc.
         try:
             org = Organization.objects.get(domain=host)
             request.organization = org
