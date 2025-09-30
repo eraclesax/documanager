@@ -161,9 +161,7 @@
   <div class="row">
     <div class="label">Affissione manifesti</div>
     <div class="fill fill--short">
-      <span class="value">
-        {% if defunto.affissione_manifesti %}Sì{% else %}No{% endif %}
-      </span>
+      <span class="value">{{ defunto.affissione_manifesti |default_if_none:"" }}</span>
     </div>
 
     <div class="label">Medico Curante</div>
