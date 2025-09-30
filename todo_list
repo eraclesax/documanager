@@ -478,6 +478,10 @@ contenuto:
         location /media/ {
                 alias /var/www/documanager/media/;
         }
+        
+        location ~ /\. {
+            deny all;
+        }
 
 
     }
