@@ -1,14 +1,20 @@
+## HOSTS
 # ALLOWED_HOST=16.171.113.111
 ALLOW_LOCAL_HOSTS=False
 ALLOW_EVERY_HOST=False
 ALLOW_PRODUCTION_HOSTS=True
+## DJANGO BASE SETTINGS
 DEBUG=False
-LOG_LEVEL=INFO
-LOG_FILE=/var/log/django/debug.log
 STATIC_ROOT=/var/www/documanager/static
 MEDIA_ROOT=/var/www/documanager/media
 SECRET_KEY=...
-# DATABASE #
+## DJANGO LOGS (ON FILE)
+LOG_TYPE=CONSOLE
+LOG_LEVEL=INFO
+LOG_FILE=/var/log/django/debug.log
+## CUSTOM LOGS (ON DB)
+CLOG_LEVEL=WARNING
+## DATABASE
 DB_IS_SQLITE=False
 DB_ENGINE=django.db.backends.postgresql_psycopg2
 DB_NAME=eifuprod_db

@@ -2,6 +2,7 @@ import re
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from app.models import Organization, User
+from logger.utils import add_log
 
 class AnagraficaDefunto(models.Model):
     # Metadata
@@ -152,29 +153,41 @@ class AnagraficaDefunto(models.Model):
 
     @property
     def get_age(self):
-        if self.data_nascita and self.data_decesso:
-            years_delta = self.data_decesso.year - self.data_nascita.year
-            months_delta = self.data_decesso.month - self.data_nascita.month
-            days_delta = self.data_decesso.day - self.data_nascita.day
-            happy_birthday = int(months_delta >= 0 and days_delta >= 0)
-            age = years_delta + happy_birthday
-            return age
-        else:
-            return None
+        try:
+            if self.data_nascita and self.data_decesso:
+                years_delta = self.data_decesso.year - self.data_nascita.year
+                months_delta = self.data_decesso.month - self.data_nascita.month
+                days_delta = self.data_decesso.day - self.data_nascita.day
+                happy_birthday = int(months_delta >= 0 and days_delta >= 0)
+                age = years_delta + happy_birthday
+                return age
+            else:
+                return None
+        except Exception as e:
+            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.get_age")
+            raise(e)
 
     class Meta(): # type: ignore
         verbose_name = _("Anagrafica Defunto")
         verbose_name_plural = _("Anagrafiche Defunti")
 
     def __str__(self):
-        return f"{self.cognome} {self.nome}"
+        try:
+            return f"{self.cognome} {self.nome}"
+        except Exception as e:
+            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.__str__")
+            raise(e)
     
     def save(self, *args, **kwargs):
-        if self.relative_id is None:  # solo alla creazione
-            last = AnagraficaDefunto.objects.filter(organization=self.organization)\
-                                    .aggregate(models.Max("relative_id"))["relative_id__max"]
-            self.relative_id = 1 if last is None else last + 1
-        super().save(*args, **kwargs)
+        try:
+            if self.relative_id is None:  # solo alla creazione
+                last = AnagraficaDefunto.objects.filter(organization=self.organization)\
+                                        .aggregate(models.Max("relative_id"))["relative_id__max"]
+                self.relative_id = 1 if last is None else last + 1
+            super().save(*args, **kwargs)
+        except Exception as e:
+            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.save")
+            raise(e)
 
     # FIELD_CATEGORIES determina la visualizzazione dei dati in defunto.html e in defunto_edit, quindi deve sempre essere aggiornata
     NON_USER_FIELDS = ('created_by', 'organization', 'relative_id', 'created', 'modified', )
@@ -208,17 +221,29 @@ class AnagraficaDefunto(models.Model):
         Ritorna True se la stringa indica 'Rionero in Vulture'
         (accettando varianti come 'rionero in V.', case-insensitive).
         """
-        text = self.comune_sepoltura if self.comune_sepoltura is not None else ""
-        pattern = r"^\s*rionero\s+in\s+(vulture|v\.)\s*$"
-        return re.match(pattern, text.strip(), re.IGNORECASE) is not None
+        try:
+            text = self.comune_sepoltura if self.comune_sepoltura is not None else ""
+            pattern = r"^\s*rionero\s+in\s+(vulture|v\.)\s*$"
+            return re.match(pattern, text.strip(), re.IGNORECASE) is not None
+        except Exception as e:
+            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.get_is_rionero")
+            raise(e)
 
 
 def user_documents_path(instance, filename):
     # esempio: "media/azienda_5/documenti/contratto.pdf"
-    return f"{instance.organization.tag}/documents/{filename}"
+    try:
+        return f"{instance.organization.tag}/documents/{filename}"
+    except Exception as e:
+        add_log(level=4,exception=e,custom_message="Exception in docdefunto.models.user_documents_path")
+        raise(e)
 def user_documentsbkgds_path(instance, filename):
     # esempio: "media/azienda_5/documenti/contratto.pdf"
-    return f"{instance.organization.tag}/backgrounds/{filename}"
+    try:
+        return f"{instance.organization.tag}/backgrounds/{filename}"
+    except Exception as e:
+        add_log(level=4,exception=e,custom_message="Exception in docdefunto.models.user_documentsbkgds_path")
+        raise(e)
 class Documento(models.Model):
     nome = models.CharField(verbose_name="Nome Documento", blank=True, null=True, max_length=255, default="")
     file = models.FileField(verbose_name="File", upload_to=user_documents_path)
@@ -230,5 +255,9 @@ class Documento(models.Model):
         verbose_name_plural = _("Documenti")
 
     def __str__(self):
-        return f"{self.nome}"
+        try:
+            return f"{self.nome}"
+        except Exception as e:
+            add_log(level=4,exception=e,custom_message="Exception in Documento.__str__")
+            raise(e)
 

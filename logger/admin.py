@@ -10,7 +10,7 @@ def custom_logger_delete(modeladmin, request, queryset):
         cursor = connection.cursor()
         try:
             selected_items = str(list(queryset.all().values_list('log_id', flat=True)))[1:-1]
-            sql = 'DELETE FROM custom_logger_logger WHERE log_id IN (%s)' % selected_items
+            sql = 'DELETE FROM logger_logger WHERE log_id IN (%s)' % selected_items
             # cursor.execute("BEGIN")
             cursor.execute(sql)
             # cursor.execute("COMMIT")

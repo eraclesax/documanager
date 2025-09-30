@@ -1,9 +1,5 @@
-from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.conf import settings
-from re import compile
 from threading import local
 from django.utils.deprecation import MiddlewareMixin
-import json
 
 _user = local()
 def get_current_user():
@@ -32,14 +28,14 @@ class CurrentUserMiddleware:
             ip = get_client_ip(request)
         except:
             ip = 'none'
-        #add_log(level=1, request=request, custom_message=ip )
+        # add_log(level=1, request=request, custom_message=ip )
 
 class ErrorMiddleware(MiddlewareMixin):
 
     def process_exception(self, request, exception):
         from logger.utils import add_log
         from ipware.ip import get_client_ip
-        import traceback, sys
+        import traceback
         try:
             ip = get_client_ip(request)
         except:

@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset
 from crispy_forms.helper import FormHelper
 from django.utils.translation import gettext_lazy as _
-from .models import *
+from .models import AnagraficaDefunto
 
 class DefuntoEditForm(forms.ModelForm):
     

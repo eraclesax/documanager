@@ -1,16 +1,20 @@
-from logger.models import Logger, LoggerMessage, WebRequest
-from django.conf import settings
+from logger.models import Logger, LoggerMessage, WebRequest, REV_LOGGER_LEVEL
 import json
+from django.conf import settings
 
 def add_log(level, message=None, user=None, custom_message=None, request=None, exception=None):
     try:
+        # Check level is the requested level else skip
+        if level < REV_LOGGER_LEVEL[settings.CLOG_LEVEL]:
+            return
+        
         if message:
             try:
                 msg = LoggerMessage.objects.get(pk=message)
             except:
-                msg = LoggerMessage.objects.get(pk=1)
+                msg = None
         else:
-            msg = LoggerMessage.objects.get(pk=1)
+            msg = None
         log = Logger(message=msg, level=level, request=request,exception=exception, custom_message=custom_message,)
         if user:
             log.user = user
@@ -18,8 +22,8 @@ def add_log(level, message=None, user=None, custom_message=None, request=None, e
             web_request = _save_request(request)
             log.web_request = web_request
         log.save()
-    except:
-        pass
+    except Exception as e:
+        raise(e)
 
 def _dumps(value):
     return json.dumps(value,default=lambda o:None, ensure_ascii=False)
@@ -69,7 +73,7 @@ def _save_request(request):
         get = None if not request.GET else _dumps(request.GET),
         post = post,
         is_secure = request.is_secure(),
-        is_ajax = request.is_ajax(),
+        is_ajax = False, # request.is_ajax(), deprecated
         user = user
     )
     web_req.save()

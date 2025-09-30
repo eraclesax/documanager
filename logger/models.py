@@ -1,9 +1,6 @@
 ﻿from builtins import str
 from builtins import object
-from django.db import models, DatabaseError
-from django.urls import reverse
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.db import models
 from django.contrib.auth.models import User
 from logger.middlewares import get_current_user
 
@@ -14,7 +11,13 @@ LOGGER_LEVEL = (
         (4, 'ERROR'),
         (5, 'CRITICAL'),
     )
-
+REV_LOGGER_LEVEL = {
+    'DEBUG':1,
+    'INFO':2,
+    'WARNING':3,
+    'ERROR':4,
+    'CRITICAL':5,
+}
 
 class Logger(models.Model):
 
