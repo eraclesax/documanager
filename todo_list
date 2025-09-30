@@ -566,3 +566,93 @@ ALTER ROLE eifuprod_dbuser SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE eifuprod_db TO eifuprod_dbuser;
 \c eifuprod_db postgres
 GRANT ALL ON SCHEMA public TO eifuprod_dbuser;
+
+
+
+## LOGS PER DEBUG DETTAGLIATI ##
+
+Sto avendo problemi ma non riesco a fare debug perché non so dove leggere gli errori. C'è un modo per avere logs più dettagliati da nginx, gunicorn e dal server django in produzione?
+ChatGPT said:
+
+Sì, assolutamente 👍
+In produzione di solito i log sono molto “scarsi” perché pensati solo per non intasare il disco. Ma puoi renderli molto più verbosi sia per nginx, gunicorn che per Django.
+
+🔹 Nginx
+
+I log stanno quasi sempre in:
+
+/var/log/nginx/access.log
+/var/log/nginx/error.log
+
+
+Puoi aumentare il livello di dettaglio cambiando in /etc/nginx/nginx.conf (o nel file del tuo sito in /etc/nginx/sites-enabled/...):
+
+error_log /var/log/nginx/error.log notice;
+
+
+→ cambia notice in info o debug:
+
+error_log /var/log/nginx/error.log debug;
+
+
+⚠️ Con debug i log diventano enormi, quindi usalo solo temporaneamente.
+
+Poi fai reload:
+
+sudo nginx -s reload
+
+🔹 Gunicorn
+
+Se usi systemd, apri la tua unit (/etc/systemd/system/gunicorn.service) e aggiungi ad esempio:
+
+ExecStart=/home/ubuntu/documanager/venv/bin/gunicorn \
+  --workers 3 \
+  --bind unix:/run/gunicorn.sock \
+  --log-level debug \
+  --access-logfile /var/log/gunicorn/access.log \
+  --error-logfile /var/log/gunicorn/error.log \
+  core.wsgi:application
+
+
+Poi:
+
+sudo systemctl daemon-reexec
+sudo systemctl restart gunicorn
+sudo systemctl restart nginx
+
+Ora avrai log dettagliati in /var/log/gunicorn/.
+
+🔹 Django
+
+In settings.py, puoi configurare il logging.
+Per esempio, se vuoi che Django scriva tutto in un file /var/log/django/debug.log:
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/django/debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+
+Puoi anche loggare solo certi componenti, tipo database query, middleware, ecc.
+
+👉 Così avresti:
+
+nginx → errori di proxy/static/media
+
+gunicorn → crash dei worker
+
+django → eccezioni Python e query strane
