@@ -538,9 +538,6 @@
     FIRMA
     <div class="fill fill--xxlarge">
       <span class="value">
-        {% if defunto.firmato %}
-          <img class="inline-sign-img" src="{{user.profile.signature.url}}" alt="" />
-        {% endif %}
       </span> 
     </div>
     <br>
@@ -557,11 +554,11 @@
 
   <div class="textbox-end">
     <div class="fill fill--short">
-      <span class="value"></span>
+      <span class="value">Rionero in V.re</span>
     </div>
-    lì
+    , lì
     <div class="fill fill--short">
-      <span class="value"></span>
+      <span class="value">{{ defunto.data_firma | date:"d/m/Y" }}</span>
     </div>
     &nbsp
     l’addetto al trasporto
