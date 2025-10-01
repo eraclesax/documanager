@@ -187,9 +187,9 @@ else:
     EMAIL_HOST = "smtp.tuoservizio.com"   # es. smtp.gmail.com o email-smtp.eu-central-1.amazonaws.com (SES)
     EMAIL_PORT = 587                      # tipico TLS
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = "il_tuo_username"
+    EMAIL_HOST_USER = "riso"
     EMAIL_HOST_PASSWORD = "la_tua_password_o_token"
-    DEFAULT_FROM_EMAIL = "noreply@tuodominio.com"
+    DEFAULT_FROM_EMAIL = "noreply@eifusoft.com"
 
 # import locale
 # locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')

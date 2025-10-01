@@ -660,3 +660,41 @@ nginx → errori di proxy/static/media
 gunicorn → crash dei worker
 
 django → eccezioni Python e query strane
+
+
+## Metto un file di swap ##
+sudo fallocate -l 1G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+## FILE DI CONFIGURAZIONE GUNICORN RIDOTTA RAM ##
+ù[Unit]
+Description=Gunicorn daemon for Django project
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+UMask=0002
+WorkingDirectory=/home/ubuntu/documanager
+ExecStart=/home/ubuntu/documanager/venv/bin/gunicorn \
+    --workers 1 \
+	--threads 2 \
+	--timeout 30 \
+	--max-requests 100 \
+	--max-requests-jitter 10 \
+        --bind unix:/run/gunicorn/documanager.sock \
+	--log-level debug \
+	--access-logfile /var/log/gunicorn/access.log \
+	--error-logfile /var/log/gunicorn/error.log \
+        core.wsgi:application
+Environment="DJANGO_SETTINGS_MODULE=core.settings"
+EnvironmentFile=/home/ubuntu/documanager/.env
+
+RuntimeDirectory=gunicorn
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target
