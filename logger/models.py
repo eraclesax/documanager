@@ -63,7 +63,7 @@ class WebRequest(models.Model):
     method = models.CharField(max_length=50)
     uri = models.CharField(max_length=2000)
     user_agent = models.CharField(max_length=1000,blank=True,null=True)
-    remote_addr = models.GenericIPAddressField()
+    remote_addr = models.GenericIPAddressField(blank=True,null=True) # Should not be null
     remote_addr_fwd = models.GenericIPAddressField(blank=True,null=True)
     meta = models.TextField()
     cookies = models.TextField(blank=True,null=True)

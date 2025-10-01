@@ -57,10 +57,10 @@ def _save_request(request):
     except:
         pass
 
-    # Remote addr sometimes is empty, i found a fix on the magic internet
-    if "HTTP_X_FORWARDED_FOR" in meta:
-        parts = meta["HTTP_X_FORWARDED_FOR"].split(",", 1)
-        meta["REMOTE_ADDR"] = parts[0]
+    # # Remote addr sometimes is empty, i found a fix on the magic internet
+    # if "HTTP_X_FORWARDED_FOR" in meta:
+    #     parts = meta["HTTP_X_FORWARDED_FOR"].split(",", 1)
+    #     meta["REMOTE_ADDR"] = parts[0]
 
     web_req = WebRequest(
         host = request.get_host(),
