@@ -696,5 +696,7 @@ EnvironmentFile=/home/ubuntu/documanager/.env
 RuntimeDirectory=gunicorn
 RuntimeDirectoryMode=0755
 
+MemoryMax=200M
+
 [Install]
 WantedBy=multi-user.target
