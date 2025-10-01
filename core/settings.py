@@ -32,6 +32,8 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-6@&(ti2fkhl&g0$ar)&wv=04+@6-lo8%l17@a(-0s4s&rf4oci')
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE',cast=bool,default=False)
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE',cast=bool,default=False)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG',cast=bool,default=True)
 DEBUG_DOMAIN = env('DEBUG_DOMAIN',cast=str,default='')

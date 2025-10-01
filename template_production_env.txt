@@ -8,6 +8,8 @@ DEBUG=False
 STATIC_ROOT=/var/www/documanager/static
 MEDIA_ROOT=/var/www/documanager/media
 SECRET_KEY=...
+CSRF_COOKIE_SECURE=True
+SESSION_COOKIE_SECURE=True
 ## DJANGO LOGS (ON FILE)
 LOG_TYPE=CONSOLE
 LOG_LEVEL=INFO
