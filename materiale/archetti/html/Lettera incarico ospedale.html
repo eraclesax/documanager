@@ -285,7 +285,9 @@
     <div class="sign-block">
       <div class="sign-label">Firma</div>
       <div class="sign-bar">
-        
+        {% if defunto.firmato %}
+          <img class="sign-img" src="{{user.profile.signature.url}}" alt="" />
+        {% endif %}
       </div>
     </div>
   </div>
