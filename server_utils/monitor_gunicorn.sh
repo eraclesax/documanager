@@ -11,7 +11,7 @@ case "$1" in
     # Avvia in background con nohup
     nohup bash -c 'while true; do
       echo "---- $(date) ----"
-      ps -o pid,rss,cmd -p $(pgrep -f "gunicorn" | grep -v "^$(pgrep -fo gunicorn)$")
+      ps -o pid,rss,cmd -p $(pgrep /home/ubuntu/documanager/venv/bin/python3 /home/ubuntu/documanager/venv/bin/gunicorn")
       echo
       sleep 5
     done' >> "$LOGFILE" 2>&1 &
