@@ -8,8 +8,8 @@ def direct_admin_delete(modeladmin, request, queryset):
         from django.db import connection
         cursor = connection.cursor()
         try:
-            selected_items = str(list(queryset.all().values_list('log_id', flat=True)))[1:-1]
-            sql = 'DELETE FROM logger_logger WHERE log_id IN (%s)' % selected_items
+            selected_items = str(list(queryset.all().values_list('memorylog_id', flat=True)))[1:-1]
+            sql = 'DELETE FROM customtest_memorylog WHERE memorylog_id IN (%s)' % selected_items
             # cursor.execute("BEGIN")
             cursor.execute(sql)
             # cursor.execute("COMMIT")
