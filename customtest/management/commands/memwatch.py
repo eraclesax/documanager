@@ -13,8 +13,8 @@ class Command(BaseCommand):
     help = "Monitoraggio memoria"
 
     def add_arguments(self, parser):
-        parser.add_argument("--interval", type=int, default=60)
-        parser.add_argument("--top", type=int, default=10)
+        parser.add_argument("--interval", type=int, default=600)
+        parser.add_argument("--top", type=int, default=5)
         parser.add_argument("--stop", action="store_true")
 
     def handle(self, *args, **options):
