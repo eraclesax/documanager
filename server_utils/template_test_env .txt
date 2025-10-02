@@ -22,5 +22,7 @@ DB_NAME=eifuprod_db
 DB_USER=eifuprod_dbuser
 DB_PASSWORD=UkVorS0E2@
 DB_HOST=localhost
-# REMOTE TEST SERVER #
+## REMOTE TEST SERVER 
 DEBUG_DOMAIN=archetti.eifusoft.it
+## EMAIL
+DEBUG_EMAIL=True

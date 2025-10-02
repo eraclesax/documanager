@@ -23,3 +23,11 @@ DB_NAME=eifuprod_db
 DB_USER=eifuprod_dbuser
 DB_PASSWORD=...
 DB_HOST=localhost
+## EMAIL
+DEBUG_EMAIL=False
+EMAIL_HOST=email-smtp.eu-north-1.amazonaws.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=AKIASTM3NABXCKKBWGE5
+EMAIL_HOST_PASSWORD=BH5hKgrV5YgukXXqImxSH8tkbALJfDd2F0kYzs7xD1sI
+DEFAULT_FROM_EMAIL=noreply@eifusoft.it

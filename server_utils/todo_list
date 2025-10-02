@@ -52,13 +52,40 @@ sudo mkdir -p /run/gunicorn
 sudo chown ubuntu:www-data /run/gunicorn
 
 Indirizzi dns per connettersi con ssh:
-ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-171-113-111.eu-north-1.compute.amazonaws.com
-ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ubuntu@ec2-13-51-193-252.eu-north-1.compute.amazonaws.com
-ssh -i "/home/riso/.ssh/ArchettiEC2.pem" ec2-user@ec2-13-60-228-41.eu-north-1.compute.amazonaws.com
-ssh -i "/home/riso/.ssh/ec2us_east_1.pem" ubuntu@ec2-3-238-40-176.compute-1.amazonaws.com
+# PROD
+ssh -i "/home/cristian/.ssh/ArchettiEC2@LenovoG500.pem" ubuntu@ec2-16-16-93-45.eu-north-1.compute.amazonaws.com
 ssh -i "/home/riso/.ssh/aws_eu-north-1@riso_thinkpad.pem" ubuntu@ec2-16-16-93-45.eu-north-1.compute.amazonaws.com
+# TEST
+ssh -i "/home/riso/.ssh/aws_eu-north-1@riso_thinkpad.pem" ubuntu@ec2-16-171-66-80.eu-north-1.compute.amazonaws.com
 
 
+## EMAIL WITH AMAZON SES ##
+IAM user name
+    eraclesax_smtp
+SMTP user name
+    AKIASTM3NABXCKKBWGE5
+SMTP password
+    BH5hKgrV5YgukXXqImxSH8tkbALJfDd2F0kYzs7xD1sI
+SMTP endpoint
+    email-smtp.eu-north-1.amazonaws.com
+STARTTLS Port
+    25, 587 or 2587
+TLS Wrapper Port
+    465 or 2465
+
+Transport Layer Security (TLS)
+Required
+
+## Installare swaks per debug email
+sudo apt install swaks -y
+swaks --server email-smtp.eu-north-1.amazonaws.com \
+      --port 587 \
+      --auth LOGIN \
+      --auth-user "AKIASTM3NABXCKKBWGE5" \
+      --auth-password "BH5hKgrV5YgukXXqImxSH8tkbALJfDd2F0kYzs7xD1sI" \
+      --from "info@eifusoft.it" \
+      --to "eraclesax@gmail.com" \
+      -tls
 
 --------------------------------------------------
 

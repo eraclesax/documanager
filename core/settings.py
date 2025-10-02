@@ -185,12 +185,12 @@ if DEBUG_EMAIL:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = "smtp.tuoservizio.com"   # es. smtp.gmail.com o email-smtp.eu-central-1.amazonaws.com (SES)
-    EMAIL_PORT = 587                      # tipico TLS
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = "riso"
-    EMAIL_HOST_PASSWORD = "la_tua_password_o_token"
-    DEFAULT_FROM_EMAIL = "noreply@eifusoft.com"
+    EMAIL_HOST = env("EMAIL_HOST", cast=str, default='email-smtp.eu-north-1.amazonaws.com')
+    EMAIL_PORT = env("EMAIL_PORT", cast=int, default=587)
+    EMAIL_USE_TLS = env("EMAIL_USE_TLS", cast=bool, default=True)
+    EMAIL_HOST_USER = env("EMAIL_HOST_USER", cast=str, default='')   # generato in SES
+    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", cast=str, default='')
+    DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", cast=str, default='noreply@eifusoft.it')
 
 # import locale
 # locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')
