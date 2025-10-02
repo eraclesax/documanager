@@ -232,8 +232,9 @@ Convenzione amazon linux:
     sudo nano /etc/nginx/conf.d/documanager.conf
 contenuto per Ubuntu:
 server {
-    listen 80;
-    server_name 3.238.40.176;
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
@@ -253,7 +254,7 @@ upstream documanager {
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    server_name 13.60.228.41 localhost _;
+    server_name _;
 
     client_max_body_size 32M;
 
@@ -462,8 +463,9 @@ Creo il file di configurazione:
     sudo nano /etc/nginx/sites-available/documanager
 contenuto:
     server {
-        listen 80;
-        server_name 13.53.205.189;
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        server_name _;
 
         location = /favicon.ico { access_log off; log_not_found off; }
         location /static/ {
