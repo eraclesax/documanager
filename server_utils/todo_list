@@ -670,7 +670,7 @@ sudo swapon /swapfile
 echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 ## FILE DI CONFIGURAZIONE GUNICORN RIDOTTA RAM ##
-ù[Unit]
+[Unit]
 Description=Gunicorn daemon for Django project
 After=network.target
 
@@ -685,18 +685,23 @@ ExecStart=/home/ubuntu/documanager/venv/bin/gunicorn \
 	--timeout 30 \
 	--max-requests 100 \
 	--max-requests-jitter 10 \
-        --bind unix:/run/gunicorn/documanager.sock \
+    --limit-request-memory ?? \ Di questo non sono sicuro!
+    --limit-request-line 4094 \ Di questo non sono sicuro!
+    --limit-request-field_size 8190 \ Di questo non sono sicuro!
+    --bind unix:/run/gunicorn/documanager.sock \
 	--log-level debug \
 	--access-logfile /var/log/gunicorn/access.log \
 	--error-logfile /var/log/gunicorn/error.log \
         core.wsgi:application
 Environment="DJANGO_SETTINGS_MODULE=core.settings"
 EnvironmentFile=/home/ubuntu/documanager/.env
-
 RuntimeDirectory=gunicorn
 RuntimeDirectoryMode=0755
-
 MemoryMax=200M
 
 [Install]
 WantedBy=multi-user.target
+
+
+## Per leggere i log di systemd
+/var/log/syslog

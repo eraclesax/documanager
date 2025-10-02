@@ -9,13 +9,16 @@ https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
 
 import os
 from dotenv import load_dotenv
+from django.core.wsgi import get_wsgi_application
 
 # carica variabili di ambiente subito, metterle qui serve per l'ambiente di produzione e test
 load_dotenv('.env')
 
-from django.core.wsgi import get_wsgi_application
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 # os.environ['HTTPS'] = "on"
+
+## PUT HERE YOUR TESTS ##
+
+#########################
 
 application = get_wsgi_application()
