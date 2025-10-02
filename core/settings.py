@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     # Custom
     'app',
     'docdefunto',
+    'customtest',
     # Signals
     # 'app.apps.MyAppConfig',
 ]
