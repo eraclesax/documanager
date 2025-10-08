@@ -33,30 +33,30 @@ def _send(mail):
         
     subject = mail.subject
     try:
-        json_message = mail.json_message.replace("'",'"')
-        print(json_message)
-        json_message = json.loads(json_message)
+        template_context = mail.template_context.replace("'",'"')
+        print(template_context)
+        template_context = json.loads(template_context)
     except:
         import traceback
         traceback.print_exc()
         print('error on utils.py')
-        json_message = mail.json_message
+        template_context = mail.template_context
 
-    json_message['uuid'] = str(mail.uuid)
+    template_context['uuid'] = str(mail.uuid)
 
     if settings.DEBUG_EMAIL:
-        json_message['extra_info'] = 'to=' + ';'.join(to) + '   cc=' + ';'.join(cc)+ '   bcc=' + ';'.join(bcc)
+        template_context['extra_info'] = 'to=' + ';'.join(to) + '   cc=' + ';'.join(cc)+ '   bcc=' + ';'.join(bcc)
         to = [settings.DEFAULT_FROM_EMAIL]
         bcc = None
         cc = None
     else:
-        json_message['extra_info'] = ''
+        template_context['extra_info'] = ''
     
     template_html = 'mail/' + mail.template_name + '.html'
     template_text = 'mail/' + mail.template_name + '.txt'
 
-    text_content = render_to_string(template_text, json_message )
-    html_content = render_to_string(template_html, json_message )
+    text_content = render_to_string(template_text, template_context )
+    html_content = render_to_string(template_html, template_context )
     mail.html_text=html_content
     mail.txt_text=text_content
     mail.save()
