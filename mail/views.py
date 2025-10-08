@@ -14,12 +14,12 @@ class RenderMailView(View):
         mail = Mail.objects.get(uuid=kwargs.get('uuid'))
         self.template_name = 'mail/' + mail.template_name + '.html'
         
-        return render(request, self.template_name, json.loads(mail.json_message))
-        # return HttpResponse(m.html_text)
+        # return render(request, self.template_name, json.loads(mail.json_message))
+        return HttpResponse(mail.html_text)
     
 class SentMailListView(View):
 
-    template_name = 'mail/sent_mail_list.html'
+    template_name = 'pages/sent_mail_list.html'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser is True:
@@ -35,7 +35,7 @@ class SentMailListView(View):
 
 class SentMailView(View):
 
-    template_name = 'mail/sent_mail.html'
+    template_name = 'pages/sent_mail.html'
 
     def get(self, request, *args, **kwargs):
         mail_id = kwargs.get("id", None)

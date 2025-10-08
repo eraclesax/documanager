@@ -1,16 +1,14 @@
 {% extends BASE_TEMPLATE %}
 
-{% load i18n %}
-
 {% block content %}
 <div class="row table-container" style="overflow: auto;">
 
 
 
         <div class="col-xs-6">
-            <a class="btn btn-success" id='reminder_mail' href="{% url 'mail_reminder' from_who=from_who %}">{% trans 'Reminder Email' %}</a>
+            <a class="btn btn-success" id='reminder_mail' href="">Reminder Email</a>
                 {% if back_source %}
-            <a class="btn btn-warning pull-right" href="{{ back_source }}">{% trans 'Back' %}</a>
+            <a class="btn btn-warning pull-right" href="{{ back_source }}">Back</a>
             {% endif %}
         </div>
 
@@ -39,19 +37,19 @@
                         <thead>
                             <tr>
                                 <th style="text-align: center;">Id</th>
-                                <th style="text-align: center;">{% trans 'Sending Time' %}</th>
-                                <th style="text-align: center;">{% trans 'From' %}</th>
-                                <th style="text-align: center;">{% trans 'To' %}</th>
-                                <th style="text-align: center;">{% trans 'Subject' %}</th>
-                                <th style="text-align: center;">{% trans 'Text' %}</th>
-                                <th style="text-align: center;">{% trans 'Sent' %}</th>
-                                <th style="text-align: center;">{% trans 'Html' %}
+                                <th style="text-align: center;">Sending Time</th>
+                                <th style="text-align: center;">From</th>
+                                <th style="text-align: center;">To</th>
+                                <th style="text-align: center;">Subject</th>
+                                <th style="text-align: center;">Text</th>
+                                <th style="text-align: center;">Sent</th>
+                                <th style="text-align: center;">Html
                             </tr>
                         </thead>
                         <tbody>
                         {% for mi in mails %}
                             <tr>
-                                <td style="text-align: right;"><a href="{% url 'sent_mail' from_who=from_who id=mi.pk %}">{{ mi.pk }}</a></td>
+                                <td style="text-align: right;"><a href="{% url 'sent_mail' id=mi.pk %}">{{ mi.pk }}</a></td>
                                 <td style="text-align: center" data-sort='{{ mi.end_date|date:"YmdHMS"  }}'>{{ mi.end_date }}</td>
                                 <td style="text-align: center;">{{ mi.from_who }}</td>
                                 <td style="text-align: left;">{{ mi.to_who|truncatechars:80}}</td>
@@ -59,7 +57,7 @@
                                 <td style="text-align: left;">{{ mi.txt_text|truncatechars:100}}</td>
                                 <td style="text-align: center;">{{ mi.sent }}</td>
                                 <td style="text-align: center;">
-                                    <a class="btn btn-warning pull-right" target="_blank" href="{% url 'render_mail'  uuid=mi.uuid %}">{% trans 'Html' %}</a>
+                                    <a class="btn btn-warning pull-right" target="_blank" href="{% url 'render_mail'  uuid=mi.uuid %}">Html</a>
                                 </td>
                                 
                             </tr>
@@ -89,7 +87,7 @@
             // "responsive": true,
             "language": {
                 "search": "",
-                "searchPlaceholder": "{% trans 'Search' %}"
+                "searchPlaceholder": "Search"
             },
 
             initComplete: function () {

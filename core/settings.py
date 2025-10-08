@@ -193,7 +193,7 @@ else:
     EMAIL_USE_TLS = env("EMAIL_USE_TLS", cast=bool, default=True)
     EMAIL_HOST_USER = env("EMAIL_HOST_USER", cast=str, default='')   # generato in SES
     EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", cast=str, default='')
-    DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", cast=str, default='noreply@eifusoft.it')
+    DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", cast=str, default='noreply@webmaster.com')
 
 # import locale
 # locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')
