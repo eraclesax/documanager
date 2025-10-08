@@ -1,27 +1,21 @@
 from __future__ import print_function
 from __future__ import absolute_import
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.generic import View
-from django.utils.decorators import method_decorator
-from logger.utils import add_log
-from django.urls import reverse
 from .models import Mail
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
-from django.urls import reverse
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
-import copy
-import json
 
 class RenderMailView(View):
 
     template_name = ''
  
     def get(self, request, *args, **kwargs):
-        m = Mail.objects.get(uuid=kwargs.get('uuid'))
-        self.template_name = 'mail/' + m.template_name + '.html'
-        return HttpResponse(m.html_text)
+        import json
+        mail = Mail.objects.get(uuid=kwargs.get('uuid'))
+        self.template_name = 'mail/' + mail.template_name + '.html'
+        
+        return render(request, self.template_name, json.loads(mail.json_message))
+        # return HttpResponse(m.html_text)
     
 class SentMailListView(View):
 

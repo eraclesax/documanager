@@ -52,6 +52,9 @@ if ALLOW_EVERY_HOST:
     ALLOWED_HOSTS += ['*',]
 if ALLOW_PRODUCTION_HOSTS:
     ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
+
+FULL_URL = "https://eifusoft.it"
+SITE_NAME = "EifuSoft"
 # Application definition
 
 INSTALLED_APPS = [

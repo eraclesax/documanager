@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include("authentication.urls")), # Auth routes - login / register
     path('', include('docdefunto.urls')),
     path('', include("app.urls")),             # UI Kits Html files - must be last one
+    path('mail/', include("mail.urls")),
 ]
 
 

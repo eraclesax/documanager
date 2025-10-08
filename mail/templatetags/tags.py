@@ -23,7 +23,6 @@ def mail_header(uuid=None):
 
     return data
 
-
 @register.inclusion_tag('mail/mail_footer.html')
 def mail_footer(uuid=None, unsubscribe=None):
     data = {}

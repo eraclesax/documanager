@@ -6,7 +6,6 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from logger.utils import add_log
 import json
-import sys
 from django.conf import settings
 
 

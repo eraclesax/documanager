@@ -1,0 +1,20 @@
+{% load tags %}
+{% mail_header uuid=uuid %}
+
+<tr>
+    <td class="innerpadding borderbottom" style="padding-top:30px;padding-bottom:30px;padding-right:30px;padding-left:30px;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#f2eeed;" >
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+        <td class="bodycopy" style="color:#153643;font-size:16px;line-height:22px;" >
+            <br>
+            Caro amico<b>{{username}}</b>,
+            <br><br>
+            bla bla bla
+        </td>
+        </tr>
+    </table>
+    </td>
+</tr>
+<tr><td>{{extra_info}}</td></tr>
+
+{% mail_footer uuid=uuid %}
