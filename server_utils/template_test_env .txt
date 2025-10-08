@@ -26,3 +26,4 @@ DB_HOST=localhost
 DEBUG_DOMAIN=archetti.eifusoft.it
 ## EMAIL
 DEBUG_EMAIL=True
+## INFO

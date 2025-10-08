@@ -53,7 +53,7 @@ if ALLOW_EVERY_HOST:
 if ALLOW_PRODUCTION_HOSTS:
     ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
 
-FULL_URL = "https://eifusoft.it"
+FULL_URL = env('FULL_URL',cast=str,default="http://full-urlnotsetted.com")
 SITE_NAME = "EifuSoft"
 # Application definition
 
