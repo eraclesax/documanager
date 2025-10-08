@@ -46,6 +46,8 @@ class MailAdmin(admin.ModelAdmin):
         obj.pk = None  # questo crea una copia
         obj.sent = False
         obj.end_date = None
+        obj.html_text = None
+        obj.txt_text = None
         obj.uuid = uuid.uuid4()
         obj.save()
         self.message_user(request, f"'{obj}' duplicato con successo.")
