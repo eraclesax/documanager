@@ -26,8 +26,10 @@
   .row { display:flex; align-items:flex-end; flex-wrap:nowrap; gap: 3mm; margin-bottom: 2mm; }
   .label { white-space:nowrap; font-size: 11pt; }
   .fill { flex:1; border-bottom: 1px solid #000; min-height: 6mm; }
+  .fill--xshort { width: 20mm; }
   .fill--short { width: 35mm; }
   .fill--mid   { width: 60mm; }
+  .fill--long   { min-width: 100mm; }
   .spacer { flex:0 0 6mm; }
 
   /* se vuoi mostrare il valore stampato sopra la linea */
@@ -124,52 +126,70 @@
   <!-- riga 7 -->
   <div class="row">
     <div class="label">Stato civile</div>
-    <div class="fill fill--mid"><span class="value">{{ defunto.stato_civile |default_if_none:"" }}</span></div>
-
-    <div class="label">Cogn. e nome parente</div>
-    <div class="fill"><span class="value">{{ defunto.cognome_parente |default_if_none:"" }} {{ defunto.nome_parente |default_if_none:"" }}</span></div>
+    <div class="fill fill--mid">
+      <span class="value">
+        {{ defunto.stato_civile |default_if_none:"" }}
+      </span>
+    </div>
+    <div class="label">Cogn. e nome coniuge</div>
+    <div class="fill fill--short">
+      <span class="value">
+        {% if defunto.stato_civile == "Celibe / nubile" %}
+          &nbsp;&nbsp;&nbsp; /
+        {% else %}
+          {{ defunto.cognome_coniuge |default_if_none:"" }} {{ defunto.nome_coniuge |default_if_none:"" }}
+        {% endif %}
+        </span>
+    </div>
   </div>
 
   <!-- riga 8 -->
   <div class="row">
+    <div class="label">Cogn. e nome parente</div>
+    <div class="fill fill--mid">
+      <span class="value">
+        {{ defunto.cognome_parente |default_if_none:"" }} {{ defunto.nome_parente |default_if_none:"" }}
+      </span>
+    </div>
+
     <div class="label">Data nascita parente</div>
     <div class="fill fill--short"><span class="value">{{ defunto.data_nascita_parente|date:"d/m/Y" |default_if_none:"" }}</span></div>
-    
-    <div class="label">Cell. famiglia</div>
-    <div class="fill fill--mid"><span class="value">{{ defunto.tel_famiglia |default_if_none:"" }}</span></div>
   </div>
 
   <!-- riga 9 -->
-  <div class="row">
+  <div class="row">        
+    <div class="label">Cell. famiglia</div>
+    <div class="fill fill--mid"><span class="value">{{ defunto.tel_famiglia |default_if_none:"" }}</span></div>
+
     <div class="label">Chiesa</div>
     <div class="fill"><span class="value">{{ defunto.chiesa |default_if_none:"" }}</span></div>
-
-    <div class="label">Data e ora funerale</div>
-    <div class="fill fill--mid"><span class="value">{{ defunto.data_ora_funerale|date:"d/m/Y H:i" |default_if_none:"" }}</span></div>
   </div>
 
   <!-- riga 10 -->
   <div class="row">
+    <div class="label">Data e ora funerale</div>
+    <div class="fill fill--mid"><span class="value">{{ defunto.data_ora_funerale|date:"d/m/Y H:i" |default_if_none:"" }}</span></div>
+
     <div class="label">Cimitero di sepoltura</div>
     <div class="fill"><span class="value">{{ defunto.comune_sepoltura |default_if_none:"" }} {% if defunto.provincia_sepoltura %}({{ defunto.provincia_sepoltura | default_if_none:"" }}){% endif %}</span></div>
-
-    <div class="label">Ubicazione feretro</div>
-    <div class="fill"><span class="value">{{ defunto.ubicazione_feretro |default_if_none:"" }}</span></div>
   </div>
 
   <!-- riga 11 -->
   <div class="row">
+      <div class="label">Ubicazione feretro</div>
+    <div class="fill"><span class="value">{{ defunto.ubicazione_feretro |default_if_none:"" }}</span></div>
+
     <div class="label">Affissione manifesti</div>
     <div class="fill fill--short">
       <span class="value">{{ defunto.affissione_manifesti |default_if_none:"" }}</span>
     </div>
-
-    <div class="label">Medico Curante</div>
-    <div class="fill"><span class="value">{{ defunto.medico_curante |default_if_none:"" }}</span></div>
   </div>
 
   <!-- riga 12 -->
   <div class="row">
+    <div class="label">Medico Curante</div>
+    <div class="fill"><span class="value">{{ defunto.medico_curante |default_if_none:"" }}</span></div>
+
     <div class="label">Fioraio</div>
     <div class="fill"><span class="value">{{ defunto.fioraio |default_if_none:"" }}</span></div>
   </div>
