@@ -78,6 +78,7 @@ class DefuntoEditForm(forms.ModelForm):
         self.fields['via_decesso'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
         self.fields['via_salma'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
         self.fields['via_residenza_par'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", "Piazza", ecc.'
+        self.fields['sosta_feretro'].widget.attrs['placeholder'] = 'Indicare "Via", "Viale", ecc. o altro tipo di luogo'
         # self.fields['data_inumazione'].widget.attrs['placeholder'] = 'Es. 31/05/1936'
         # self.fields['ora_inumazione'].widget.attrs['placeholder'] = 'Es. 21:45'
         self.fields['affissione_manifesti'].widget.attrs['placeholder'] = 'Esempio:\nRionero in Vulture\nBarile\necc.'

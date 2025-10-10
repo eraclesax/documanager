@@ -291,8 +291,8 @@
         condotto dal 
       </div>
       <div class="textbox" style="text-align: center; padding-top: 2mm;">
-        Sig._NARDOZZA CARMINE_ nato a _VENOSA (PZ)_il_28/08/1976_ residente
-        in_RIONERO IN V.RE (PZ)_ Via_DEGLI ULIVI, 5_e che sarà comunicato
+        Sig. NARDOZZA CARMINE  nato a  VENOSA (PZ) il 28/08/1976 residente
+        in RIONERO IN V.RE (PZ)  Via DEGLI ULIVI, 5 e che sarà comunicato
         al Comune di destinazione.
       </div>
     {% else %}
@@ -335,13 +335,13 @@
       </div>
       
       <div class="textbox sm">
-        Il feretro sosterà in Via
+        Il feretro sosterà in
         <div class="fill fill--mid">
-          <span class="value"></span>
+          <span class="value">{{ defunto.sosta_feretro | default_if_none:"" }}</span>
         </div> 
         e per le esequie il 
         <div class="fill fill--short">
-          <span class="value"></span>
+          <span class="value">{{ defunto.data_ora_funerale|date:"d/m/Y" }}</span>
         </div> 
         presso la Chiesa
         <div class="fill fill--mid">

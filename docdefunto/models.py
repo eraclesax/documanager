@@ -105,6 +105,7 @@ class AnagraficaDefunto(models.Model):
 
     # Funerale
     data_ora_partenza = models.DateTimeField(verbose_name="Data e Ora della partenza del corteo", blank=True, null=True) #TODO: non è la stessa cosa di data_ora_funerale?
+    sosta_feretro = models.CharField(verbose_name="Sosta feretro", blank=True, null=True, max_length=255)
     chiesa = models.CharField(verbose_name="Chiesa", blank=True, null=True, max_length=255)
     comune_chiesa = models.CharField(verbose_name="Comune Chiesa", blank=True, null=True, max_length=255)
     provincia_chiesa = models.CharField(verbose_name="Provincia della Chiesa (sigla)", blank=True, null=True, max_length=2)
@@ -203,7 +204,7 @@ class AnagraficaDefunto(models.Model):
                     'comune_residenza_par', 'provincia_residenza_par', 'via_residenza_par','codice_fiscale_par',
                     'doc_ric_par', 'n_doc_ric_par', 'ente_doc_par', 'data_doc_par', ),
         "Contatti":('tel_famiglia', 'email', 'altro', ),
-        "Funerale":('data_ora_partenza', 'chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  
+        "Funerale":('data_ora_partenza', 'sosta_feretro', 'chiesa', 'comune_chiesa', 'provincia_chiesa', 'data_ora_funerale',  
                     'comune_sepoltura','provincia_sepoltura','processo_sepoltura', 'ubicazione_feretro', 
                     'affissione_manifesti', 'medico_curante', 'fioraio', ),
         "Servizi funebri":('lutto_casa', 'corteo_da_casa', 'corteo_da_ospedale', 'pass_solo_auto', 

@@ -123,6 +123,7 @@ def crea_defunto_di_test(username="admin"):
 
             # Funerale
             data_ora_partenza=datetime(2025, 1, 3, 9, 0),
+            sosta_feretro = "Via dei Pellegrini, 13",
             chiesa="Chiesa San Pietro",
             comune_chiesa="Roma",
             provincia_chiesa="RM",
