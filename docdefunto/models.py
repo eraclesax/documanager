@@ -216,17 +216,17 @@ class AnagraficaDefunto(models.Model):
 
     # Custom properties: ARCHETTI
     @property
-    def get_is_rionero(self) -> bool:
+    def get_comune_decesso_is_rionero(self) -> bool:
         """
         Ritorna True se la stringa indica 'Rionero in Vulture'
         (accettando varianti come 'rionero in V.', case-insensitive).
         """
         try:
-            text = self.comune_sepoltura if self.comune_sepoltura is not None else ""
+            text = self.comune_decesso if self.comune_decesso is not None else ""
             pattern = r"^\s*rionero\s+in\s+(vulture|v\.)\s*$"
             return re.match(pattern, text.strip(), re.IGNORECASE) is not None
         except Exception as e:
-            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.get_is_rionero")
+            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.get_comune_decesso_is_rionero")
             raise(e)
 
 

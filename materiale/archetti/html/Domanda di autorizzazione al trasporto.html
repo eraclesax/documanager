@@ -166,7 +166,7 @@
     </h5>
 
     <div class="recipient">
-      <span class="recipient">Al Sig. Ufficiale dello Stato Civile del Comune di {{ defunto.comune_sepoltura|default_if_none:"" }}{% if defunto.provincia_sepoltura %} ({{ defunto.provincia_sepoltura | default_if_none:"" }}){% endif %}</span>
+      <span class="recipient">Al Sig. Ufficiale dello Stato Civile del Comune di {{ defunto.comune_decesso|default_if_none:"" }}{% if defunto.provincia_decesso %} ({{ defunto.provincia_decesso | default_if_none:"" }}){% endif %}</span>
     </div>
 
     <div class="textbox">
@@ -249,7 +249,7 @@
       CHIEDE IL RILASCIO DELL’ AUTORIZZAZIONE AL TRASPORTO E
     </h4>
 
-    {% if defunto.get_is_rionero %}
+    {% if defunto.get_comune_decesso_is_rionero %}
       <div class="textbox">
         {% if defunto.ubicazione_feretro == 'Cappella' %}
           alla tumulazione in Cappella Privata
