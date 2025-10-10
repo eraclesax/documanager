@@ -39,7 +39,7 @@ class Mail(models.Model):
             self.from_who = settings.DEFAULT_FROM_EMAIL
         if not self.reply_to:
             from django.conf import settings
-            self.reply_to = settings.DEFAULT_FROM_EMAIL
+            self.reply_to = settings.DEFAULT_REPLY_TO_EMAIL
         if not self.bcc_who:
             from django.conf import settings
             self.bcc_who = settings.DEFAULT_FROM_EMAIL
