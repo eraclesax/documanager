@@ -221,9 +221,9 @@
   <div class="fill fill--short">
     <span class="value">{{ defunto.tipo_parente | default_if_none:"" }} </span>
   </div>
-  {% if defunto.sesso_par == 'M' %}
+  {% if defunto.sesso == 'M' %}
     del defunto
-  {% elif defunto.sesso_par == 'F' %}
+  {% elif defunto.sesso == 'F' %}
     della defunta
   {% else %}
     del/la defunto/a 
@@ -285,9 +285,6 @@
     <div class="sign-block">
       <div class="sign-label">Firma</div>
       <div class="sign-bar">
-        {% if defunto.firmato %}
-          <img class="sign-img" src="{{user.profile.signature.url}}" alt="" />
-        {% endif %}
       </div>
     </div>
   </div>

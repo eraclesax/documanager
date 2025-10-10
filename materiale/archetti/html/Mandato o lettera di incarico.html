@@ -488,13 +488,21 @@
     </div>
 
     <h4 class="declaration">
-      INCARICO la Ditta “Archetti Ag.di On. e Trasporti Funebri”
+      INCARICO la Ditta “Archetti Ag. di On. e Trasporti Funebri”
     </h4>
 
     <div class="textbox">
       ad espletare le pratiche sia direttamente che tramite terzi, compresa eventuale cremazione, e ad
       anticipare, a mio nome e per mio conto, tutte le spese relative all’organizzazione del servizio
-      funebre per il/la suddetto/a defunto/a attenendosi a quanto stabilito nel preventivo allegato.
+      funebre per 
+      {% if defunto.sesso == 'M' %}
+        il suddetto defunto
+      {% elif defunto.sesso == 'F' %}
+        la suddetta defunta
+      {% else %}
+        il/la suddetto/a defunto/a
+      {% endif %}
+      attenendosi a quanto stabilito nel preventivo allegato.
     </div>
 
     <div class="textbox">
