@@ -18,20 +18,6 @@ def send_msgs():
 
 def _send(mail):
 
-    to = [i for i in mail.to_who.split(';') if i != '']
-    bcc = ''
-    cc = ''
-    if mail.bcc_who:
-        bcc = [i for i in mail.bcc_who.split(';') if i != '']
-    if mail.cc_who:
-        cc =  [i for i in mail.cc_who.split(';') if i != '']
-    reply_to = [i for i in mail.reply_to.split(';') if i != '']
-    try:
-        from_email = [i for i in mail.from_who.split(';') if i != ''][0]
-    except:
-        from_email = settings.DEFAULT_FROM_EMAIL
-        
-    subject = mail.subject
     try:
         template_context = mail.template_context.replace("'",'"')
         print(template_context)
@@ -46,22 +32,34 @@ def _send(mail):
 
     if settings.DEBUG_EMAIL:
         template_context['extra_info'] = 'to=' + ';'.join(to) + '   cc=' + ';'.join(cc)+ '   bcc=' + ';'.join(bcc)
-        to = [settings.DEFAULT_FROM_EMAIL]
+        to = [settings.DEFAULT_REPLY_TO_EMAIL]
         bcc = None
         cc = None
     else:
         template_context['extra_info'] = ''
+        to = mail.to
+        bcc = mail.bcc
+        cc = mail.cc
     
     template_html = 'mail/' + mail.template_name + '.html'
     template_text = 'mail/' + mail.template_name + '.txt'
 
     text_content = render_to_string(template_text, template_context )
     html_content = render_to_string(template_html, template_context )
-    mail.html_text=html_content
-    mail.txt_text=text_content
+    
+    mail.html_text = html_content
+    mail.txt_text = text_content
     mail.save()
 
-    msg = EmailMultiAlternatives(subject, text_content, from_email, to, bcc=bcc , cc=cc, reply_to=reply_to)
+    msg = EmailMultiAlternatives(
+        subject = mail.subject, 
+        body = text_content, 
+        from_email = mail.from_email, 
+        to = to, 
+        bcc = bcc, 
+        cc = cc, 
+        reply_to = mail.reply_to,
+        )
     msg.attach_alternative(html_content, "text/html")
 
     if mail.attachments:

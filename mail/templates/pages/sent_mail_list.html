@@ -51,8 +51,8 @@
                             <tr>
                                 <td style="text-align: right;"><a href="{% url 'sent_mail' id=mi.pk %}">{{ mi.pk }}</a></td>
                                 <td style="text-align: center" data-sort='{{ mi.end_date|date:"YmdHMS"  }}'>{{ mi.end_date }}</td>
-                                <td style="text-align: center;">{{ mi.from_who }}</td>
-                                <td style="text-align: left;">{{ mi.to_who|truncatechars:80}}</td>
+                                <td style="text-align: center;">{{ mi.from_email }}</td>
+                                <td style="text-align: left;">{{ mi.to|truncatechars:80}}</td>
                                 <td style="text-align: center;">{{ mi.subject }}</td>
                                 <td style="text-align: left;">{{ mi.txt_text|truncatechars:100}}</td>
                                 <td style="text-align: center;">{{ mi.sent }}</td>

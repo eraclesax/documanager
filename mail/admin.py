@@ -13,7 +13,7 @@ send_selected.short_description = "Send selected mail"
 
 class MailAdmin(admin.ModelAdmin):
     actions = [send_selected]
-    list_display = ('pk', 'to_who', 'subject', 'creation_date', 'sent', 'uuid', 'apri_link', "duplica_link")
+    list_display = ('pk', 'to', 'subject', 'creation_date', 'sent', 'uuid', 'apri_link', "duplica_link")
     list_filter = ('sent', )
     ordering = ['-pk']
 
