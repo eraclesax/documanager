@@ -25,5 +25,6 @@ DB_HOST=localhost
 ## REMOTE TEST SERVER 
 DEBUG_DOMAIN=archetti.eifusoft.it
 ## EMAIL
+CONSOLE_EMAIL=True
 DEBUG_EMAIL=True
 ## INFO

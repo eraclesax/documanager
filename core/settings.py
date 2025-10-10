@@ -184,8 +184,12 @@ USE_TZ = True
 
 # EMAIL SETTINGS #
 
+# Send the emails in the DEFAULT_REPLY_TO_EMAIL box (for production environement
+# testing purpose)
 DEBUG_EMAIL = env("DEBUG_EMAIL", cast=bool, default=True)
-if DEBUG_EMAIL:
+# Print the email on the terminal (for development environement testing purpose)
+CONSOLE_EMAIL = env("CONSOLE_EMAIL", cast=bool, default=True)
+if CONSOLE_EMAIL:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -196,7 +200,7 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER", cast=str, default='')   # generato in S
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", cast=str, default='')
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", cast=str, default='info@eifusoft.it')
 DEFAULT_REPLY_TO_EMAIL = env("DEFAULT_REPLY_TO_EMAIL", cast=str, default='eifusoft@gmail.com')
-
+DEFAULT_BCC_EMAIL = env("DEFAULT_BCC_EMAIL", cast=str, default='')
 # import locale
 # locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')
 #############################################################

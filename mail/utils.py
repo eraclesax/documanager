@@ -2,7 +2,6 @@ from __future__ import print_function
 from builtins import str
 from django.core.mail import EmailMultiAlternatives, get_connection
 from mail.models import Mail
-from django.template.loader import render_to_string
 from django.utils import timezone
 from logger.utils import add_log
 import json
@@ -18,53 +17,28 @@ def send_msgs():
 
 def _send(mail):
 
-    try:
-        template_context = mail.template_context.replace("'",'"')
-        print(template_context)
-        template_context = json.loads(template_context)
-    except:
-        import traceback
-        traceback.print_exc()
-        print('error on utils.py')
-        template_context = mail.template_context
-
-    template_context['uuid'] = str(mail.uuid)
-
     if settings.DEBUG_EMAIL:
-        template_context['extra_info'] = 'to=' + ';'.join(to) + '   cc=' + ';'.join(cc)+ '   bcc=' + ';'.join(bcc)
         to = [settings.DEFAULT_REPLY_TO_EMAIL]
         bcc = None
         cc = None
     else:
-        template_context['extra_info'] = ''
         to = mail.to
         bcc = mail.bcc
         cc = mail.cc
-    
-    template_html = 'mail/' + mail.template_name + '.html'
-    template_text = 'mail/' + mail.template_name + '.txt'
-
-    text_content = render_to_string(template_text, template_context )
-    html_content = render_to_string(template_html, template_context )
-    
-    mail.html_text = html_content
-    mail.txt_text = text_content
-    mail.save()
 
     msg = EmailMultiAlternatives(
         subject = mail.subject, 
-        body = text_content, 
+        body = mail.txt_text, 
         from_email = mail.from_email, 
         to = to, 
         bcc = bcc, 
         cc = cc, 
-        reply_to = mail.reply_to,
+        reply_to = [mail.reply_to,],
         )
-    msg.attach_alternative(html_content, "text/html")
+    msg.attach_alternative(mail.html_text, "text/html")
 
     if mail.attachments:
-        attachments = [i for i in mail.attachments.split(';') if i != '']
-        for f in attachments:
+        for f in mail.attachments:
             msg.attach_file( str(f) )
 
     try:

@@ -14,7 +14,7 @@ class RenderMailView(View):
         mail = Mail.objects.get(uuid=kwargs.get('uuid'))
         self.template_name = 'mail/' + mail.template_name + '.html'
         
-        # return render(request, self.template_name, json.loads(mail.template_context))
+        # return render(request, self.template_name, mail.template_context)
         return HttpResponse(mail.html_text)
     
 class SentMailListView(View):

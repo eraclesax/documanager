@@ -24,6 +24,7 @@ DB_USER=eifuprod_dbuser
 DB_PASSWORD=...
 DB_HOST=localhost
 ## EMAIL
+CONSOLE_EMAIL=True
 DEBUG_EMAIL=False
 EMAIL_HOST=email-smtp.eu-north-1.amazonaws.com
 EMAIL_PORT=587
