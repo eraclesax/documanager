@@ -201,7 +201,7 @@
       <div class="fill fill--mid">
         <span class="value">{{ defunto.comune_residenza | default_if_none:"" }} {% if defunto.provincia_residenza %}({{ defunto.provincia_residenza | default_if_none:"" }}){% endif %}</span>
       </div>
-      in Via
+      in 
       <div class="fill fill--mid">
         <span class="value">{{ defunto.via_residenza | default_if_none:"" }}</span>
       </div>
@@ -233,14 +233,15 @@
       {% elif defunto.tipo_luogo_salma == 'Istituto / Casa di riposo / Struttura obitoriale / Ospedale' %}
         Istituto / Casa di riposo / Struttura obitoriale / Ospedale sito in
       {% else %}
-        abitazione privata / Istituto / Casa di Riposo / struttura obitoriale / ospedale di 
+        abitazione privata / Istituto / Casa di Riposo / Struttura obitoriale / Ospedale sito in
       {% endif %} 
       <div class="fill fill--mid">
-        <span class="value">{{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}</span>
-      </div>
-      Via
-      <div class="fill fill--mid">
-        <span class="value">{{ defunto.via_salma | default_if_none:"" }}</span>
+        <span class="value">
+          {{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}
+          {% if defunto.via_salma %}
+          , {{ defunto.via_salma | default_if_none:"" }}
+          {% endif %}
+        </span>
       </div>
     </div>
 

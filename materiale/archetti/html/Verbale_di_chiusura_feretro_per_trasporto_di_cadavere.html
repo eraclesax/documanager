@@ -516,16 +516,16 @@
           <div class="fill fill--all" style="min-width: 156mm">
             <span class="value">
               {{ defunto.data_nascita_parente | date:"d/m/Y" }}
-              {% if defunto.comune_residenza_par %}
+              {% if defunto.via_residenza_par %}
                 , residenza
+                {{ defunto.via_residenza_par | default_if_none:"" }}
               {% endif %}
-              {{ defunto.via_residenza_par | default_if_none:"" }}
               {% if defunto.comune_residenza_par %}
                 ,
-              {% endif %}
-              {{ defunto.comune_residenza_par | default_if_none:"" }}
-              {% if defunto.provincia_residenza_par %}
-                ({{ defunto.provincia_residenza_par | default_if_none:"" }})
+                {{ defunto.comune_residenza_par | default_if_none:"" }}
+                {% if defunto.provincia_residenza_par %}
+                  ({{ defunto.provincia_residenza_par | default_if_none:"" }})
+                {% endif %}
               {% endif %}
             </span> 
           </div>
