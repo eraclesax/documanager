@@ -25,7 +25,6 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 ## BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -53,7 +52,10 @@ if ALLOW_EVERY_HOST:
 if ALLOW_PRODUCTION_HOSTS:
     ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
 
+
 FULL_URL = env('FULL_URL',cast=str,default="http://full-urlnotsetted.com")
+TRIAL_DOMAIN = env('TRIAL_DOMAIN',cast=str,default="trial.domain-notsetted.com")
+TRIAL_URL = "https://" + TRIAL_DOMAIN
 SITE_NAME = "EifuSoft"
 # Application definition
 

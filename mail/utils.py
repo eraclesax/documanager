@@ -58,6 +58,8 @@ def _send(mail):
         mail.sent = True
         mail.save()
 
+        msg =  f"Inviata email {mail.pk} con oggetto: {mail.subject} -> {mail.to}"
+        add_log(level=2, custom_message=f"mail.utils._send: {msg}")
     except Exception as e:
         # print('Error get_dashbaord_url: %s' % e)
         # TODO: forse basta il print(sopra senza usare sys.exc_info()[0])
@@ -65,6 +67,6 @@ def _send(mail):
         e = sys.exc_info()
         print(e)
         mail.retry = mail.retry + 1
-        add_log(level=5, message=1, custom_message=e )
+        add_log(level=5, custom_message=e )
         mail.save()
     

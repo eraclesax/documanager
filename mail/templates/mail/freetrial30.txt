@@ -1,0 +1,26 @@
+Gentile {{ organization_name }},
+
+Siamo due programmatori freelance — Riso e Roxy — che hanno sviluppato un software 
+per la gestione documentale pensato per Agenzie di Onoranze Funebri. L’app ha già portato benefici a un nostro cliente e 
+ora vorremmo proporla anche ad altre realtà come la vostra.
+
+Il software permette di generare documenti precompilati (richieste di autorizzazioni, verbali di chiusura feretro, ecc.). 
+A breve sarà disponibile anche un modulo per il ritaglio automatico dello sfondo delle immagini.
+
+Per provare gratuitamente e senza impegno abbiamo predisposto uno spazio di test dedicato alla vostra azienda.
+Codice di accesso: {{ promo_code }}
+Accedi allo spazio di prova: 
+All'interno troverà anagrafiche di prova e documenti fac-simile. Può testare l'inserimento di nuove anagrafiche e la generazione dei documenti.
+
+Per consultare i prezzi: 
+
+Per ogni informazione può rispondere a questa email o contattarci telefonicamente al 340 158 5058.
+
+Cordialmente,
+Riso & Roxy
+Sviluppatori indipendenti — {{ full_url }}
+
+
+Se preferisce non ricevere altre comunicazioni, risponda a questa email con la parola "RIMUOVI".
+
+Questo messaggio è stato inviato da info@eifusoft.com

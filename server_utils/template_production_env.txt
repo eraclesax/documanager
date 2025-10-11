@@ -33,5 +33,7 @@ EMAIL_HOST_USER=AKIASTM3NABXFT4X62M3
 EMAIL_HOST_PASSWORD=...
 DEFAULT_FROM_EMAIL=info@eifusoft.it
 DEFAULT_REPLY_TO_EMAIL=eifusoft@gmail.com
+DEFAULT_BCC_EMAIL=eifusoft@gmail.com
 ## INFO
 FULL_URL=https://eifusoft.it
+TRIAL_DOMAIN=trial.eifusoft.it

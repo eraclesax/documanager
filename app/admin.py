@@ -23,7 +23,14 @@ admin.site.register(User, CustomUserAdmin)
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('pk', 'name', 'tag', 'email', 'is_active', 'domain')
+    ordering = ['-pk']
+
 @admin.register(Permission)
 class PermissionAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(Badge)
+class BadgeAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'tag', 'name', 'active', 'organization', 'validity', 'duration')
+    ordering = ['-pk']

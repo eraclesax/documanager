@@ -1,0 +1,176 @@
+import time, random, json, os
+from datetime import datetime, timedelta
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from mail.models import Mail 
+from app.models import Badge, Organization
+from logger.utils import add_log
+
+class Command(BaseCommand):
+    help = "Invia email in modo scaglionato secondo una policy temporale"
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--file",
+            type=str,
+            help="Percorso relativo del file JSON o TXT contenente indirizzi e dati email",
+            required=True,
+        )
+
+    def handle(self, *args, **options):
+        filepath = os.path.join(os.path.dirname(__file__), options["file"])
+        msg =  f"[{datetime.now()}] Lettura file: {filepath}"
+        self.stdout.write(msg)
+        add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+
+        # --- 1. Leggi file (può essere JSON o semplice lista di email)
+        data = self._read_input_file(filepath)
+        # --- 2. Crea organizzazione e codice promozionale
+        msg =  f"Inizio il processo per inviare {len(data)} email.\n"
+        self.stdout.write(msg)
+        add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+        for entry in data:
+            organization, _ = self._get_or_create_trial_organization(entry)
+            promo_code, _ = self._get_or_create_freetrial30(organization)
+            # --- 3. Genera le email
+            mail = self._create_freetrial30_mail(organization,promo_code)
+            # --- 2. Invia effettivamente l’email
+            try:
+                mail.send()
+                msg =  f"Inviata a {mail.to}"
+                self.stdout.write(self.style.SUCCESS(msg))
+                add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+            except Exception as e:
+                msg =  self.style.ERROR(f"Errore con {mail.to}: {e}")
+                self.stdout.write(self.style.SUCCESS(msg))
+                add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+            # --- 3. Applica la policy di ritardo “umano”
+            if entry != data[-1]:
+                self._wait_policy()
+
+        msg = "Tutte le email sono state processate."
+        self.stdout.write(self.style.SUCCESS(msg))
+        add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+
+    def _read_input_file(self, filepath:str):
+        """
+        Reads the input file and create mails, organizations and promo_codes. The file must have
+        this structure:
+
+        <email organization 1>, <name organization 1>, <tag organization 1>
+        <email organization 2>, <name organization 2>, <tag organization 2>
+        ...
+
+        """
+        if filepath.endswith(".json"):
+            with open(filepath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        else:
+            with open(filepath, "r", encoding="utf-8") as f:
+                data = []
+                for line in f:
+                    if line.strip():
+                        args = line.split(",")
+                        data.append({
+                            "email" : args[0].strip(),
+                            "organization_name" : args[1].strip(),
+                            "organization_tag" : args[2].lower().strip(),
+                        })
+        return data
+    
+    def _get_or_create_trial_organization(self, data:dict):
+        """
+        Get or create a trial organization account using the information contained in the dictionary data
+        """
+        organization, c = Organization.objects.get_or_create(
+            tag = data["organization_tag"],
+            defaults={
+                "name" : data["organization_name"],
+                "email" : data["email"],
+                "domain" : settings.TRIAL_DOMAIN,
+            }
+        )
+        if c:
+            msg = f" - Creata Organizzazione(id={organization.pk})"
+            self.stdout.write(msg)
+            add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+        else:
+            msg = f" - Trovata Organizzazione(id={organization.pk})"
+            self.stdout.write(msg)
+            add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+        
+        return organization, c
+    
+    def _get_or_create_freetrial30(self, organization:Organization):
+        """
+        Get or create a promo code using the information contained in the dictionary data
+        """
+        promo_code, c = Badge.objects.get_or_create(
+            tag = "prova30" + organization.tag,
+            organization = organization,
+            defaults={
+                "name" : "Free-trial promo code 30 days",
+                "duration" : timedelta(days=30),
+            }
+        )
+        if c:
+            msg = f" - Creato PromoCode(id={promo_code.pk})"
+            self.stdout.write(msg)
+            add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+        else:
+            promo_code.refresh()
+            msg = f" - Trovato PromoCode(id={promo_code.pk})"
+            self.stdout.write(msg)
+            add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+            
+        return promo_code, c
+
+    def _create_freetrial30_mail(self,organization:Organization,promo_code:Badge):
+        mail = Mail(
+            from_email = settings.DEFAULT_FROM_EMAIL,
+            reply_to = settings.DEFAULT_REPLY_TO_EMAIL,
+            to = [organization.email,],
+            subject = "Proposta di applicativo per la vostra Agenzia",
+            template_name = "freetrial30",
+            template_context = {
+                "organization_name" : organization.name,
+                "promo_code" : promo_code.tag,
+                "trial_url_name" : "trial_login",
+                "prices_url_name" : "site_prices",
+                "full_url" : settings.FULL_URL,
+            },
+        )
+        mail.save()
+        msg = f"Salvata Mail(id={mail.id}) → {mail.to}"
+        self.stdout.write(msg)
+        add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+        
+        return mail
+
+    # ============================================================
+    # Policy temporale
+    # ============================================================
+    def _wait_policy(self):
+        """Definisce i tempi di attesa tra un invio e l'altro."""
+        # Invio ogni 10–20 minuti, con jitter casuale
+        min_delay = 5 * 60   # 5 minuti = 5 * 60
+        max_delay = 60 * 60   # 60 minuti = 60 * 60 
+        delay = random.randint(min_delay, max_delay)
+        # Invio solo in una certa fascia oraria
+        min_hour = 9
+        max_hour = 14
+        now = datetime.now()
+        if min_hour < max_hour:
+            condition = now.hour >= min_hour and now.hour < max_hour
+            if not condition:
+                delay = ((24 - (now.hour - min_hour))%24)*60*60
+        elif min_hour > max_hour:
+            condition = (now.hour >= min_hour and now.hour <= 23) or (now.hour >= 0 and now.hour < max_hour)
+            if not condition:
+                delay = (min_hour - now.hour )*60*60
+
+        next_time = (datetime.now() + timedelta(seconds=delay)).strftime("%d/%m/%Y %H:%M:%S")
+        msg = f"Aspetto {delay//60} min prima del prossimo invio ({next_time})\n"
+        self.stdout.write(msg)
+        add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
+        time.sleep(delay)

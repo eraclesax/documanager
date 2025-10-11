@@ -1,7 +1,8 @@
+import uuid
 from builtins import str
 from builtins import object
 from django.db import models
-import uuid
+from logger.utils import add_log
 
 class Mail(models.Model):
 
@@ -55,12 +56,18 @@ class Mail(models.Model):
                 self.bcc = []
 
             if settings.DEFAULT_BCC_EMAIL:
-                self.bcc.append(settings.DEFAULT_BCC_EMAIL)
+                if settings.DEFAULT_BCC_EMAIL not in self.bcc:
+                    self.bcc.append(settings.DEFAULT_BCC_EMAIL)
 
             self.template_context['uuid'] = str(self.uuid)
-            self.template_context['extra_info'] = 'to=' + ';'.join(self.to) + \
-                '   cc=' + ';'.join(self.cc) + \
-                '   bcc=' + ';'.join(self.bcc)
+            extra_info = ""
+            if self.to:
+                extra_info += 'to=' + ';'.join(self.to)
+            if self.cc:
+                extra_info += '   cc=' + ';'.join(self.cc)
+            if self.bcc:
+                extra_info += '   bcc=' + ';'.join(self.bcc)
+            self.template_context['extra_info'] = extra_info
 
             ## If template_name is not None, it overwrites the custom text and html
             if self.template_name:
@@ -71,3 +78,7 @@ class Mail(models.Model):
             self.render = False
 
         super(Mail, self).save(*args, **kwargs) # Call the "real" save() method.
+    
+    def send(self):
+        from mail.utils import _send
+        _send(self)
