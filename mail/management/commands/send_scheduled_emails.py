@@ -150,27 +150,46 @@ class Command(BaseCommand):
     # ============================================================
     # Policy temporale
     # ============================================================
+    def _get_delay(self,lmbda,min=0,max=10**17,gen_limit=100000):
+        i = 0
+        delay = -1
+        while delay < min or delay > max or i < 1000:
+            i += 1
+            delay = random.expovariate(lmbda)
+        if i == gen_limit:
+            delay = lmbda
+            msg =  f"send_scheduled_emails.Command._wait_policy WARNING: random generation loop limit reached"
+            self.stdout.write(msg)
+            add_log(level=3, custom_message=msg)
+        return delay
+
     def _wait_policy(self):
         """Definisce i tempi di attesa tra un invio e l'altro."""
-        # Invio ogni 10–20 minuti, con jitter casuale
+        # Invio ogni min_delay-max_delay minuti, con jitter casuale 
+        # esponenziale decrescente (simula azioni random) e media average
+        average = 10 * 60 # 10 min
         min_delay = 5 * 60   # 5 minuti = 5 * 60
-        max_delay = 60 * 60   # 60 minuti = 60 * 60 
-        delay = random.randint(min_delay, max_delay)
-        # Invio solo in una certa fascia oraria
+        max_delay = 24 * 60 * 60   # 24 ore
+        # Invio solo in una certa fascia oraria, dalle min_hour alle max_hour
         min_hour = 9
         max_hour = 14
+
         now = datetime.now()
         if min_hour < max_hour:
             condition = now.hour >= min_hour and now.hour < max_hour
             if not condition:
                 delay = ((24 - (now.hour - min_hour))%24)*60*60
+            else:
+                delay = self._get_delay(average,min_delay,max_delay)
         elif min_hour > max_hour:
             condition = (now.hour >= min_hour and now.hour <= 23) or (now.hour >= 0 and now.hour < max_hour)
             if not condition:
                 delay = (min_hour - now.hour )*60*60
+            else:
+                delay = self._get_delay(average,min_delay,max_delay)
 
         next_time = (datetime.now() + timedelta(seconds=delay)).strftime("%d/%m/%Y %H:%M:%S")
-        msg = f"Aspetto {delay//60} min prima del prossimo invio ({next_time})\n"
+        msg = f"Aspetto il {delay//60} min prima del prossimo invio ({next_time})\n"
         self.stdout.write(msg)
         add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
         time.sleep(delay)
