@@ -16,9 +16,17 @@ class Command(BaseCommand):
             help="Percorso relativo del file JSON o TXT contenente indirizzi e dati email",
             required=True,
         )
+        parser.add_argument(
+            "--fake_delay",
+            type=bool,
+            help="Imposta il reale ritardo di invio a 0s simulando la generazione del ritardo normalmente",
+            required=False,
+            default=False
+        )
 
     def handle(self, *args, **options):
         filepath = os.path.join(os.path.dirname(__file__), options["file"])
+        fake_delay = options["fake_delay"]
         msg =  f"[{datetime.now()}] Lettura file: {filepath}"
         self.stdout.write(msg)
         add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
@@ -30,11 +38,13 @@ class Command(BaseCommand):
         self.stdout.write(msg)
         add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
         for entry in data:
+            # --- 3. Applica la policy di ritardo “umano”
+            self._wait_policy(fake_delay=fake_delay)
+            # --- 4. Genera le email e altri oggetti
             organization, _ = self._get_or_create_trial_organization(entry)
             promo_code, _ = self._get_or_create_freetrial30(organization)
-            # --- 3. Genera le email
             mail = self._create_freetrial30_mail(organization,promo_code)
-            # --- 2. Invia effettivamente l’email
+            # --- 5. Invia effettivamente l’email
             try:
                 mail.send()
                 msg =  f"Inviata a {mail.to}"
@@ -44,9 +54,6 @@ class Command(BaseCommand):
                 msg =  self.style.ERROR(f"Errore con {mail.to}: {e}")
                 self.stdout.write(self.style.SUCCESS(msg))
                 add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
-            # --- 3. Applica la policy di ritardo “umano”
-            if entry != data[-1]:
-                self._wait_policy()
 
         msg = "Tutte le email sono state processate."
         self.stdout.write(self.style.SUCCESS(msg))
@@ -163,7 +170,7 @@ class Command(BaseCommand):
             add_log(level=3, custom_message=msg)
         return delay
 
-    def _wait_policy(self):
+    def _wait_policy(self,fake_delay=False):
         """Definisce i tempi di attesa tra un invio e l'altro."""
         # Invio ogni min_delay-max_delay minuti, con jitter casuale 
         # esponenziale decrescente (simula azioni random) e media average
@@ -189,7 +196,10 @@ class Command(BaseCommand):
                 delay = self._get_delay(average,min_delay,max_delay)
 
         next_time = (datetime.now() + timedelta(seconds=delay)).strftime("%d/%m/%Y %H:%M:%S")
-        msg = f"Aspetto il {delay//60} min prima del prossimo invio ({next_time})\n"
+        msg = f"Aspetto {delay//60} min (fake_delay={fake_delay}) prima del prossimo invio ({next_time})\n"
         self.stdout.write(msg)
         add_log(level=2, custom_message=f"Command send_scheduled_emails: {msg}")
-        time.sleep(delay)
+        if fake_delay:
+            time.sleep(0)
+        else:
+            time.sleep(delay)

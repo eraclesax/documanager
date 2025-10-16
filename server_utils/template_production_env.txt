@@ -15,7 +15,7 @@ LOG_TYPE=CONSOLE
 LOG_LEVEL=INFO
 LOG_FILE=/var/log/django/debug.log
 ## CUSTOM LOGS (ON DB)
-CLOG_LEVEL=WARNING
+CLOG_LEVEL=INFO
 ## DATABASE
 DB_IS_SQLITE=False
 DB_ENGINE=django.db.backends.postgresql_psycopg2

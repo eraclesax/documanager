@@ -6,12 +6,12 @@ ALLOW_PRODUCTION_HOSTS=False
 DEBUG=False
 STATIC_ROOT=/var/www/documanager/static/
 MEDIA_ROOT=/var/www/documanager/media/
-SECRET_KEY=^#3l-2wt4icvr(xj+mf3ew&9o-)z8zdmgo9pj4kb63+kmcm+39
+SECRET_KEY=^#3l-2wt4icvr(xj+mf3ew&9o-)_unsecure
 CSRF_COOKIE_SECURE=False
 SESSION_COOKIE_SECURE=False
 ## DJANGO LOGS (ON FILE)
 LOG_TYPE=FILE
-LOG_LEVEL=DEBUG
+LOG_LEVEL=INFO
 LOG_FILE=/var/log/django/debug.log
 ## CUSTOM LOGS (ON DB)
 CLOG_LEVEL=INFO
@@ -26,5 +26,10 @@ DB_HOST=localhost
 DEBUG_DOMAIN=archetti.eifusoft.it
 ## EMAIL
 CONSOLE_EMAIL=True
-DEBUG_EMAIL=True
+DEBUG_EMAIL=False
+DEFAULT_FROM_EMAIL=info@eifusoft.it
+DEFAULT_REPLY_TO_EMAIL=eifusoft@gmail.com
+DEFAULT_BCC_EMAIL=eifusoft@gmail.com
 ## INFO
+FULL_URL=https://eifusoft.it
+TRIAL_DOMAIN=trial.eifusoft.it
