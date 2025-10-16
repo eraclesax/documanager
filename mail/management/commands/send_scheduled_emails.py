@@ -14,7 +14,6 @@ class Command(BaseCommand):
             "file",
             type=str,
             help="Percorso relativo del file JSON o TXT contenente indirizzi e dati email",
-            required=True,
         )
         parser.add_argument(
             "-f",
