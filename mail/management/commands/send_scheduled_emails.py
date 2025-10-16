@@ -11,17 +11,16 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--file",
+            "file",
             type=str,
             help="Percorso relativo del file JSON o TXT contenente indirizzi e dati email",
             required=True,
         )
         parser.add_argument(
+            "-f",
             "--fake_delay",
-            type=bool,
+            action="store_true",
             help="Imposta il reale ritardo di invio a 0s simulando la generazione del ritardo normalmente",
-            required=False,
-            default=False
         )
 
     def handle(self, *args, **options):
