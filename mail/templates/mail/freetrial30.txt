@@ -1,7 +1,7 @@
 Gentile {{ organization_name }},
 
 Siamo due programmatori freelance — Riso e Roxy — che hanno sviluppato un software 
-per la gestione documentale pensato per Agenzie di Onoranze Funebri. L’app ha già portato benefici a un nostro cliente e 
+per la gestione documentale pensato per Agenzie di Onoranze Funebri. L’app ha già portato benefici ad un nostro cliente e 
 ora vorremmo proporla anche ad altre realtà come la vostra.
 
 Il software permette di generare documenti precompilati (richieste di autorizzazioni, verbali di chiusura feretro, ecc.). 
