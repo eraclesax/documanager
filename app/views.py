@@ -6,7 +6,7 @@ def index(request):
     context = {}
     context['segment'] = 'index'
 
-    return HttpResponseRedirect(reverse('defunti'))
+    return HttpResponseRedirect(reverse('login'))
 
 # @login_required
 # def debug_pages(request):

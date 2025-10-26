@@ -57,7 +57,7 @@ class DefuntoView(View):
     """
     template_name = 'defunto.html'
 
-    @login_required
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
 
@@ -97,7 +97,7 @@ class DefuntoEditView(View):
     """
     template_name = 'defunto_edit.html'
 
-    @login_required
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
 
@@ -129,7 +129,7 @@ class DefuntoEditView(View):
             add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
             raise(e)
 
-    @login_required
+    @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         try:
             from .forms import DefuntoEditForm
@@ -193,7 +193,7 @@ class DefuntoDocsView(View):
     """
     template_name = 'defunto_docs.html'
 
-    @login_required
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
 
@@ -216,7 +216,7 @@ class DefuntoDocsView(View):
 class GetDocView(View):
     template_name = 'defunto_docs.html'
 
-    @login_required
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request, *args, **kwargs)
 
@@ -339,7 +339,7 @@ class GetDocView(View):
 #     """
 #     template_name = 'defunto_docs.html'
 
-#     @login_required
+#     @method_decorator(login_required)
 #     def get(self, request, *args, **kwargs):
 #         return self.GET_render(request,*args, **kwargs)
 
@@ -354,7 +354,7 @@ class GetDocView(View):
 
 #         return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
 
-#     @login_required
+#     @method_decorator(login_required)
 #     def post(self, request, *args, **kwargs):
 #         def_id = kwargs.get("def_id", None)
 #         doc_id = kwargs.get("doc_id", None)

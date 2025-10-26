@@ -98,6 +98,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "defunti"
+# LOGOUT_REDIRECT_URL = "logout"
 
 TEMPLATES = [
     {

@@ -15,15 +15,13 @@
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
 
-                {% if msg %}
-                  <p>{{ msg | safe }}</p>
-                {% else %}
-                  <p>
-                    Inserisci le credenziali 
-                    <br />
-                    oppure contatta l'assistenza <b>eraclesax@gmail.com</b></a>
-                  </p>
-                {% endif %}
+              <p>
+                Inserisci le credenziali 
+                <br />
+                oppure contatta l'assistenza <b>eraclesax@gmail.com</b></a>
+              </p>
+              
+              {% include "includes/errors_bar.html" %}
 
               </div>
 
