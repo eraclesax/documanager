@@ -1,10 +1,36 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.views import LoginView
 # from django.contrib.auth.models import User
 # from django.forms.utils import ErrorList
 # from django.http import HttpResponse
 from .forms import LoginForm, SignUpForm
 
+class CustomLoginView(LoginView):
+    form_class=LoginForm
+    template_name="registration/login.html"
+
+    def form_valid(self, form):
+        ## Questo metodo è pensato a posta per aggiungere codice dopo la validazione del form
+
+        # Qui chiama il comportamento di login standard
+        response = super().form_valid(form)
+
+        # Qui il form è valido e l'utente è autenticato
+        remember_me = form.cleaned_data.get('remember_me')
+
+        if not remember_me:
+            # Sessione scade quando il browser viene chiuso
+            self.request.session.set_expiry(0)
+            self.request.session.modified = True
+        else:
+            # Sessione "persistente"
+            self.request.session.set_expiry(settings.SESSION_COOKIE_AGE)
+            self.request.session.modified = True
+
+        return response
+    
 # def login_view(request):
 #     form = LoginForm(request.POST or None)
 
