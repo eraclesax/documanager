@@ -1,23 +1,30 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView, \
     PasswordResetView, PasswordResetConfirmView
-from .views import password_reset_sent, CustomLoginView
-from .forms import LoginForm, SignUpForm
+from django.views.generic.base import TemplateView
+from .views import CustomLoginView
+from .forms import SignUpForm, CustomPasswordResetForm
 
 # i tempalte_name sono quelli di default, quindi anche levandoli funziona comunque tutto
 _logout_view = LogoutView.as_view(
     template_name='registration/logged_out.html',
-    )
+)
 _password_reset_view = PasswordResetView.as_view(
-    template_name='registration/password_reset.html',
+    form_class = CustomPasswordResetForm,
+    template_name='registration/password_reset_form.html',
     email_template_name='mail/password_reset_email_tmpl.html',
     subject_template_name='mail/password_reset_subject.txt',
-    success_url='accounts/password_reset_sent/'
-    )
+    html_email_template_name='', # TODO
+    from_email='', # TODO
+    success_url=reverse_lazy("password_reset_done")
+)
+_password_reset_sent_view = TemplateView.as_view(
+    template_name='registration/password_reset_sent.html',
+)
 _password_reset_confirm_view = PasswordResetConfirmView.as_view(
     template_name='registration/password_reset_confirm.html',
     success_url='accounts/login/'
-    )
+)
 
 urlpatterns = [
     # path('login/', login_view, name="login"),
@@ -27,9 +34,10 @@ urlpatterns = [
     path("accounts/logout/", _logout_view, name="logout"),    
     # invio link (simile a password reset)
     path('accounts/imposta-password/', _password_reset_view, name='password_reset'),
+    path('accounts/password-reset-inviata/', _password_reset_sent_view, name="password_reset_done"),
     # link che l’utente clicca per settare la password
     path('accounts/imposta-password/<uidb64>/<token>/', _password_reset_confirm_view, name='password_reset_confirm'),
-    path('accounts/password_reset_sent/', password_reset_sent, name="password_reset_sent"),
+    
 ]
 
 

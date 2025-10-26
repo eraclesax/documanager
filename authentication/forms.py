@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm, UsernameField
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UsernameField
 
-class LoginForm(AuthenticationForm):
+class CustomAuthenticationForm(AuthenticationForm):
     username = UsernameField(
         widget=forms.TextInput(
             attrs={
@@ -30,6 +30,19 @@ class LoginForm(AuthenticationForm):
         widget=forms.CheckboxInput(
             attrs={          
                 "class": "custom-control-input"
+                }
+            ),
+    )
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label="Email",
+        max_length=254,
+        widget=forms.EmailInput(
+            attrs={
+                "autofocus": True,
+                "autocomplete": "email",
+                "class": "form-control"
                 }
             ),
     )
