@@ -24,6 +24,15 @@ class LoginForm(AuthenticationForm):
                 }
             ),
     )
+    remember_me = forms.BooleanField(
+        label="Remember me",
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={          
+                "class": "custom-control-input"
+                }
+            ),
+    )
 
 class SignUpForm(UserCreationForm):
     username = forms.CharField(
