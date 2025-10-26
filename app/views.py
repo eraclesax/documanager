@@ -1,26 +1,14 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.template import loader
-from django.http import HttpResponse,HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django import template
-from django.conf import settings
 
-@login_required(login_url="/login/")
 def index(request):
     
     context = {}
     context['segment'] = 'index'
 
-    # html_template = loader.get_template( 'home.html' )
     return HttpResponseRedirect(reverse('defunti'))
 
-# @login_required(login_url="/login/")
+# @login_required
 # def debug_pages(request):
 #     """Get the original templates of the UI only for DEBUG purpose
 #     """
