@@ -1,4 +1,4 @@
-import io
+import io, traceback
 
 from django.shortcuts import render,get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -46,7 +46,7 @@ class DefuntiListView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntiListView.GET_render"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class DefuntoView(View):
@@ -86,7 +86,7 @@ class DefuntoView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntoView.GET_render"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class DefuntoEditView(View):
@@ -126,7 +126,7 @@ class DefuntoEditView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntoEditView.GET_render"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
     @method_decorator(login_required)
@@ -177,7 +177,7 @@ class DefuntoEditView(View):
                 return self.GET_render(request, *args, **kwargs)
         except Exception as e:
             msg = "Exception in DefuntoEditView.post"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class AnagraficaDefuntoDeleteView(DeleteView):
@@ -210,7 +210,7 @@ class DefuntoDocsView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntoDocsView.post"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class GetDocView(View):
@@ -300,7 +300,7 @@ class GetDocView(View):
             return response
         except Exception as e:
             msg = "Exception in GetDocView.post"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
     # def GET_render(self,request,*args, **kwargs):

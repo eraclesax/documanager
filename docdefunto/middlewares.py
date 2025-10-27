@@ -21,5 +21,6 @@ class OrganizationMiddleware(MiddlewareMixin):
                     add_log(level=3,exception=e, custom_message=msg)
 
         except Exception as e:
-            add_log(level=4,exception=e,custom_message="Exception in OrganizationMiddleware.process_request")
+            import traceback
+            add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in OrganizationMiddleware.process_request")
             raise(e)

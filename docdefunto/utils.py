@@ -159,7 +159,8 @@ def crea_defunto_di_test(username="admin"):
 
         return defunto
     except Exception as e:
-        add_log(level=4,exception=e,custom_message="Exception in docdefunto.utils.crea_defunto_di_test")
+        import traceback
+        add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in docdefunto.utils.crea_defunto_di_test")
         raise(e)
 
 ## PROD SETUP ##
