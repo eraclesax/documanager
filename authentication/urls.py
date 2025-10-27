@@ -2,14 +2,14 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView, \
     PasswordResetView, PasswordResetConfirmView
 from django.views.generic.base import TemplateView
-from .views import CustomLoginView
+from .views import CustomLoginView, CustomPasswordResetView
 from .forms import SignUpForm, CustomPasswordResetForm
 
 # i tempalte_name sono quelli di default, quindi anche levandoli funziona comunque tutto
 _logout_view = LogoutView.as_view(
     template_name='registration/logged_out.html',
 )
-_password_reset_view = PasswordResetView.as_view(
+_password_reset_view = CustomPasswordResetView.as_view(
     form_class = CustomPasswordResetForm,
     template_name='registration/password_reset_form.html',
     email_template_name='mail/password_reset_email_tmpl.html',

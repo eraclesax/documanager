@@ -3,11 +3,10 @@ from django.utils.html import format_html
 from django.urls import path
 from django.shortcuts import redirect, get_object_or_404
 from mail.models import Mail
-from mail.utils import _send
 
 def send_selected(modeladmin, request, queryset):
     for mail in queryset:
-        _send(mail)
+        mail.send()
 
 send_selected.short_description = "Send selected mail"
 

@@ -1,7 +1,7 @@
 import uuid
-from builtins import str
-from builtins import object
+from builtins import str, object
 from django.db import models
+from django.conf import settings
 from logger.utils import add_log
 
 class Mail(models.Model):
@@ -34,6 +34,7 @@ class Mail(models.Model):
 
     def __str__(self):
         return str(self.sent) + ' - ' + str(self.from_email) + ' - ' + str(self.subject)
+
 
     def save(self, *args, **kwargs):
         if self.render:
@@ -80,5 +81,64 @@ class Mail(models.Model):
         super(Mail, self).save(*args, **kwargs) # Call the "real" save() method.
     
     def send(self):
-        from mail.utils import _send
-        _send(self)
+        from django.utils import timezone
+        from django.core.mail import EmailMultiAlternatives, get_connection
+
+        if settings.DEBUG_EMAIL:
+            to = [settings.DEFAULT_REPLY_TO_EMAIL]
+            bcc = None
+            cc = None
+        else:
+            to = self.to
+            bcc = self.bcc
+            cc = self.cc
+
+        subject = self.subject or ""
+        body = self.txt_text or ""
+        from_email = self.from_email
+        reply_to = [self.reply_to,] if self.reply_to else []
+        attachments = self.attachments or []
+
+        msg = EmailMultiAlternatives(
+            subject = subject, 
+            body = body, 
+            from_email = from_email, 
+            to = to, 
+            bcc = bcc, 
+            cc = cc, 
+            reply_to = reply_to,
+            )
+        msg.attach_alternative(self.html_text or "" , "text/html")
+
+        if attachments:
+            for file_path in attachments:
+                msg.attach_file( str(file_path) )
+
+        try:
+            print('Starting email send')
+            connection = get_connection()
+            connection.username = settings.EMAIL_HOST_USER
+            connection.password = settings.EMAIL_HOST_PASSWORD
+            connection.host = settings.EMAIL_HOST
+            connection.port = settings.EMAIL_PORT
+            connection.use_ssl = settings.EMAIL_USE_SSL
+            connection.send_messages([msg,])
+            connection.close()
+            print('Email sended.')
+
+            self.end_date = timezone.now()
+            self.sent = True
+            self.save()
+
+            msg =  f"Inviata email {self.pk} con oggetto: {self.subject} -> {self.to}"
+            add_log(level=2, custom_message=f"mail.send: {msg}")
+        except Exception as exc:
+            # print('Error get_dashbaord_url: %s' % e)
+            # TODO: forse basta il print(sopra senza usare sys.exc_info()[0])
+            import sys
+            exc = sys.exc_info()
+            retry = self.retry or 0
+            self.retry = retry + 1
+            print(exc)
+            add_log(level=4, exception=exc )
+            self.save()
