@@ -10,12 +10,12 @@ class RenderMailView(View):
     template_name = ''
  
     def get(self, request, *args, **kwargs):
-        import json
         mail = Mail.objects.get(uuid=kwargs.get('uuid'))
-        self.template_name = 'mail/' + mail.template_name + '.html'
-        
-        # return render(request, self.template_name, mail.template_context)
-        return HttpResponse(mail.html_text)
+        if mail.template_html:
+            self.template_name = mail.template_html
+            return render(request, self.template_name, mail.context)
+        else:
+            return HttpResponse(mail.html_text)
     
 class SentMailListView(View):
 

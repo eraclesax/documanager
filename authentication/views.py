@@ -1,6 +1,7 @@
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.urls import reverse_lazy
+from django.shortcuts import render
+from django.contrib.auth import authenticate
 from django.contrib.auth.views import LoginView, PasswordResetView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -38,6 +39,14 @@ class CustomLoginView(LoginView):
 class CustomPasswordResetView(PasswordResetView):
 
     form_class = CustomPasswordResetForm
+
+    template_name='registration/password_reset_form.html'
+
+    email_template_name='mail/password_reset_email.txt'
+    subject_template_name='mail/password_reset_subject.txt'
+    html_email_template_name= None #'mail/password_reset_email.html'
+    # extra_email_context ={}
+    success_url=reverse_lazy("password_reset_done")
 
     # Sovrascrivo la funzione per poter chiamare l'errore di invio email e riportarlo
     # all'utente

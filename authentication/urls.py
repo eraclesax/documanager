@@ -9,15 +9,6 @@ from .forms import SignUpForm, CustomPasswordResetForm
 _logout_view = LogoutView.as_view(
     template_name='registration/logged_out.html',
 )
-_password_reset_view = CustomPasswordResetView.as_view(
-    form_class = CustomPasswordResetForm,
-    template_name='registration/password_reset_form.html',
-    email_template_name='mail/password_reset_email_tmpl.html',
-    subject_template_name='mail/password_reset_subject.txt',
-    html_email_template_name='', # TODO
-    from_email='', # TODO
-    success_url=reverse_lazy("password_reset_done")
-)
 _password_reset_sent_view = TemplateView.as_view(
     template_name='registration/password_reset_sent.html',
 )
@@ -33,7 +24,7 @@ urlpatterns = [
     path("accounts/login/", CustomLoginView.as_view(), name='login'),
     path("accounts/logout/", _logout_view, name="logout"),    
     # invio link (simile a password reset)
-    path('accounts/imposta-password/', _password_reset_view, name='password_reset'),
+    path('accounts/imposta-password/', CustomPasswordResetView.as_view(), name='password_reset'),
     path('accounts/password-reset-inviata/', _password_reset_sent_view, name="password_reset_done"),
     # link che l’utente clicca per settare la password
     path('accounts/imposta-password/<uidb64>/<token>/', _password_reset_confirm_view, name='password_reset_confirm'),

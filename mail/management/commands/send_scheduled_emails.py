@@ -135,9 +135,10 @@ class Command(BaseCommand):
             from_email = settings.DEFAULT_FROM_EMAIL,
             reply_to = settings.DEFAULT_REPLY_TO_EMAIL,
             to = [organization.email,],
-            subject = "Proposta di applicativo per la vostra Agenzia",
-            template_name = "freetrial30",
-            template_context = {
+            template_txt = "mail/freetrial30.txt",
+            template_html = "mail/freetrial30.html",
+            template_subject = "mail/freetrial30_subject.txt",
+            context = {
                 "organization_name" : organization.name,
                 "promo_code" : promo_code.tag,
                 "trial_url_name" : "trial_login",

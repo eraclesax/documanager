@@ -57,7 +57,7 @@ if ALLOW_PRODUCTION_HOSTS:
     ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
 
 
-FULL_URL = env('FULL_URL',cast=str,default="http://full-urlnotsetted.com")
+FULL_URL = env('FULL_URL',cast=str,default="http://full-urlnotsetted.com") ## TODO: può essere calcolato dalla request
 TRIAL_DOMAIN = env('TRIAL_DOMAIN',cast=str,default="trial.domain-notsetted.com")
 TRIAL_URL = "https://" + TRIAL_DOMAIN
 SITE_NAME = "EifuSoft"

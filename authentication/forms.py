@@ -70,28 +70,17 @@ class CustomPasswordResetForm(PasswordResetForm):
             msg = "Invio email per reset password a %s"%to_email
             add_log(level=2, custom_message=msg)
             print(msg)
-
-            subject = None # Serve se no potrebbe arrabbiarsi nell'exception
-            subject = render_to_string(subject_template_name, context)
-            subject = "".join(subject.splitlines())
-            body = render_to_string(email_template_name, context)
-
-            # email_message = EmailMultiAlternatives(
-            #     subject, body, from_email, [to_email]
-            # )
-            html_email = None
-            if html_email_template_name is not None:
-                html_email = render_to_string(html_email_template_name, context)
-                
+            
             email_message = Mail(
-                subject=subject, 
-                txt_text = body,
-                reply_to = [to_email] if to_email else [],
                 from_email = from_email,
-                html_text = html_email
+                reply_to = from_email,
+                to = [to_email] if to_email else [],
+                template_subject = subject_template_name,
+                template_txt = email_template_name,
+                template_html = html_email_template_name,
+                context=context,
             )
 
-            print("SONO QUI------------------")
             email_message.save()
             # invio reale: può sollevare eccezioni del backend
             email_message.send()
@@ -106,7 +95,8 @@ class CustomPasswordResetForm(PasswordResetForm):
             # aggiungo un errore al campo email (compare sotto l'input)
             self.add_error(
                 "email",
-                "Impossibile inviare l'email di reset. Riprovare più tardi o contattare l'assistenza."
+                "Impossibile inviare l'email di reset. Controlla di aver inserito il giusto indirizzo " \
+                    "altrimenti contatta l'assistenza."
             )
             # ritorno False per segnalare al chiamante che c'è stato un problema
             return False
