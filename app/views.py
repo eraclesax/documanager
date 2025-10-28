@@ -8,6 +8,8 @@ def index(request):
 
     return HttpResponseRedirect(reverse('defunti'))
 
+
+
 # @login_required
 # def debug_pages(request):
 #     """Get the original templates of the UI only for DEBUG purpose

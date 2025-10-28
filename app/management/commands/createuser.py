@@ -1,12 +1,5 @@
-import time, random, json, os
-from datetime import datetime, timedelta
-from django.conf import settings
 from django.core.management.base import BaseCommand
-from mail.models import Mail 
-from app.models import Badge, Organization
 from logger.utils import add_log
-
-from django.contrib.auth import get_user_model
 
 class Command(BaseCommand):
     help = "Invia email in modo scaglionato secondo una policy temporale"
@@ -24,6 +17,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        from django.contrib.auth import get_user_model
         username = options["username"]
         email = options["email"]
         try:

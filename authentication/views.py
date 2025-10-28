@@ -9,7 +9,7 @@ from django.views.generic.edit import FormView
 # from django.forms.utils import ErrorList
 # from django.http import HttpResponse
 from logger.utils import add_log
-from .forms import CustomAuthenticationForm, CustomPasswordResetForm, SignUpForm
+from .forms import CustomAuthenticationForm, CustomPasswordResetForm
 
 class CustomLoginView(LoginView):
     form_class=CustomAuthenticationForm
@@ -71,22 +71,61 @@ class CustomPasswordResetView(PasswordResetView):
         }
 
         # chiamiamo form.save e controlliamo il risultato / eventuali errori aggiunti
-        success = form.save(**opts)
+        form.save(**opts)
 
         # se il form ha errori (es. self.add_error chiamato nella form), mostriamo il form con gli errori
         if form.errors:
             return self.form_invalid(form)
-        # se form.save ha ritornato False (cioè fallimento nell'invio), aggiungiamo un errore non-field (opzionale)
-        # if not success:
-        #     # già dovremmo avere un errore sul campo email; ma possiamo anche aggiungerne uno non-field
-        #     form.add_error(None, "Si è verificato un problema durante l'invio dell'email.")
-        #     return self.form_invalid(form)
 
         # NON chiamo super().form_valid(form) di PasswordResetView perché la sua implementazione
         # chiamerebbe di nuovo form.save(); uso FormView.form_valid per ricevere il redirect.
         return FormView.form_valid(self, form)
 
-    
+class CustomPasswordSetView(PasswordResetView):
+
+    form_class = CustomPasswordResetForm
+
+    template_name='registration/password_reset_form.html'
+
+    email_template_name='mail/password_reset_email.txt'
+    subject_template_name='mail/password_reset_subject.txt'
+    html_email_template_name= 'mail/password_reset_email.html'
+    # extra_email_context ={}
+    success_url=reverse_lazy("password_reset_done")
+
+    # Sovrascrivo la funzione per poter chiamare l'errore di invio email e riportarlo
+    # all'utente
+    def form_valid(self, form):
+        """Valida il form (non c'è nulla da validare) e invia l'email tramite form.save()
+        che chiama send_mail della classe ereditaria CustomPasswordResetForm
+        """
+        msg = f"Richiesta impostazione della password"
+        add_log(level=2, custom_message=msg)
+        print(msg)
+
+        # opzioni usate da PasswordResetView
+        opts = {
+            "use_https": self.request.is_secure(),
+            "token_generator": self.token_generator,
+            "from_email": self.from_email,
+            "email_template_name": self.email_template_name,
+            "subject_template_name": self.subject_template_name,
+            "request": self.request,
+            "html_email_template_name": self.html_email_template_name,
+            "extra_email_context": self.extra_email_context,
+        }
+
+        # chiamiamo form.save e controlliamo il risultato / eventuali errori aggiunti
+        form.save(**opts)
+
+        # se il form ha errori (es. self.add_error chiamato nella form), mostriamo il form con gli errori
+        if form.errors:
+            return self.form_invalid(form)
+
+        # NON chiamo super().form_valid(form) di PasswordResetView perché la sua implementazione
+        # chiamerebbe di nuovo form.save(); uso FormView.form_valid per ricevere il redirect.
+        return FormView.form_valid(self, form)
+
 # def login_view(request):
 #     form = CustomAuthenticationForm(request.POST or None)
 

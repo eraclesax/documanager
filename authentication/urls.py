@@ -1,9 +1,7 @@
 from django.urls import path, reverse_lazy
-from django.contrib.auth.views import LoginView, LogoutView, \
-    PasswordResetView, PasswordResetConfirmView
+from django.contrib.auth.views import LogoutView, PasswordResetConfirmView
 from django.views.generic.base import TemplateView
-from .views import CustomLoginView, CustomPasswordResetView
-from .forms import SignUpForm, CustomPasswordResetForm
+from .views import CustomLoginView, CustomPasswordResetView, CustomPasswordSetView
 
 # i tempalte_name sono quelli di default, quindi anche levandoli funziona comunque tutto
 _logout_view = LogoutView.as_view(
@@ -24,7 +22,8 @@ urlpatterns = [
     path("accounts/login/", CustomLoginView.as_view(), name='login'),
     path("accounts/logout/", _logout_view, name="logout"),    
     # invio link (simile a password reset)
-    path('accounts/imposta-password/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('accounts/password-reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('accounts/password-set/', CustomPasswordSetView.as_view(), name='password_set'),
     path('accounts/password-reset-inviata/', _password_reset_sent_view, name="password_reset_done"),
     # link che l’utente clicca per settare la password
     path('accounts/imposta-password/<uidb64>/<token>/', _password_reset_confirm_view, name='password_reset_confirm'),

@@ -1,0 +1,5 @@
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" value="{{email}}">
+    <button type="submit">Invita</button>
+</form>
