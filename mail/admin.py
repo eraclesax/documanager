@@ -12,7 +12,7 @@ send_selected.short_description = "Send selected mail"
 
 class MailAdmin(admin.ModelAdmin):
     actions = [send_selected]
-    list_display = ('pk', 'to', 'subject', 'creation_date', 'sent', 'uuid', 'apri_link', "duplica_link")
+    list_display = ('pk', 'to', 'subject_text', 'creation_date', 'sent', 'uuid', 'apri_link', "duplica_link")
     list_filter = ('sent', )
     ordering = ['-pk']
 
@@ -45,6 +45,9 @@ class MailAdmin(admin.ModelAdmin):
         obj.pk = None  # questo crea una copia
         obj.sent = False
         obj.end_date = None
+        obj.rendered = False
+        obj.retry = 0
+
         obj.html_text = None
         obj.txt_text = None
         obj.uuid = uuid.uuid4()

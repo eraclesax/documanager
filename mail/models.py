@@ -21,13 +21,13 @@ class Mail(models.Model):
     to = models.JSONField(verbose_name="TOs (as a Python list)", default=list, null=True, blank=True)
     cc = models.JSONField(verbose_name='CCs (as a Python list)', default=list, null=True, blank=True,)
     bcc = models.JSONField(verbose_name='BCCs (as a Python list)', default=list, null=True, blank=True,)
-    subject = models.TextField(verbose_name='Subject', null=True, blank=True,)
     template_subject = models.CharField(verbose_name='Template subject name',max_length=255, null=True, blank=True,)
     template_txt = models.CharField(verbose_name='Template txt name',max_length=255, null=True, blank=True,)
     template_html = models.CharField(verbose_name='Template html name',max_length=255, null=True, blank=True,)
     context = models.JSONField(verbose_name='Template Context (JSON)', default=dict, null=True, blank=True,)
-    html_text = models.TextField(verbose_name='Rendered Html Text', null=True, blank=True,)
+    subject_text = models.TextField(verbose_name='Subject', null=True, blank=True,)
     txt_text = models.TextField(verbose_name='Rendered Txt Text', null=True, blank=True,)
+    html_text = models.TextField(verbose_name='Rendered Html Text', null=True, blank=True,)
     attachments = models.JSONField(verbose_name='Attachments (as a Python list)', default=list, null=True, blank=True,)
 
     class Meta(object):
@@ -35,7 +35,7 @@ class Mail(models.Model):
         verbose_name_plural = 'Mails'
 
     def __str__(self):
-        return str(self.sent) + ' - ' + str(self.from_email) + ' - ' + str(self.subject)
+        return str(self.sent) + ' - ' + str(self.from_email) + ' - ' + str(self.subject_text)
 
     def save(self, *args, **kwargs):
         try:
@@ -65,7 +65,7 @@ class Mail(models.Model):
             bcc = self.bcc
             cc = self.cc
 
-        subject = self.subject or ""
+        subject = self.subject_text or ""
         body = self.txt_text or ""
         from_email = self.from_email
         reply_to = [self.reply_to,] if self.reply_to else []
@@ -128,8 +128,8 @@ class Mail(models.Model):
 
         ## If template_name is not None, it overwrites the custom text and html
         if self.template_subject:
-            subject = render_to_string(self.template_subject, context )
-            self.subject = "".join(subject.splitlines())
+            subject_text = render_to_string(self.template_subject, context )
+            self.subject_text = "".join(subject_text.splitlines())
         if self.template_txt:
             self.txt_text = render_to_string(self.template_txt, context )
         if self.template_html:
@@ -161,7 +161,7 @@ class Mail(models.Model):
             self.sent = True
             self.save()
 
-            msg =  f"Inviata email {self.pk} con oggetto: {self.subject} -> {self.to}"
+            msg =  f"Inviata email {self.pk} con oggetto: {self.subject_text} -> {self.to}"
             add_log(level=2, custom_message=f"mail.send: {msg}")
         except Exception as exc:
             # print('Error get_dashbaord_url: %s' % e)
