@@ -9,7 +9,7 @@ def send_msgs():
     for mail in mails:
         mail.send()
     
-def safe_json_dumps(data, **kwargs):
+def safe_jsonify(data, **kwargs):
     """
     Serializza `data` in JSON, sostituendo gli oggetti non serializzabili
     con la stringa "__non-serializable-obj__".
@@ -22,7 +22,8 @@ def safe_json_dumps(data, **kwargs):
             return f"__non-serializable-obj__({obj.__class__.__name__})"
 
     # try:
-    return json.dumps(data, default=default_serializer, **kwargs)
+    dump = json.dumps(data, default=default_serializer, **kwargs)
+    return json.loads(dump)
     # except Exception:
     #     # Se anche json.dumps dovesse fallire, ritorna una stringa di fallback
     #     return json.dumps(f"__non-serializable-obj__({data.__class__.__name__})")

@@ -1,10 +1,8 @@
-from typing import Any
 from django import forms
-from django.conf import settings
-from django.template import loader
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UsernameField
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, \
+    UsernameField
 from logger.utils import add_log
 from mail.models import Mail
 
@@ -101,7 +99,7 @@ class CustomPasswordResetForm(PasswordResetForm):
             # ritorno False per segnalare al chiamante che c'è stato un problema
             return False
 
-
+    
 class SignUpForm(UserCreationForm):
     username = forms.CharField(
         widget=forms.TextInput(

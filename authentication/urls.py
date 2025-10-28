@@ -14,7 +14,7 @@ _password_reset_sent_view = TemplateView.as_view(
 )
 _password_reset_confirm_view = PasswordResetConfirmView.as_view(
     template_name='registration/password_reset_confirm.html',
-    success_url='accounts/login/'
+    success_url=reverse_lazy("login")
 )
 
 urlpatterns = [

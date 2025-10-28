@@ -44,7 +44,7 @@ class CustomPasswordResetView(PasswordResetView):
 
     email_template_name='mail/password_reset_email.txt'
     subject_template_name='mail/password_reset_subject.txt'
-    html_email_template_name= None #'mail/password_reset_email.html'
+    html_email_template_name= 'mail/password_reset_email.html'
     # extra_email_context ={}
     success_url=reverse_lazy("password_reset_done")
 
@@ -85,6 +85,7 @@ class CustomPasswordResetView(PasswordResetView):
         # NON chiamo super().form_valid(form) di PasswordResetView perché la sua implementazione
         # chiamerebbe di nuovo form.save(); uso FormView.form_valid per ricevere il redirect.
         return FormView.form_valid(self, form)
+
     
 # def login_view(request):
 #     form = CustomAuthenticationForm(request.POST or None)

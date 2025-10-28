@@ -95,14 +95,14 @@ class Mail(models.Model):
 
         from django.conf import settings
         from django.template.loader import render_to_string
-        from .utils import safe_json_dumps
+        from .utils import safe_jsonify
         if not self.from_email:
             self.from_email = settings.DEFAULT_FROM_EMAIL
         if not self.reply_to:
             self.reply_to = settings.DEFAULT_REPLY_TO_EMAIL
 
         if not context:
-                context = self.context
+                context = self.context or {}
         if not self.to:
             self.to = []
         if not self.cc:
@@ -135,7 +135,7 @@ class Mail(models.Model):
         if self.template_html:
             self.html_text = render_to_string(self.template_html, context )
 
-        self.context = safe_json_dumps(context)
+        self.context = safe_jsonify(context)
         self.rendered = True
         if save:
             self.save()
