@@ -145,7 +145,6 @@ class Mail(models.Model):
         from django.core.mail import get_connection
 
         email_multi_alternatives = self.email_multi_alternatives
-
         try:
             print('Starting email send')
             connection = get_connection()

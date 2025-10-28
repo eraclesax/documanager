@@ -73,14 +73,14 @@ class CustomPasswordResetView(PasswordResetView):
         # chiamiamo form.save e controlliamo il risultato / eventuali errori aggiunti
         success = form.save(**opts)
 
-        # se il form ha errori (es. self.add_error chiamato nella form), mostriamo la form con gli errori
+        # se il form ha errori (es. self.add_error chiamato nella form), mostriamo il form con gli errori
         if form.errors:
             return self.form_invalid(form)
         # se form.save ha ritornato False (cioè fallimento nell'invio), aggiungiamo un errore non-field (opzionale)
-        if not success:
-            # già dovremmo avere un errore sul campo email; ma possiamo anche aggiungerne uno non-field
-            form.add_error(None, "Si è verificato un problema durante l'invio dell'email.")
-            return self.form_invalid(form)
+        # if not success:
+        #     # già dovremmo avere un errore sul campo email; ma possiamo anche aggiungerne uno non-field
+        #     form.add_error(None, "Si è verificato un problema durante l'invio dell'email.")
+        #     return self.form_invalid(form)
 
         # NON chiamo super().form_valid(form) di PasswordResetView perché la sua implementazione
         # chiamerebbe di nuovo form.save(); uso FormView.form_valid per ricevere il redirect.

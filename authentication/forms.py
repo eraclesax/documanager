@@ -82,7 +82,6 @@ class CustomPasswordResetForm(PasswordResetForm):
             email_message.save()
             # invio reale: può sollevare eccezioni del backend
             email_message.send()
-            return True
 
         except Exception as exc:
             # log per debug/monitoring
@@ -96,8 +95,6 @@ class CustomPasswordResetForm(PasswordResetForm):
                 "Impossibile inviare l'email di reset. Controlla di aver inserito il giusto indirizzo " \
                     "altrimenti contatta l'assistenza."
             )
-            # ritorno False per segnalare al chiamante che c'è stato un problema
-            return False
 
     
 class SignUpForm(UserCreationForm):
