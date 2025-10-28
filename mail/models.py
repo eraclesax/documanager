@@ -12,7 +12,7 @@ class Mail(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='Data di creazione')
     end_date = models.DateTimeField(null=True, blank=True, verbose_name='Data di invio')
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    rendered = models.BooleanField(default=True, verbose_name='Renderizzata')
+    rendered = models.BooleanField(default=False, verbose_name='Renderizzata')
     ## Setting fields
     retry = models.IntegerField(null=True, blank=True, default=0, verbose_name='Numero di tentativi')
     ## Email fields
@@ -88,17 +88,21 @@ class Mail(models.Model):
 
         return email_multi_alternatives
     
-    def render(self,save=True):
-        """Render the email"""
+    def render(self,context={},save=True):
+        """Render the email. If a context is specified, it will overwrite the self.context 
+        variable as possible. If it is not specified, self.context will be used (some information
+        can be lost if the first call was by an external context)"""
+
         from django.conf import settings
         from django.template.loader import render_to_string
+        from .utils import safe_json_dumps
         if not self.from_email:
             self.from_email = settings.DEFAULT_FROM_EMAIL
         if not self.reply_to:
             self.reply_to = settings.DEFAULT_REPLY_TO_EMAIL
 
-        if not self.template_context:
-            self.template_context = {}
+        if not context:
+                context = self.context
         if not self.to:
             self.to = []
         if not self.cc:
@@ -112,7 +116,7 @@ class Mail(models.Model):
             if settings.DEFAULT_BCC_EMAIL not in self.bcc:
                 self.bcc.append(settings.DEFAULT_BCC_EMAIL)
 
-        self.template_context['uuid'] = str(self.uuid)
+        context['uuid'] = str(self.uuid)
         extra_info = ""
         if self.to:
             extra_info += 'to=' + ';'.join(self.to)
@@ -120,16 +124,18 @@ class Mail(models.Model):
             extra_info += '   cc=' + ';'.join(self.cc)
         if self.bcc:
             extra_info += '   bcc=' + ';'.join(self.bcc)
-        self.template_context['extra_info'] = extra_info
+        context['extra_info'] = extra_info
 
         ## If template_name is not None, it overwrites the custom text and html
         if self.template_subject:
-            subject = render_to_string(self.template_subject, self.template_context )
+            subject = render_to_string(self.template_subject, context )
             self.subject = "".join(subject.splitlines())
         if self.template_txt:
-            self.txt_text = render_to_string(self.template_txt, self.template_context )
+            self.txt_text = render_to_string(self.template_txt, context )
         if self.template_html:
-            self.html_text = render_to_string(self.template_html, self.template_context )
+            self.html_text = render_to_string(self.template_html, context )
+
+        self.context = safe_json_dumps(context)
         self.rendered = True
         if save:
             self.save()
