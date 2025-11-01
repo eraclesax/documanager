@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from django.contrib.auth.admin import UserAdmin 
 from django.contrib.auth.models import User,Permission
 from .models import *
-from authentication.forms import CustomPasswordResetForm
+from .forms import CustomPasswordResetForm
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, get_object_or_404
