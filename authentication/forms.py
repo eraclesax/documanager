@@ -65,7 +65,7 @@ class CustomPasswordResetForm(PasswordResetForm):
         """
         from django.template.loader import render_to_string
         try:
-            msg = "Invio email per set/reset password a %s"%to_email
+            msg = "Sto per inviare l'email per set/reset password a %s"%to_email
             add_log(level=2, custom_message=msg)
             print(msg)
             
@@ -82,7 +82,6 @@ class CustomPasswordResetForm(PasswordResetForm):
             email_message.save()
             # invio reale: può sollevare eccezioni del backend
             email_message.send()
-
         except Exception as exc:
             # log per debug/monitoring
             import traceback

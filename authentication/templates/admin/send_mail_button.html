@@ -1,5 +1,1 @@
-<form method="POST">
-    {% csrf_token %}
-    <input type="hidden" value="{{email}}">
-    <button type="submit">Invita</button>
-</form>
+<a href="{% url 'admin:send_invite' user_id %}" class="button">Invita</a>

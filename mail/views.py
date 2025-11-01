@@ -11,9 +11,9 @@ class RenderMailView(View):
  
     def get(self, request, *args, **kwargs):
         mail = Mail.objects.get(uuid=kwargs.get('uuid'))
-        if mail.template_html:
-            self.template_name = mail.template_html
-            return render(request, self.template_name, mail.context)
+        if not mail.html_text and mail.template_html:
+            template_name = mail.template_html
+            return render(request, template_name, mail.context)
         else:
             return HttpResponse(mail.html_text)
     
