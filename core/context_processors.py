@@ -1,5 +1,6 @@
+from django.conf import settings
+
 def cms_context(request):
-    from django.conf import settings
     from django.urls import resolve
     current_url_name = resolve(request.path_info).url_name
 
@@ -17,15 +18,27 @@ def side_menu_context(current_url_name):
     side_menu = []
     
     url_name = "index"
+    INDEX_PAGE = settings.INDEX_PAGE
     item = {
         "type":"url",
         "text":"Home",
         "url":url_name,
-        "active":current_url_name==url_name,
+        "active":current_url_name==url_name or current_url_name==INDEX_PAGE,
         "icon_classes":"ni ni-bullet-list-67 text-primary",
         "childs":None,
         }
-    side_menu.append(item)    
+    side_menu.append(item)  
+
+    url_name = "foto"
+    item = {
+        "type":"url",
+        "text":"Ritaglia sfondo",
+        "url":url_name,
+        "active":current_url_name==url_name,
+        "icon_classes":"ni ni-camera-compact text-primary",
+        "childs":None,
+        }
+    side_menu.append(item)
 
     # url_name = "storico_dash"
     # item = {

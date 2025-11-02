@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     # Custom
     'app',
     'docdefunto',
+    'cutimages',
     'customtest',
     # Signals
     # 'app.apps.MyAppConfig',
@@ -101,6 +102,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'core.urls'
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "defunti"
+INDEX_PAGE = "defunti"
 # LOGOUT_REDIRECT_URL = "logout"
 
 TEMPLATES = [

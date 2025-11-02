@@ -27,7 +27,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),          # Django admin route
     path('', index, name='index'),
     path('accounts/', include("app.urls")),             # Auth routes - login / register
-    path('', include('docdefunto.urls')),
+    path('defunti/', include('docdefunto.urls')),
+    path('foto/', include('cutimages.urls')),
+
     path('mail/', include("mail.urls")),
 ]
 

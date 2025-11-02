@@ -89,7 +89,7 @@
           {% for item in side_menu %}
             <li class="nav-item">
               {% if item.type == "url" %}
-                <a class="nav-link {% if item.active %}active{% endif %}" href="{% url 'index' %}"> 
+                <a class="nav-link {% if item.active %}active{% endif %}" href="{% url item.url %}"> 
                   <i class="{{ item.icon_classes }}"></i> 
                   {{ item.text }}
                 </a>
