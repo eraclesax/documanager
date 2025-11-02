@@ -32,7 +32,7 @@ def side_menu_context(current_url_name):
     url_name = "foto"
     item = {
         "type":"url",
-        "text":"Ritaglia sfondo",
+        "text":"Rimuovi sfondo",
         "url":url_name,
         "active":current_url_name==url_name,
         "icon_classes":"ni ni-camera-compact text-primary",
