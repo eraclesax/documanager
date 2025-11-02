@@ -23,6 +23,8 @@ DB_NAME=eifuprod_db
 DB_USER=eifuprod_dbuser
 DB_PASSWORD=...
 DB_HOST=localhost
+## API
+API4AI_DEMO=False
 ## EMAIL
 CONSOLE_EMAIL=True
 DEBUG_EMAIL=False

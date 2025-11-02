@@ -47,8 +47,8 @@
           <div class="card-header bg-white border-0">
             <div class="row align-items-center">
               <div class="col-8">
-                  <h3>Rimuovi lo sfondo da immagini di persone</h3>
-                  <p class="mb-0">Questo strumento permette di eliminare lo sfondo dalle immagini caricate</p>
+                  <h3>Rimuovi o sostituisci lo sfondo dalle foto</h3>
+                  <p class="mb-0">Questo strumento permette di eliminare o sostituire lo sfondo delle foto</p>
               </div>
               <!-- <div class="col-4 text-right">
                 <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
@@ -56,33 +56,56 @@
             </div>
           </div>
           <div class="card-body">
+            <form id="dummy-form" action="#" method="POST">
 
-            <label for="file">Seleziona un'immagine da caricare:</label>
-            <input type="file" id="file" name="file">
+              <div class="mb-3">
+                <label for="file">Seleziona un'immagine (max 16Mb e 4096x4096):</label>
+                <div>
+                  <input type="file" id="main-file" name="main-file" required>
+                </div>
+              </div>
+              <div >
+                <label for="file">Seleziona uno sfondo (opzionale):</label>
+                <div>
+                  <input type="file" id="bg-file" name="bg-file">
+                </div>
+              </div>
 
-            <h4 id="spinner-text" style="text-align: center;" aria-busy="true" hidden>Caricamento...</h4>
-            <div id="spinner" class="spinner-icon" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                  stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10" opacity="0.25"/>
-                <path d="M22 12a10 10 0 0 1-10 10" />
-              </svg>
+              <div class="row align-items-center">
+                <div class="col-8">
+                </div>
+                <div class="col-4 text-right">
+                  <button type="submit" class="btn btn-md btn-primary">Carica</button>
+                </div>
+              </div>
+            </form>
+
+            <div id="loading" hidden>
+              <h4 id="spinner-text" style="text-align: center;" aria-busy="true">Caricamento...</h4>
+              <div id="spinner" class="spinner-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                  <path d="M22 12a10 10 0 0 1-10 10" />
+                </svg>
+              </div>
             </div>
 
             <section id="sectionParsed" hidden>
-              <label for="parsed">Risultato:
-                <img id="result-image" class="result-image">
-              </label>
-              <button id="downloadBtn">Scarica immagine</button>
+              <div>
+                <label for="parsed">Risultato:
+                  <img id="result-image" class="result-image">
+                </label>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-8">
+                </div>
+                <div class="col-4 text-right">
+                  <button id="downloadBtn" class="btn btn-md btn-primary">Scarica immagine</button>
+                </div>
+              </div>
             </section>
 
-            <!-- <div class="row align-items-center">
-              <div class="col-8">
-              </div>
-              <div class="col-4 text-right">
-                <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
-              </div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -108,86 +131,95 @@
     // Use 'rapidapi' if you want to try api4ai via RapidAPI marketplace.
     // For more details visit:
     //   https://rapidapi.com/api4ai-api4ai-default/api/people-photo-background-removal/details
-    const MODE = 'demo'
-
-    // Your RapidAPI key. Fill this variable with the proper value if you want
-    // to try api4ai via RapidAPI marketplace.
-    const RAPIDAPI_KEY = ''
+    const MODE = '{% if demo %}demo{% else %}pro{% endif %}' //'demo' or 'pro'
+    const API_KEY = '{{ api_key }}' // api-key
+    const RESULT_MODE = '{{ result_mode }}' // 'fg-image' or 'fg-mask'
 
     // Processing mode influences returned result. Supported values are:
     // * fg-image - Foreground image.
     // * fg-mask - Mask image.
-    const RESULT_MODE = 'fg-image'
 
     const OPTIONS = {
-    demo: {
-        url: `https://demo.api4ai.cloud/img-bg-removal/v1/people/results?mode=${RESULT_MODE}`,
-        headers: { 'A4A-CLIENT-APP-ID': 'sample' }
-    },
-    rapidapi: {
-        url: `https://people-photo-background-removal.p.rapidapi.com/v1/results?mode=${RESULT_MODE}`,
-        headers: { 'X-RapidAPI-Key': RAPIDAPI_KEY }
+      demo: {
+          url: `https://demo.api4ai.cloud/img-bg-removal/v1/people/results?mode=${RESULT_MODE}`,
+          headers: { 'A4A-CLIENT-APP-ID': 'sample' }
+      },
+      pro: {
+          url: `https://api4ai.cloud/img-bg-removal/v1/results?mode=${RESULT_MODE}`,
+          headers: { 'X-API-KEY': API_KEY }
+      }
     }
-    }
+    
 
-    document.addEventListener('DOMContentLoaded', function (event) {
-    const input = document.getElementById('file')
-    const resultImage = document.getElementById('result-image')
-    const sectionParsed = document.getElementById('sectionParsed')
-    const spinner = document.getElementById('spinner')
-    const spinner_text = document.getElementById('spinner-text')
+    document.addEventListener('DOMContentLoaded', function () {
+      const input = document.getElementById('main-file');
+      const bg_input = document.getElementById('bg-file');
+      const dummy_form = document.getElementById('dummy-form')
+      const loading = document.getElementById('loading')
+      const sectionParsed = document.getElementById('sectionParsed')
+      const resultImage = document.getElementById('result-image')
 
-    input.addEventListener('change', (event) => {
-        const file = event.target.files[0]
-        if (!file) {
-        return false
-        }
+      dummy_form.addEventListener('submit', (event) => {
 
-        sectionParsed.hidden = true
-        spinner_text.hidden = false
-        spinner.hidden = false
+          event.preventDefault();
 
-        // Preapare request.
-        const form = new FormData()
-        form.append('image', file)
-        const requestOptions = {
-          method: 'POST',
-          body: form,
-          headers: OPTIONS[MODE].headers
-        }
+          const file = input.files[0] // TODO: Check image size
+          const bg_file = bg_input.files[0]
 
-        // Make request.
-        fetch(OPTIONS[MODE].url, requestOptions)
-        .then(response => response.json())
-        .then(function (response) {
-            // Parse response and show result image.
-            const imgBase64 = response.results[0].entities[0].image
-            const imageData = 'data:image/png;base64,' + imgBase64
-            resultImage.src = 'data:image/png;base64,' + imgBase64
+          if (!file) {
+            alert('Seleziona un\'immagine prima di procedere');
+            return;
+          }
 
-            // Mostra bottone download
-            const downloadBtn = document.getElementById('downloadBtn');
-            // Gestione click download
-            downloadBtn.onclick = function() {
-              const a = document.createElement('a');
-              a.href = imageData;
-              a.download = 'immagine_senza_sfondo.png';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            };
+          sectionParsed.hidden = true
+          loading.hidden = false
+          
 
-            sectionParsed.hidden = false
-        })
-        .catch(function (error) {
-            // Error can be handled here.
-            console.error(error)
-        })
-        .then(function () {
-            spinner_text.hidden = true
-            spinner.hidden = true
-        })
-    })
+          // Preapare request.
+          const form = new FormData()
+          form.append('image', file)
+          if (bg_file) {
+            form.append('image-bg', bg_file)
+          }
+          const requestOptions = {
+            method: 'POST',
+            body: form,
+            headers: OPTIONS[MODE].headers
+          }
+
+          // Make request.
+          fetch(OPTIONS[MODE].url, requestOptions)
+          .then(response => response.json())
+          .then(function (response) {
+              // Parse response and show result image.
+              const imgBase64 = response.results[0].entities[0].image
+              const imageData = 'data:image/png;base64,' + imgBase64
+              resultImage.src = 'data:image/png;base64,' + imgBase64
+
+              // Mostra bottone download
+              const downloadBtn = document.getElementById('downloadBtn');
+              // Gestione click download
+              downloadBtn.onclick = function() {
+                const a = document.createElement('a');
+                a.href = imageData;
+                a.download = 'immagine_senza_sfondo.png';  // TODO: Usa il nome del file originale
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              };
+
+              sectionParsed.hidden = false
+          })
+          .catch(function (error) {
+              // Error can be handled here.
+              console.error(error)
+          })
+          .then(function () {
+              loading.hidden = true
+              
+          })
+
+      })
     })
 </script>
 

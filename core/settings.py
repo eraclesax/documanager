@@ -192,6 +192,10 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# CUT IMAGE SETTINGS #
+API4AI_DEMO = env("API_DEMO", cast=bool, default=True)
+API4AI_KEY = env("API4AI_KEY", cast=str, default="")
+
 # EMAIL SETTINGS #
 
 # Send the emails in the DEFAULT_REPLY_TO_EMAIL box (for production environement

@@ -23,23 +23,13 @@ class PictureView(View):
 
     def GET_render(self,request,*args, **kwargs):
         try:
-            # from .forms import PictureForm
             add_log(level=2,user=request.user, custom_message="Entering view PictureView.GET_render",request=request)
-            #### Objects from post ####
-            # form = kwargs.get("form",None)
-            # has_error = kwargs.get("has_error",False)
-            ###########################
 
-            # id = kwargs.get("id", None)
-            # if id is not None:
-            #     obj = get_object_or_404(AnagraficaDefunto,pk=id)
-            # else:
-            #     obj = None
-            # if not form:
-            #     form = PictureView(
-            #         instance = obj,
-            #     )
-            return render(request, self.template_name, {})
+            return render(request, self.template_name, {
+                "demo" : settings.API4AI_DEMO,
+                "api_key": settings.API4AI_KEY,
+                "result_mode" : 'fg-image'
+            })
         except Exception as e:
             msg = "Exception in PictureView.GET_render"
             add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
