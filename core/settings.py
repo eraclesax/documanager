@@ -278,6 +278,11 @@ if LOG_TYPE == "FILE":
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
+        "formatters": {
+            "simple": {
+                "format": "%(levelname)s %(asctime)s %(filename)s %(message)s"
+            },
+        },
         'handlers': {
             'file': {
                 'level': 'DEBUG',
@@ -294,13 +299,44 @@ if LOG_TYPE == "FILE":
         },
     }
 elif LOG_TYPE == "CONSOLE":
+    # LOGGING = {
+    #     "version": 1,
+    #     "disable_existing_loggers": False,
+    #     "handlers": {
+    #         "console": {
+    #             "class": "logging.StreamHandler",
+    #         },
+    #     },
+    #     "root": {
+    #         "handlers": ["console"],
+    #         "level": LOG_LEVEL,
+    #     },
+    # }
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
+        "formatters": {
+            "simple": {
+                "format": "%(levelname)s %(asctime)s %(filename)s %(message)s"
             },
+        },
+        "handlers": {
+            "null_handler": {
+                "class": "logging.NullHandler",
+            },
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+                "stream": "ext://sys.stdout",  # Default to standard output
+            },
+        },
+        "loggers": {
+            "fontTools": {
+                "level": "INFO",  # Suppress DEBUG and INFO for fontTools
+                "handlers": ["console"],
+                "propagate": False
+            }
         },
         "root": {
             "handlers": ["console"],
