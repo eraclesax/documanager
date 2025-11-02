@@ -64,18 +64,24 @@
                   <input type="file" id="main-file" name="main-file" required>
                 </div>
               </div>
-              <div >
+              <!-- <div >
                 <label for="file">Seleziona uno sfondo (opzionale):</label>
                 <div>
                   <input type="file" id="bg-file" name="bg-file">
                 </div>
-              </div>
+              </div> -->
+              <label>
+                <input type="checkbox" id="use-ai" name="use-ai">
+                Usa AI (Ritaglio più preciso ma qualità dell'immagine leggermente inferiore)
+              </label>
 
               <div class="row align-items-center">
                 <div class="col-8">
                 </div>
                 <div class="col-4 text-right">
-                  <button type="submit" class="btn btn-md btn-primary">Carica</button>
+                  <button id="submit-button" type="submit" class="btn btn-md btn-primary">
+                    Carica
+                  </button>
                 </div>
               </div>
             </form>
@@ -131,96 +137,118 @@
     // Use 'rapidapi' if you want to try api4ai via RapidAPI marketplace.
     // For more details visit:
     //   https://rapidapi.com/api4ai-api4ai-default/api/people-photo-background-removal/details
-    const MODE = '{% if demo %}demo{% else %}pro{% endif %}' //'demo' or 'pro'
-    const API_KEY = '{{ api_key }}' // api-key
+
+    const ML_API_KEY = '{{ ml_api_key }}' // api-key
+    const AI_API_KEY = '{{ ai_api_key }}' // api-key
+    const MODE = '{% if demo %}ml_demo{% else %}ml_pro{% endif %}';
     const RESULT_MODE = '{{ result_mode }}' // 'fg-image' or 'fg-mask'
-
-    // Processing mode influences returned result. Supported values are:
-    // * fg-image - Foreground image.
-    // * fg-mask - Mask image.
-
     const OPTIONS = {
-      demo: {
-          url: `https://demo.api4ai.cloud/img-bg-removal/v1/people/results?mode=${RESULT_MODE}`,
-          headers: { 'A4A-CLIENT-APP-ID': 'sample' }
-      },
-      pro: {
-          url: `https://api4ai.cloud/img-bg-removal/v1/results?mode=${RESULT_MODE}`,
-          headers: { 'X-API-KEY': API_KEY }
-      }
+        ml_demo: {
+            url: `https://demo.api4ai.cloud/img-bg-removal/v1/people/results?mode=${RESULT_MODE}`,
+            headers: { 'A4A-CLIENT-APP-ID': 'sample' }
+        },
+        ml_pro: {
+            url: `https://api4ai.cloud/img-bg-removal/v1/results?mode=${RESULT_MODE}`,
+            headers: { 'X-API-KEY': ML_API_KEY }
+        },
+        ai: {
+            url: 'https://platform.sentisight.ai/api/pm-predict/Background-removal',
+            headers: { 
+            'X-Auth-token': AI_API_KEY,
+            'Content-Type': 'application/octet-stream',
+            }
+        }
     }
-    
+  
 
     document.addEventListener('DOMContentLoaded', function () {
-      const input = document.getElementById('main-file');
-      const bg_input = document.getElementById('bg-file');
-      const dummy_form = document.getElementById('dummy-form')
-      const loading = document.getElementById('loading')
-      const sectionParsed = document.getElementById('sectionParsed')
-      const resultImage = document.getElementById('result-image')
+        const input = document.getElementById('main-file');
+        const dummy_form = document.getElementById('dummy-form');
+        const loading = document.getElementById('loading');
+        const sectionParsed = document.getElementById('sectionParsed');
+        const resultImage = document.getElementById('result-image');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const useAIInput = document.getElementById('use-ai');
+        const submit_button = document.getElementById('submit-button');
 
-      dummy_form.addEventListener('submit', (event) => {
+        const baseApiURL = 'https://platform.sentisight.ai/api/pm-predict/Background-removal';
+        const token = '{{ api_key }}'; // iniettato dal server
 
-          event.preventDefault();
+        dummy_form.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-          const file = input.files[0] // TODO: Check image size
-          const bg_file = bg_input.files[0]
+            const useAI = useAIInput.checked; // booleano vero
+            const file = input.files[0];
 
-          if (!file) {
+            if (!file) {
             alert('Seleziona un\'immagine prima di procedere');
             return;
-          }
+            }
 
-          sectionParsed.hidden = true
-          loading.hidden = false
-          
+            sectionParsed.hidden = true;
+            submit_button.hidden = true;
+            loading.hidden = false;
 
-          // Preapare request.
-          const form = new FormData()
-          form.append('image', file)
-          if (bg_file) {
-            form.append('image-bg', bg_file)
-          }
-          const requestOptions = {
-            method: 'POST',
-            body: form,
-            headers: OPTIONS[MODE].headers
-          }
+            try {
+                let imageData;
 
-          // Make request.
-          fetch(OPTIONS[MODE].url, requestOptions)
-          .then(response => response.json())
-          .then(function (response) {
-              // Parse response and show result image.
-              const imgBase64 = response.results[0].entities[0].image
-              const imageData = 'data:image/png;base64,' + imgBase64
-              resultImage.src = 'data:image/png;base64,' + imgBase64
+                if (useAI) {
+                    // === Modalità AI con Sentisight ===
+                    const arrayBuffer = await file.arrayBuffer();
 
-              // Mostra bottone download
-              const downloadBtn = document.getElementById('downloadBtn');
-              // Gestione click download
-              downloadBtn.onclick = function() {
-                const a = document.createElement('a');
-                a.href = imageData;
-                a.download = 'immagine_senza_sfondo.png';  // TODO: Usa il nome del file originale
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              };
+                    const response = await fetch(OPTIONS['ai']['url'], {
+                    method: 'POST',
+                    headers: OPTIONS['ai'].headers,
+                    body: arrayBuffer
+                    });
 
-              sectionParsed.hidden = false
-          })
-          .catch(function (error) {
-              // Error can be handled here.
-              console.error(error)
-          })
-          .then(function () {
-              loading.hidden = true
-              
-          })
+                    if (!response.ok) {
+                    throw new Error('Errore durante la richiesta AI');
+                    }
 
-      })
-    })
+                    const data = await response.json();
+                    const imgBase64 = data[0].image;
+                    imageData = 'data:image/png;base64,' + imgBase64;
+                } else {
+                    // === Modalità "classica" (ML demo/pro) ===
+                    const form = new FormData();
+                    form.append('image', file);
+
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: OPTIONS[MODE].headers,
+                        body: form
+                    };
+
+                    const response = await fetch(OPTIONS[MODE].url, requestOptions);
+                    const data = await response.json();
+                    const imgBase64 = data.results[0].entities[0].image;
+                    imageData = 'data:image/png;base64,' + imgBase64;
+                }
+
+                // === Mostra immagine e bottone download ===
+                resultImage.src = imageData;
+
+                downloadBtn.onclick = function () {
+                    const a = document.createElement('a');
+                    a.href = imageData;
+                    a.download = 'immagine_senza_sfondo.png'; // TODO: usa nome originale
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+
+                sectionParsed.hidden = false;
+
+            } catch (error) {
+                console.error(error);
+                alert('Si è verificato un errore durante l\'elaborazione dell\'immagine.');
+            } finally {
+                loading.hidden = true;
+                submit_button.hidden = false;
+            }
+        });
+    });
 </script>
 
 {% endblock javascripts %}

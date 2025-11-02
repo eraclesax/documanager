@@ -193,8 +193,9 @@ USE_L10N = True
 USE_TZ = True
 
 # CUT IMAGE SETTINGS #
-API4AI_DEMO = env("API_DEMO", cast=bool, default=True)
-API4AI_KEY = env("API4AI_KEY", cast=str, default="")
+API4AI_BG_API_DEMO = env("API4AI_BG_API_DEMO", cast=bool, default=True)
+API4AI_BG_API_KEY = env("API4AI_BG_API_KEY", cast=str, default="")
+SENTISIGHT_BG_API_KEY = env("SENTISIGHT_BG_API_KEY", cast=str, default="")
 
 # EMAIL SETTINGS #
 

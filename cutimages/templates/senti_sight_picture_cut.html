@@ -1,0 +1,177 @@
+{% extends BASE_TEMPLATE %}
+{% load static %}
+
+{% block stylesheets %}
+  <style>
+    .result-image {
+      max-width: 400px;  /* o quanto vuoi tu */
+      max-height: 400px;
+      object-fit: contain; /* mantiene proporzioni */
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      display: block;
+      margin: 1rem auto;
+    }
+
+    .spinner-icon svg {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+{% endblock stylesheets %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Scheda Defunto{% endblock title %}
+
+{% block content %}
+
+
+  <!-- Header -->
+  <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt--7">
+    <div class="row">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                  <h3>Rimuovi o sostituisci lo sfondo dalle foto</h3>
+                  <p class="mb-0">Questo strumento permette di eliminare o sostituire lo sfondo delle foto</p>
+              </div>
+              <!-- <div class="col-4 text-right">
+                <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
+              </div> -->
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="dummy-form" action="#" method="POST">
+
+              <div class="mb-3">
+                <label for="file">Seleziona un'immagine (max 16Mb e 4096x4096):</label>
+                <div>
+                  <input type="file" id="main-file" name="main-file" required>
+                </div>
+              </div>
+
+              <div class="row align-items-center">
+                <div class="col-8">
+                </div>
+                <div class="col-4 text-right">
+                  <button type="submit" class="btn btn-md btn-primary">Carica</button>
+                </div>
+              </div>
+            </form>
+
+            <div id="loading" hidden>
+              <h4 id="spinner-text" style="text-align: center;" aria-busy="true">Caricamento...</h4>
+              <div id="spinner" class="spinner-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                  <path d="M22 12a10 10 0 0 1-10 10" />
+                </svg>
+              </div>
+            </div>
+
+            <section id="sectionParsed" hidden>
+              <div>
+                <label for="parsed">Risultato:
+                  <img id="result-image" class="result-image"><img/>
+                </label>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-8">
+                </div>
+                <div class="col-4 text-right">
+                  <button id="downloadBtn" class="btn btn-md btn-primary">Scarica immagine</button>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+
+{% endblock content %}
+
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<script>
+
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('main-file');
+    const dummy_form = document.getElementById('dummy-form');
+    const loading = document.getElementById('loading');
+    const sectionParsed = document.getElementById('sectionParsed');
+    const resultImage = document.getElementById('result-image');
+    const downloadBtn = document.getElementById('downloadBtn');
+    
+    const baseApiURL = 'https://platform.sentisight.ai/api/pm-predict/Background-removal';
+    const token = '{{ api_key }}';
+    let predictionId;
+    let results;
+    let resultOutput;
+
+    dummy_form.addEventListener('submit', (event) => {
+
+      event.preventDefault();
+      sectionParsed.hidden = true
+      loading.hidden = false
+
+      const file = input.files[0];
+      const fr = new FileReader();
+      fr.onload = function() {
+          results = apiPostRequest(baseApiURL, fr.result);
+          let parsedResults = JSON.parse(results)[0].image;
+          resultImage.innerText = results;
+          resultImage.src = 'data:image/png;base64,' + parsedResults;
+          const imageData = 'data:image/png;base64,' + parsedResults;
+          console.log(parsedResults);
+          // Gestione click download
+          downloadBtn.onclick = function() {
+            const a = document.createElement('a');
+            a.href = imageData;
+            a.download = 'immagine_senza_sfondo.png';  // TODO: Usa il nome del file originale
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          };
+          loading.hidden = true
+          sectionParsed.hidden = false
+      }
+      fr.readAsArrayBuffer(file);
+    })
+
+    function apiPostRequest(request, body) {
+      const xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "POST",  request, false );
+      xmlHttp.setRequestHeader('Content-Type', 'application/octet-stream');
+      xmlHttp.setRequestHeader('X-Auth-token', token);
+      xmlHttp.send(body);
+      console.log(xmlHttp.responseText);
+      return xmlHttp.responseText;
+    }
+  })
+</script>
+
+{% endblock javascripts %}

@@ -26,9 +26,10 @@ class PictureView(View):
             add_log(level=2,user=request.user, custom_message="Entering view PictureView.GET_render",request=request)
 
             return render(request, self.template_name, {
-                "demo" : settings.API4AI_DEMO,
-                "api_key": settings.API4AI_KEY,
-                "result_mode" : 'fg-image'
+                "demo": settings.API4AI_BG_API_DEMO,
+                "ml_api_key": settings.API4AI_BG_API_KEY,
+                "ai_api_key": settings.SENTISIGHT_BG_API_KEY,
+                "result_mode":'fg-image',
             })
         except Exception as e:
             msg = "Exception in PictureView.GET_render"
