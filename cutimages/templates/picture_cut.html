@@ -208,7 +208,7 @@
 
                     const data = await response.json();
                     const imgBase64 = data[0].image;
-                    imageData = 'data:image/png;base64,' + imgBase64;
+                    // imageData = 'data:image/png;base64,' + imgBase64;
                 } else {
                     // === Modalità "classica" (ML demo/pro) ===
                     const form = new FormData();
@@ -223,19 +223,40 @@
                     const response = await fetch(OPTIONS[MODE].url, requestOptions);
                     const data = await response.json();
                     const imgBase64 = data.results[0].entities[0].image;
-                    imageData = 'data:image/png;base64,' + imgBase64;
+                    // imageData = 'data:image/png;base64,' + imgBase64;
                 }
 
-                // === Mostra immagine e bottone download ===
-                resultImage.src = imageData;
+                // == Usa "blob" per il downlaod ==
+                const byteCharacters = atob(imgBase64);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
+                const imageURL = URL.createObjectURL(blob);
 
+                // === Mostra immagine e bottone download ===
+                resultImage.src = imageURL;
+                // resultImage.src = imageData;
+                
+                // downloadBtn.onclick = function () {
+                //     const a = document.createElement('a');
+                //     a.href = imageData;
+                //     a.download = 'immagine_senza_sfondo.png'; // TODO: usa nome originale
+                //     document.body.appendChild(a);
+                //     a.click();
+                //     document.body.removeChild(a);
+                // };
+                
                 downloadBtn.onclick = function () {
                     const a = document.createElement('a');
-                    a.href = imageData;
-                    a.download = 'immagine_senza_sfondo.png'; // TODO: usa nome originale
+                    a.href = imageURL;
+                    a.download = 'immagine_senza_sfondo.png';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
+                    URL.revokeObjectURL(imageURL); // libera memoria
                 };
 
                 sectionParsed.hidden = false;
