@@ -178,7 +178,7 @@ class AnagraficaNewNFCView(View):
 
     def GET_render(self,request,*args, **kwargs):
         try:
-            from .forms import AnagraficaEditForm
+            # from .forms import AnagraficaEditForm
             from .models import Anagrafica
             add_log(level=2,user=request.user, custom_message="Entering view AnagraficaEditView.GET_render",request=request)
 
