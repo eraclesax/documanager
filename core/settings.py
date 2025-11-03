@@ -15,6 +15,7 @@ from envparse import env
 from django.contrib.messages import constants as messages
 from email.policy import default
 
+
 # Le variabili d'ambiente vengono caricate in wsgi (per il server) e manage (per lo sviluppo)
 # from dotenv import load_dotenv
 # load_dotenv('.env') # Carica le variabili di ambiente
