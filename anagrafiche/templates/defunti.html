@@ -1,6 +1,6 @@
 {% extends BASE_TEMPLATE %}
 {% load static %}
-{% block title %} Lista Schede Defunto {% endblock title %}
+{% block title %} Lista Schede Anagrafiche {% endblock title %}
 
 {% block stylesheets %}{% endblock stylesheets %}
 
@@ -23,11 +23,11 @@
         <div class="col">
           <div class="card shadow">
             <div class="card-header border-0">
-              <h3 class="mb-0">Lista Schede Defunto</h3>
+              <h3 class="mb-0">Lista Schede Anagrafiche</h3>
             </div>
             <div class="card-header border-0">
-              <a href="{% url 'defunto_new' %}" class="btn btn-success btn-sm" title="Aggiungi una nuova scheda defunto">
-                Aggiungi nuova scheda
+              <a href="{% url 'defunto_new' %}" class="btn btn-success btn-sm" title="Aggiungi una nuova scheda anagrafica">
+                Aggiungi nuova anagrafica
               </a>
             </div>
             <div class="table-responsive">

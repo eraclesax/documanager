@@ -17,42 +17,42 @@ class RenderMailView(View):
         else:
             return HttpResponse(mail.html_text)
     
-class SentMailListView(View):
+# class SentMailListView(View):
 
-    template_name = 'pages/sent_mail_list.html'
+#     template_name = 'pages/sent_mail_list.html'
 
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser is True:
-            from .models import Mail
+#     def get(self, request, *args, **kwargs):
+#         if request.user.is_superuser is True:
+#             from .models import Mail
 
-            mails=Mail.objects.all()
+#             mails=Mail.objects.all()
 
-            return render(request, self.template_name, {'mails': mails })
+#             return render(request, self.template_name, {'mails': mails })
 
-        else:
-            # Unauthorized
-            return render(request, 'errors/401.html', {'page_content': ''}, status=401)
+#         else:
+#             # Unauthorized
+#             return render(request, 'errors/401.html', {'page_content': ''}, status=401)
 
-class SentMailView(View):
+# class SentMailView(View):
 
-    template_name = 'pages/sent_mail.html'
+#     template_name = 'pages/sent_mail.html'
 
-    def get(self, request, *args, **kwargs):
-        mail_id = kwargs.get("id", None)
+#     def get(self, request, *args, **kwargs):
+#         mail_id = kwargs.get("id", None)
 
-        # If user in role Filters Viewer
-        # 31: Dashboard email notification
+#         # If user in role Filters Viewer
+#         # 31: Dashboard email notification
 
-        if request.user.is_superuser is True:
-            from .models import Mail
+#         if request.user.is_superuser is True:
+#             from .models import Mail
 
-            if mail_id:
-                mail=Mail.objects.get(pk=mail_id)
-            else:
-                mail=None
+#             if mail_id:
+#                 mail=Mail.objects.get(pk=mail_id)
+#             else:
+#                 mail=None
 
-            return render(request, self.template_name, {'mail': mail })
+#             return render(request, self.template_name, {'mail': mail })
 
-        else:
-            # Unauthorized
-            return render(request, 'errors/401.html', {'page_content': ''}, status=401)
+#         else:
+#             # Unauthorized
+#             return render(request, 'errors/401.html', {'page_content': ''}, status=401)

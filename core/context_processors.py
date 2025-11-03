@@ -29,16 +29,29 @@ def side_menu_context(current_url_name):
         }
     side_menu.append(item)  
 
-    url_name = "foto"
-    item = {
-        "type":"url",
-        "text":"Rimuovi sfondo",
-        "url":url_name,
-        "active":current_url_name==url_name,
-        "icon_classes":"ni ni-camera-compact text-primary",
-        "childs":None,
-        }
-    side_menu.append(item)
+    if settings.FOTO_ACTIVE:
+        url_name = "foto"
+        item = {
+            "type":"url",
+            "text":"Rimuovi sfondo",
+            "url":url_name,
+            "active":current_url_name==url_name,
+            "icon_classes":"ni ni-camera-compact text-primary",
+            "childs":None,
+            }
+        side_menu.append(item)
+
+    if settings.ANAGRAFICHE_ACTIVE:
+        url_name = "anagrafiche"
+        item = {
+            "type":"url",
+            "text":"Anagrafiche",
+            "url":url_name,
+            "active":current_url_name==url_name,
+            "icon_classes":"ni ni-badge text-primary",
+            "childs":None,
+            }
+        side_menu.append(item)
 
     # url_name = "storico_dash"
     # item = {

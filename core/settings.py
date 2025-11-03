@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'app',
     'docdefunto',
     'cutimages',
+    'anagrafiche',
     'customtest',
     # Signals
     # 'app.apps.MyAppConfig',
@@ -193,9 +194,14 @@ USE_L10N = True
 USE_TZ = True
 
 # CUT IMAGE SETTINGS #
+FOTO_ACTIVE = env("FOTO_ACTIVE", cast=bool, default=True)
+FOTO_ACTIVE = env("FOTO_ACTIVE", cast=bool, default=True)
 API4AI_BG_API_DEMO = env("API4AI_BG_API_DEMO", cast=bool, default=True)
 API4AI_BG_API_KEY = env("API4AI_BG_API_KEY", cast=str, default="")
 SENTISIGHT_BG_API_KEY = env("SENTISIGHT_BG_API_KEY", cast=str, default="")
+
+# ANAGRAFICHE SETTINGS #
+ANAGRAFICHE_ACTIVE = env("ANAGRAFICHE_ACTIVE", cast=bool, default=True)
 
 # EMAIL SETTINGS #
 

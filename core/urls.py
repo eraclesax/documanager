@@ -29,7 +29,7 @@ urlpatterns = [
     path('accounts/', include("app.urls")),             # Auth routes - login / register
     path('defunti/', include('docdefunto.urls')),
     path('foto/', include('cutimages.urls')),
-
+    path('anagrafiche/', include('anagrafiche.urls')),
     path('mail/', include("mail.urls")),
 ]
 
