@@ -181,8 +181,8 @@
             const file = input.files[0];
 
             if (!file) {
-            alert('Seleziona un\'immagine prima di procedere');
-            return;
+              alert('Seleziona un\'immagine prima di procedere');
+              return;
             }
 
             sectionParsed.hidden = true;
@@ -190,24 +190,25 @@
             loading.hidden = false;
 
             try {
-                let imageData;
+                // let imageData;
+                let imgBase64;
 
                 if (useAI) {
                     // === Modalità AI con Sentisight ===
                     const arrayBuffer = await file.arrayBuffer();
 
                     const response = await fetch(OPTIONS['ai']['url'], {
-                    method: 'POST',
-                    headers: OPTIONS['ai'].headers,
-                    body: arrayBuffer
+                      method: 'POST',
+                      headers: OPTIONS['ai'].headers,
+                      body: arrayBuffer
                     });
 
                     if (!response.ok) {
-                    throw new Error('Errore durante la richiesta AI');
+                      throw new Error('Errore durante la richiesta AI');
                     }
 
                     const data = await response.json();
-                    const imgBase64 = data[0].image;
+                    imgBase64 = data[0].image;
                     // imageData = 'data:image/png;base64,' + imgBase64;
                 } else {
                     // === Modalità "classica" (ML demo/pro) ===
@@ -222,7 +223,7 @@
 
                     const response = await fetch(OPTIONS[MODE].url, requestOptions);
                     const data = await response.json();
-                    const imgBase64 = data.results[0].entities[0].image;
+                    imgBase64 = data.results[0].entities[0].image;
                     // imageData = 'data:image/png;base64,' + imgBase64;
                 }
 
