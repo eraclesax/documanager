@@ -5,7 +5,7 @@ per la gestione documentale pensato per Agenzie di Onoranze Funebri. L’app ha 
 ora vorremmo proporla anche ad altre realtà come la vostra.
 
 Il software permette di generare documenti precompilati (richieste di autorizzazioni, verbali di chiusura feretro, ecc.). 
-A breve sarà disponibile anche un modulo per il ritaglio automatico dello sfondo delle immagini.
+E' disponibile anche un modulo per il ritaglio automatico dello sfondo delle immagini.
 
 Per provare gratuitamente e senza impegno abbiamo predisposto uno spazio di test dedicato alla vostra azienda.
 Codice di accesso: {{ promo_code }}
