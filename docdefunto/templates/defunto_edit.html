@@ -60,6 +60,18 @@
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
 <script>
+  // Inizializza lo scrollspy
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const body = document.body;
+    body.setAttribute("data-spy", "scroll");
+    body.setAttribute("data-target", "#sidenav-main");
+    body.setAttribute("data-offset", "500");
+
+    // Re-inizializza manualmente
+    $('body').scrollspy('refresh');
+  });
+
   // Queste funzioni sono collegate agli input fields direttamente in forms.py
   // Oscura i campi nome coniuge e cognome coniuge se stato civile è "celibe/nubile"
   function toggleConiugeFields(value) {

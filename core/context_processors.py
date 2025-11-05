@@ -1,4 +1,9 @@
 from django.conf import settings
+from django.urls import reverse, reverse_lazy
+from docdefunto.models import AnagraficaDefunto
+from docdefunto.forms import DefuntoEditForm
+
+FIELD_CATEGORIES = AnagraficaDefunto.FIELD_CATEGORIES
 
 def cms_context(request):
     from django.urls import resolve
@@ -22,11 +27,26 @@ def side_menu_context(current_url_name):
     item = {
         "type":"url",
         "text":"Home",
-        "url":url_name,
+        "url":reverse_lazy(url_name),
         "active":current_url_name==url_name or current_url_name==INDEX_PAGE,
         "icon_classes":"ni ni-bullet-list-67 text-primary",
+        "a_classes":"",
         "childs":None,
         }
+    if current_url_name in ("defunto_edit","defunto_new",):
+        item["childs"] = []
+        for key, values in FIELD_CATEGORIES.items():
+            item_ch = {
+                "type":"url",
+                "text":key,
+                "url":"#" + DefuntoEditForm.get_css_fieldset_id(key),
+                "active":False,
+                "icon_classes":"",
+                "a_classes":"scroll-link",
+                "childs":None,
+                }
+            item["childs"].append(item_ch)
+        print(item)
     side_menu.append(item)  
 
     if settings.FOTO_ACTIVE:
@@ -34,9 +54,10 @@ def side_menu_context(current_url_name):
         item = {
             "type":"url",
             "text":"Rimuovi sfondo",
-            "url":url_name,
+            "url":reverse_lazy(url_name),
             "active":current_url_name==url_name,
             "icon_classes":"ni ni-camera-compact text-primary",
+            "a_classes":"",
             "childs":None,
             }
         side_menu.append(item)
@@ -46,9 +67,10 @@ def side_menu_context(current_url_name):
         item = {
             "type":"url",
             "text":"Anagrafiche",
-            "url":url_name,
+            "url":reverse_lazy(url_name),
             "active":current_url_name==url_name,
             "icon_classes":"ni ni-badge text-primary",
+            "a_classes":"",
             "childs":None,
             }
         side_menu.append(item)

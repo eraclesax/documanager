@@ -36,7 +36,7 @@ class DefuntoEditForm(forms.ModelForm):
         #     "province":"Provincia",
         #     "country":"Stato",
         # }
-        
+    
     def __init__(self, *args,**kwargs):
         super().__init__(*args, **kwargs) 
         
@@ -47,10 +47,11 @@ class DefuntoEditForm(forms.ModelForm):
             fieldsets.append(
                 Fieldset(
                     key,
-                    *[value for value in values],
+                    *values,
+                    css_id=self.get_css_fieldset_id(key)
                 )
             )
-        self.helper.layout = Layout(*[fieldset for fieldset in fieldsets])
+        self.helper.layout = Layout(*fieldsets)
 
         # Uso widget date e datetime picker
         # self.fields["data_nascita"].widget = forms.SelectDateWidget(years=[y for y in range(1900,datetime.today().year)])comune_sepoltura
@@ -97,6 +98,10 @@ class DefuntoEditForm(forms.ModelForm):
         #     'style': 'display:none;'
         # })
 
+    @classmethod
+    def get_css_fieldset_id(cls,key):
+        return "section-"+"-".join(key.split())
+    
     def clean_codice_fiscale(self):
         value = self.cleaned_data["codice_fiscale"]
         # Validazione sul numero di caratteri
