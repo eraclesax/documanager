@@ -36,6 +36,12 @@
             </div>
           </div>
           <div class="card-body">
+
+
+            <input type="file" accept="image/*" capture="environment" id="cie-photo">
+            <button onclick="sendPhoto()">Leggi Carta</button>
+
+
             <form id="data-form" name="data-form" method='post' enctype="multipart/form-data">
               {% crispy form %}
             </form>
@@ -60,106 +66,52 @@
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
 <script>
-  // Queste funzioni sono collegate agli input fields direttamente in forms.py
-  // Oscura i campi nome coniuge e cognome coniuge se stato civile è "celibe/nubile"
-  function toggleConiugeFields(value) {
-      const cognome = document.getElementById("id_cognome_coniuge");
-      const nome = document.getElementById("id_nome_coniuge");
-      const cognomeDiv = document.getElementById("div_id_cognome_coniuge");
-      const nomeDiv = document.getElementById("div_id_nome_coniuge");
-
-      if (value === "Coniugato / unito civilmente" || value === "Vedovo" || value === "Già coniugato / unito civolmente") { 
-          cognomeDiv.style.display = "";
-          nomeDiv.style.display = "";
-      } else {
-          cognomeDiv.style.display = "none";
-          nomeDiv.style.display = "none";
-          cognome.value = "";
-          nome.value = "";
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
       }
+      return cookieValue;
   }
-  // Oscura i campi ospedale o via a seconda del valore di tipo_luogo_salma
-  function toggleLuogoSalmaFields(value) {
-      const viaSalma = document.getElementById("id_via_salma");
-      const ospedale = document.getElementById("id_ospedale");
-      const repartoOspedaliero = document.getElementById("id_reparto_ospedaliero");
-      const viaSalmaDiv = document.getElementById("div_id_via_salma");
-      const ospedaleDiv = document.getElementById("div_id_ospedale");
-      const viaRepartoOspedaliero = document.getElementById("div_id_reparto_ospedaliero");
+  const csrftoken = getCookie('csrftoken');
 
-      if (value === "Abitazione privata") {  
-          viaSalmaDiv.style.display = "";
-          ospedaleDiv.style.display = "none";
-          viaRepartoOspedaliero.style.display = "none";
-          ospedale.value = "";
-          repartoOspedaliero.value = "";
-      } else if (value === "Istituto / Casa di riposo / Struttura obitoriale / Ospedale") {
-          viaSalmaDiv.style.display = "none";
-          ospedaleDiv.style.display = "";
-          viaRepartoOspedaliero.style.display = "";
-          viaSalma.value = "";
-      } else {
-          viaSalmaDiv.style.display = "none";
-          ospedaleDiv.style.display = "none";
-          viaRepartoOspedaliero.style.display = "none";
-          ospedale.value = "";
-          repartoOspedaliero.value = "";
-          viaSalma.value = "";
+  async function sendPhoto() {
+      const fileInput = document.getElementById("cie-photo");
+      if (!fileInput.files.length) {
+          alert("Scatta prima una foto del retro della carta.");
+          return;
       }
+
+      const formData = new FormData();
+      formData.append("image", fileInput.files[0]);
+
+      const response = await fetch("{% url 'ajax_ocr_pic' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": csrftoken },
+          body: formData
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (data.error) {
+          alert("Errore lettura MRZ: " + data.error);
+          return;
+      } else {
+      // Riempio i campi del form
+      document.querySelector("#id_nome").value = data.given_names;
+      document.querySelector("#id_cognome").value = data.surname;
+      // document.querySelector("#id_data_nascita").value = data.birth_date;
+      }
+
   }
-  // Inizializza i campi oscurati
-  document.addEventListener("DOMContentLoaded", function() {
-      const statoCivile = document.getElementById("id_stato_civile");
-      const tipoLuogoSalma = document.getElementById("id_tipo_luogo_salma");
-      toggleConiugeFields(statoCivile.value);
-      toggleLuogoSalmaFields(tipoLuogoSalma.value);
-  });
 
-// Questa funzione semplifica la compilazione riempiendo i campi successivi in maniera statisticamente valida
-document.addEventListener("DOMContentLoaded", function () {
-  const comune_residenza = document.getElementById("id_comune_residenza");
-  
-  const comune_decesso = document.getElementById("id_comune_decesso");
-  const comune_salma = document.getElementById("id_comune_salma");
-  const comune_chiesa = document.getElementById("id_comune_chiesa");
-  const comune_sepoltura = document.getElementById("id_comune_sepoltura");
-
-  comune_residenza.addEventListener("blur", function () {
-    if (comune_decesso.value.trim() === "" && comune_residenza.value.trim() !== "") {
-      comune_decesso.value = comune_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-    if (comune_salma.value.trim() === "" && comune_residenza.value.trim() !== "") {
-      comune_salma.value = comune_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-    if (comune_chiesa.value.trim() === "" && comune_residenza.value.trim() !== "") {
-      comune_chiesa.value = comune_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-    if (comune_sepoltura.value.trim() === "" && comune_residenza.value.trim() !== "") {
-      comune_sepoltura.value = comune_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-  });
-
-  const provincia_residenza = document.getElementById("id_provincia_residenza");
-  
-  const provincia_decesso = document.getElementById("id_provincia_decesso");
-  const provincia_salma = document.getElementById("id_provincia_salma");
-  const provincia_chiesa = document.getElementById("id_provincia_chiesa");
-  const provincia_sepoltura = document.getElementById("id_provincia_sepoltura");
-
-  provincia_residenza.addEventListener("blur", function () {
-    if (provincia_decesso.value.trim() === "" && provincia_residenza.value.trim() !== "") {
-      provincia_decesso.value = provincia_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-    if (provincia_salma.value.trim() === "" && provincia_residenza.value.trim() !== "") {
-      provincia_salma.value = provincia_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-    if (provincia_chiesa.value.trim() === "" && provincia_residenza.value.trim() !== "") {
-      provincia_chiesa.value = provincia_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-    if (provincia_sepoltura.value.trim() === "" && provincia_residenza.value.trim() !== "") {
-      provincia_sepoltura.value = provincia_residenza.value.trim().toUpperCase(); // copia e mette in maiuscolo
-    }
-  });
-});
 </script>
 {% endblock javascripts %}

@@ -10,3 +10,4 @@ class AnagraficaEditForm(forms.ModelForm):
     class Meta:
         from .models import Anagrafica
         model = Anagrafica
+        fields = ["cognome", "nome", "sesso",]
