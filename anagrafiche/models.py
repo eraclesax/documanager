@@ -28,17 +28,3 @@ class Anagrafica(models.Model):
         except Exception as e:
             add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in Anagrafica.__str__")
             raise(e)
-        
-    @classmethod
-    def read_from_NFC(cls,save=False):
-        from cie_nis_python_sdk.lib.CIEInterface import CIEInterface
-
-        interface = CIEInterface()
-        interface.mrtdAuth('930818', '290818', 'CA77748ET')
-        data = interface.extractData()
-        return data
-
-        # if save:
-        #     obj.save()
-
-        # return obj

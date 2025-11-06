@@ -185,7 +185,7 @@ class AnagraficaNewNFCView(View):
 
             ## Qui inizializzo l'oggetto con le cose lette da NFC
             
-            data = Anagrafica.read_from_NFC(save=True)
+            data = {} # Anagrafica.read_from_NFC(save=True)
 
             ## Creo il form -> in futuro è meglio se rimando alla View del normale edit
             # form = AnagraficaEditForm(
