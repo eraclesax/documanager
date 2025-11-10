@@ -4,11 +4,13 @@
     <!-- Navbar -->
     <nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark">
       <div class="container px-4">
-        {% comment %} 
         <a class="navbar-brand" href="/">
-          <img src="{% static 'assets/img/brand/logo-white.png' %}" class="navbar-brand-img" alt="...">
+          {% if organization and organization.logo %}
+            <img src="{{ organization.logo.url }}" class="navbar-brand-img" alt="logo">
+          {% else %}
+            <!-- <img src="{% static 'assets/img/brand/logo-white.png' %}" class="navbar-brand-img" alt="logo"> -->
+          {% endif %}
         </a> 
-        {% endcomment %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-main" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -21,7 +23,7 @@
                 {% if organization and organization.logo %}
                   <img src="{{ organization.logo.url }}" alt="logo">
                 {% else %}
-                  <img src="{% static 'assets/img/brand/logo-white.png' %}" alt="logo">
+                  <!-- <img src="{% static 'assets/img/brand/logo-white.png' %}" alt="logo"> -->
                 {% endif %}
                 </a>
               </div>
@@ -36,7 +38,6 @@
           <!-- Navbar items -->
           <ul class="navbar-nav ml-auto">
 
-            {% comment %} 
             <li class="nav-item">
               <a target="_blank" 
                  class="nav-link nav-link-icon" 
@@ -45,7 +46,6 @@
                 <span class="nav-link-inner--text">Source Code</span>
               </a>
             </li>
-
             <li class="nav-item">
               <a target="_blank" 
                  class="nav-link nav-link-icon" href="https://www.creative-tim.com/templates/django">
@@ -53,7 +53,6 @@
                 <span class="nav-link-inner--text">More Apps</span>
               </a>
             </li> 
-            {% endcomment %}
 
           </ul>
         </div>

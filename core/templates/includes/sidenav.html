@@ -9,13 +9,13 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- Brand -->
-      <a class="navbar-brand pt-0" href="/">
+      <a class="navbar-brand pt-0" href="{% url 'index' %}">
         {% if organization and organization.logo %}
           <img src="{{ organization.logo.url }}" class="navbar-brand-img" alt="logo">
         {% else %}
-          <img src="{% static 'assets/img/brand/logo-white.png' %}" class="navbar-brand-img" alt="logo">
+          <!-- <img src="{% static 'assets/img/brand/logo-white.png' %}" class="navbar-brand-img" alt="logo"> -->
         {% endif %}
-        </a>
+      </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
         <li class="nav-item dropdown">
@@ -61,7 +61,7 @@
                 {% if organization and organization.logo %}
                   <img src="{{ organization.logo.url }}" alt="logo">
                 {% else %}
-                  <img src="{% static 'assets/img/brand/logo-white.png' %}" alt="logo">
+                  <!-- <img src="{% static 'assets/img/brand/logo-white.png' %}" alt="logo"> -->
                 {% endif %}
               </a>
             </div>
