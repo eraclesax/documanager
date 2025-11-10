@@ -28,10 +28,17 @@ urlpatterns = [
     path('', index, name='index'),
     path('accounts/', include("app.urls")),             # Auth routes - login / register
     path('defunti/', include('docdefunto.urls')),
-    path('foto/', include('cutimages.urls')),
-    path('anagrafiche/', include('anagrafiche.urls')),
     path('mail/', include("mail.urls")),
 ]
+if settings.FOTO_ACTIVE:
+    urlpatterns.append(
+        path('foto/', include('cutimages.urls'))
+        )
+
+if settings.ANAGRAFICHE_ACTIVE:
+    urlpatterns.append(
+        path('anagrafiche/', include('anagrafiche.urls'))
+        )
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

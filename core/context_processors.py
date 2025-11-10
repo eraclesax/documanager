@@ -46,7 +46,6 @@ def side_menu_context(current_url_name):
                 "childs":None,
                 }
             item["childs"].append(item_ch)
-        print(item)
     side_menu.append(item)  
 
     if settings.FOTO_ACTIVE:

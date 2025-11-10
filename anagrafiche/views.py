@@ -195,6 +195,7 @@ class AnagraficaOcrPicView(View):
             try:
                 data = MrzReader(image_file).data
             except Exception as exc:
+                traceback.print_exc()
                 return JsonResponse({"error": str(exc)}, status=422)
             if not data:
                 return JsonResponse({"error": "Non è possibile leggere la carta"}, status=422)
