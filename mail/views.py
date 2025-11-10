@@ -1,7 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from .models import Mail
 
@@ -10,7 +10,7 @@ class RenderMailView(View):
     template_name = ''
  
     def get(self, request, *args, **kwargs):
-        mail = Mail.objects.get(uuid=kwargs.get('uuid'))
+        mail = get_object_or_404(Mail,uuid=kwargs.get('uuid'))
         if not mail.html_text and mail.template_html:
             template_name = mail.template_html
             return render(request, template_name, mail.context)

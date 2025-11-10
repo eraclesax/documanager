@@ -1,78 +1,93 @@
+import traceback
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
+from logger.utils import add_log
 from docdefunto.models import AnagraficaDefunto
 from docdefunto.forms import DefuntoEditForm
 
 FIELD_CATEGORIES = AnagraficaDefunto.FIELD_CATEGORIES
 
 def cms_context(request):
-    from django.urls import resolve
-    current_url_name = resolve(request.path_info).url_name
-
-    context = dict()
-
-    context = {
-        **context, 
-        **side_menu_context(current_url_name),
-        "BASE_TEMPLATE":settings.BASE_TEMPLATE,
-    }
+    try:
+        from django.urls import resolve
+        try:
+            current_url_name = resolve(request.path_info).url_name
+        except Exception as exc:
+            current_url_name = None
+        context = {
+            **side_menu_context(current_url_name),
+            "BASE_TEMPLATE":settings.BASE_TEMPLATE,
+        }
+    except Exception as exc:
+        msg = "Exception in core.context_processor.cms_context"
+        add_log(level=4, custom_message=msg,request=request,exception=traceback.format_exc())
+        traceback.print_exc()
+        return {}
 
     return context
 
 def side_menu_context(current_url_name):
-    side_menu = []
-    
-    url_name = "index"
-    INDEX_PAGE = settings.INDEX_PAGE
-    item = {
-        "type":"url",
-        "text":"Home",
-        "url":reverse_lazy(url_name),
-        "active":current_url_name==url_name or current_url_name==INDEX_PAGE,
-        "icon_classes":"ni ni-bullet-list-67 text-primary",
-        "a_classes":"",
-        "childs":None,
-        }
-    if current_url_name in ("defunto_edit","defunto_new",):
-        item["childs"] = []
-        for key, values in FIELD_CATEGORIES.items():
-            item_ch = {
+    try:
+        side_menu = []
+        
+        url_name = "index"
+        INDEX_PAGE = settings.INDEX_PAGE
+        item = {
+            "type":"url",
+            "text":"Home",
+            "url":reverse_lazy(url_name),
+            "active":current_url_name==url_name or current_url_name==INDEX_PAGE,
+            "icon_classes":"ni ni-bullet-list-67 text-primary",
+            "a_classes":"",
+            "childs":None,
+            }
+        if current_url_name in ("defunto_edit","defunto_new",):
+            item["childs"] = []
+            for key, values in FIELD_CATEGORIES.items():
+                item_ch = {
+                    "type":"url",
+                    "text":key,
+                    "url":"#" + DefuntoEditForm.get_css_fieldset_id(key),
+                    "active":False,
+                    "icon_classes":"",
+                    "a_classes":"scroll-link",
+                    "childs":None,
+                    }
+                item["childs"].append(item_ch)
+        side_menu.append(item)  
+
+        if settings.FOTO_ACTIVE:
+            url_name = "foto"
+            item = {
                 "type":"url",
-                "text":key,
-                "url":"#" + DefuntoEditForm.get_css_fieldset_id(key),
-                "active":False,
-                "icon_classes":"",
-                "a_classes":"scroll-link",
+                "text":"Rimuovi sfondo",
+                "url":reverse_lazy(url_name),
+                "active":current_url_name==url_name,
+                "icon_classes":"ni ni-camera-compact text-primary",
+                "a_classes":"",
                 "childs":None,
                 }
-            item["childs"].append(item_ch)
-    side_menu.append(item)  
+            side_menu.append(item)
 
-    if settings.FOTO_ACTIVE:
-        url_name = "foto"
-        item = {
-            "type":"url",
-            "text":"Rimuovi sfondo",
-            "url":reverse_lazy(url_name),
-            "active":current_url_name==url_name,
-            "icon_classes":"ni ni-camera-compact text-primary",
-            "a_classes":"",
-            "childs":None,
-            }
-        side_menu.append(item)
+        if settings.ANAGRAFICHE_ACTIVE:
+            url_name = "anagrafiche"
+            item = {
+                "type":"url",
+                "text":"Anagrafiche",
+                "url":reverse_lazy(url_name),
+                "active":current_url_name==url_name,
+                "icon_classes":"ni ni-badge text-primary",
+                "a_classes":"",
+                "childs":None,
+                }
+            side_menu.append(item)
+    except Exception as exc:
+        msg = "Exception in core.context_processor.cms_context"
+        add_log(level=4, custom_message=msg,exception=traceback.format_exc())
+        traceback.print_exc()
+        return {}
 
-    if settings.ANAGRAFICHE_ACTIVE:
-        url_name = "anagrafiche"
-        item = {
-            "type":"url",
-            "text":"Anagrafiche",
-            "url":reverse_lazy(url_name),
-            "active":current_url_name==url_name,
-            "icon_classes":"ni ni-badge text-primary",
-            "a_classes":"",
-            "childs":None,
-            }
-        side_menu.append(item)
+    return {"side_menu":side_menu,}
 
     # url_name = "storico_dash"
     # item = {
@@ -144,7 +159,3 @@ def side_menu_context(current_url_name):
     #     "childs":None,
     #     }
     # side_menu.append(item)
-
-    return {
-        "side_menu":side_menu,
-    }
