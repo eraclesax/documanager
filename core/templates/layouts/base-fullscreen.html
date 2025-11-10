@@ -9,11 +9,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <title>
-    {% block title %} Archetti - EifuSoft {% endblock %}
+    {% block title %} 
+      {% if organization and organization.name %}
+        {{ organization.name }} - 
+      {% endif %}
+      EifuSoft
+    {% endblock %}
   </title>
 
-  <!-- Favicon - loaded as static -->
-  <link href="{% static 'assets/img/brand/favicon.png' %}" rel="icon" type="image/png">
+  <!-- Favicon - loaded as media or static -->
+  {% if organization and organization.logo %}
+    <link href="{{ organization.logo.url }}" rel="icon" type="image/png">
+  {% else %}
+    <link href="{% static 'assets/img/brand/favicon.png' %}" rel="icon" type="image/png">
+  {% endif %}
   
   <!-- Fonts -->
 
@@ -43,7 +52,7 @@
             <div class="col-lg-3 col-md-3">
               <a href="/">
                 {% if organization and organization.logo %}
-                  <img class="img-fluid" src="{{organization.logo.url}}" alt="logo">
+                  <img class="img-fluid" src="{{ organization.logo.url }}" alt="logo">
                 {% endif %}
               </a> 
             </div>

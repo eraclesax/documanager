@@ -16,9 +16,9 @@ class OrganizationMiddleware(MiddlewareMixin):
                 org = Organization.objects.get(domain=host)
                 request.organization = org
             except Organization.DoesNotExist as e:
-                    request.organization = None
-                    msg = f"Exception in OrganizationMiddleware.process_request: organization with domain {host} does not exists."
-                    add_log(level=3,exception=e, custom_message=msg)
+                request.organization = None
+                msg = f"Exception in OrganizationMiddleware.process_request: organization with domain {host} does not exists."
+                add_log(level=3,exception=e, custom_message=msg)
 
         except Exception as e:
             import traceback
