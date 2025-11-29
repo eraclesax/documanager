@@ -1,0 +1,276 @@
+{% extends BASE_TEMPLATE %}
+{% load static %}
+
+{% block stylesheets %}
+  <style>
+    .result-image {
+      max-width: 400px;  /* o quanto vuoi tu */
+      max-height: 400px;
+      object-fit: contain; /* mantiene proporzioni */
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      display: block;
+      margin: 1rem auto;
+    }
+
+    .spinner-icon svg {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+{% endblock stylesheets %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Scheda Defunto{% endblock title %}
+
+{% block content %}
+
+
+  <!-- Header -->
+  <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt--7">
+    <div class="row">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                  <h3>Rimuovi o sostituisci lo sfondo dalle foto</h3>
+                  <p class="mb-0">Questo strumento permette di eliminare o sostituire lo sfondo delle foto</p>
+              </div>
+              <!-- <div class="col-4 text-right">
+                <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
+              </div> -->
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="dummy-form" action="#" method="POST">
+
+              <div class="mb-3">
+                <label for="file">Seleziona un'immagine (max 16Mb e 4096x4096):</label>
+                <div>
+                  <input type="file" id="main-file" name="main-file" required>
+                </div>
+              </div>
+              <!-- <div >
+                <label for="file">Seleziona uno sfondo (opzionale):</label>
+                <div>
+                  <input type="file" id="bg-file" name="bg-file">
+                </div>
+              </div> -->
+              <label>
+                <input type="checkbox" id="use-ai" name="use-ai">
+                Usa AI (Ritaglio più preciso ma qualità dell'immagine leggermente inferiore)
+              </label>
+
+              <div class="row align-items-center">
+                <div class="col-8">
+                </div>
+                <div class="col-4 text-right">
+                  <button id="submit-button" type="submit" class="btn btn-md btn-primary">
+                    Carica
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <div id="loading" hidden>
+              <h4 id="spinner-text" style="text-align: center;" aria-busy="true">Caricamento...</h4>
+              <div id="spinner" class="spinner-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                  <path d="M22 12a10 10 0 0 1-10 10" />
+                </svg>
+              </div>
+            </div>
+
+            <section id="sectionParsed" hidden>
+              <div>
+                <label for="parsed">Risultato:
+                  <img id="result-image" class="result-image">
+                </label>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-8">
+                </div>
+                <div class="col-4 text-right">
+                  <button id="downloadBtn" class="btn btn-md btn-primary">Scarica immagine</button>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+
+{% endblock content %}
+
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<script>
+    // Example of using API4AI people background removal.
+
+    // Use 'demo' mode just to try api4ai for free. Free demo is rate limited.
+    // For more details visit:
+    //   https://api4.ai
+
+    // Use 'rapidapi' if you want to try api4ai via RapidAPI marketplace.
+    // For more details visit:
+    //   https://rapidapi.com/api4ai-api4ai-default/api/people-photo-background-removal/details
+
+    const ML_API_KEY = '{{ ml_api_key }}' // api-key
+    const AI_API_KEY = '{{ ai_api_key }}' // api-key
+    const MODE = '{% if demo %}ml_demo{% else %}ml_pro{% endif %}';
+    const RESULT_MODE = '{{ result_mode }}' // 'fg-image' or 'fg-mask'
+    const OPTIONS = {
+        ml_demo: {
+            url: `https://demo.api4ai.cloud/img-bg-removal/v1/people/results?mode=${RESULT_MODE}`,
+            headers: { 'A4A-CLIENT-APP-ID': 'sample' }
+        },
+        ml_pro: {
+            url: `https://api4ai.cloud/img-bg-removal/v1/results?mode=${RESULT_MODE}`,
+            headers: { 'X-API-KEY': ML_API_KEY }
+        },
+        ai: {
+            url: 'https://platform.sentisight.ai/api/pm-predict/Background-removal',
+            headers: { 
+            'X-Auth-token': AI_API_KEY,
+            'Content-Type': 'application/octet-stream',
+            }
+        }
+    }
+  
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('main-file');
+        const dummy_form = document.getElementById('dummy-form');
+        const loading = document.getElementById('loading');
+        const sectionParsed = document.getElementById('sectionParsed');
+        const resultImage = document.getElementById('result-image');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const useAIInput = document.getElementById('use-ai');
+        const submit_button = document.getElementById('submit-button');
+
+        const baseApiURL = 'https://platform.sentisight.ai/api/pm-predict/Background-removal';
+        const token = '{{ api_key }}'; // iniettato dal server
+
+        dummy_form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const useAI = useAIInput.checked; // booleano vero
+            const file = input.files[0];
+
+            if (!file) {
+              alert('Seleziona un\'immagine prima di procedere');
+              return;
+            }
+
+            sectionParsed.hidden = true;
+            submit_button.hidden = true;
+            loading.hidden = false;
+
+            try {
+                // let imageData;
+                let imgBase64;
+
+                if (useAI) {
+                    // === Modalità AI con Sentisight ===
+                    const arrayBuffer = await file.arrayBuffer();
+
+                    const response = await fetch(OPTIONS['ai']['url'], {
+                      method: 'POST',
+                      headers: OPTIONS['ai'].headers,
+                      body: arrayBuffer
+                    });
+
+                    if (!response.ok) {
+                      throw new Error('Errore durante la richiesta AI');
+                    }
+
+                    const data = await response.json();
+                    imgBase64 = data[0].image;
+                    // imageData = 'data:image/png;base64,' + imgBase64;
+                } else {
+                    // === Modalità "classica" (ML demo/pro) ===
+                    const form = new FormData();
+                    form.append('image', file);
+
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: OPTIONS[MODE].headers,
+                        body: form
+                    };
+
+                    const response = await fetch(OPTIONS[MODE].url, requestOptions);
+                    const data = await response.json();
+                    imgBase64 = data.results[0].entities[0].image;
+                    // imageData = 'data:image/png;base64,' + imgBase64;
+                }
+
+                // == Usa "blob" per il downlaod ==
+                const byteCharacters = atob(imgBase64);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
+                const imageURL = URL.createObjectURL(blob);
+
+                // === Mostra immagine e bottone download ===
+                resultImage.src = imageURL;
+                // resultImage.src = imageData;
+                
+                // downloadBtn.onclick = function () {
+                //     const a = document.createElement('a');
+                //     a.href = imageData;
+                //     a.download = 'immagine_senza_sfondo.png'; // TODO: usa nome originale
+                //     document.body.appendChild(a);
+                //     a.click();
+                //     document.body.removeChild(a);
+                // };
+                
+                downloadBtn.onclick = function () {
+                    const a = document.createElement('a');
+                    a.href = imageURL;
+                    a.download = 'immagine_senza_sfondo.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(imageURL); // libera memoria
+                };
+
+                sectionParsed.hidden = false;
+
+            } catch (error) {
+                console.error(error);
+                alert('Si è verificato un errore durante l\'elaborazione dell\'immagine.');
+            } finally {
+                loading.hidden = true;
+                submit_button.hidden = false;
+            }
+        });
+    });
+</script>
+
+{% endblock javascripts %}

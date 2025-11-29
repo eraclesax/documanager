@@ -1,4 +1,4 @@
-import re
+import re, traceback
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from app.models import Organization, User
@@ -165,7 +165,7 @@ class AnagraficaDefunto(models.Model):
             else:
                 return None
         except Exception as e:
-            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.get_age")
+            add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in AnagraficaDefunto.get_age")
             raise(e)
 
     class Meta(): # type: ignore
@@ -176,7 +176,7 @@ class AnagraficaDefunto(models.Model):
         try:
             return f"{self.cognome} {self.nome}"
         except Exception as e:
-            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.__str__")
+            add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in AnagraficaDefunto.__str__")
             raise(e)
     
     def save(self, *args, **kwargs):
@@ -187,7 +187,7 @@ class AnagraficaDefunto(models.Model):
                 self.relative_id = 1 if last is None else last + 1
             super().save(*args, **kwargs)
         except Exception as e:
-            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.save")
+            add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in AnagraficaDefunto.save")
             raise(e)
 
     # FIELD_CATEGORIES determina la visualizzazione dei dati in defunto.html e in defunto_edit, quindi deve sempre essere aggiornata
@@ -227,7 +227,7 @@ class AnagraficaDefunto(models.Model):
             pattern = r"^\s*rionero\s+in\s+(vulture|v\.)\s*$"
             return re.match(pattern, text.strip(), re.IGNORECASE) is not None
         except Exception as e:
-            add_log(level=4,exception=e,custom_message="Exception in AnagraficaDefunto.get_comune_decesso_is_rionero")
+            add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in AnagraficaDefunto.get_comune_decesso_is_rionero")
             raise(e)
 
 
@@ -236,14 +236,14 @@ def user_documents_path(instance, filename):
     try:
         return f"{instance.organization.tag}/documents/{filename}"
     except Exception as e:
-        add_log(level=4,exception=e,custom_message="Exception in docdefunto.models.user_documents_path")
+        add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in docdefunto.models.user_documents_path")
         raise(e)
 def user_documentsbkgds_path(instance, filename):
     # esempio: "media/azienda_5/documenti/contratto.pdf"
     try:
         return f"{instance.organization.tag}/backgrounds/{filename}"
     except Exception as e:
-        add_log(level=4,exception=e,custom_message="Exception in docdefunto.models.user_documentsbkgds_path")
+        add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in docdefunto.models.user_documentsbkgds_path")
         raise(e)
 class Documento(models.Model):
     nome = models.CharField(verbose_name="Nome Documento", blank=True, null=True, max_length=255, default="")
@@ -259,6 +259,6 @@ class Documento(models.Model):
         try:
             return f"{self.nome}"
         except Exception as e:
-            add_log(level=4,exception=e,custom_message="Exception in Documento.__str__")
+            add_log(level=4,exception=traceback.format_exc(),custom_message="Exception in Documento.__str__")
             raise(e)
 

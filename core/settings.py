@@ -15,6 +15,7 @@ from envparse import env
 from django.contrib.messages import constants as messages
 from email.policy import default
 
+
 # Le variabili d'ambiente vengono caricate in wsgi (per il server) e manage (per lo sviluppo)
 # from dotenv import load_dotenv
 # load_dotenv('.env') # Carica le variabili di ambiente
@@ -23,8 +24,9 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 ## BASE_DIR = Path(__file__).resolve().parent.parent
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+# CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -34,6 +36,8 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-6@&(ti2fkhl&g0$ar)&wv=04+@6-lo8%l17@a(-0s4s&rf4oci')
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE',cast=bool,default=False)
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE',cast=bool,default=False)
+SESSION_COOKIE_AGE = 31536000  # 365 giorni
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG',cast=bool,default=True)
 DEBUG_DOMAIN = env('DEBUG_DOMAIN',cast=str,default='')
@@ -53,7 +57,10 @@ if ALLOW_EVERY_HOST:
 if ALLOW_PRODUCTION_HOSTS:
     ALLOWED_HOSTS += ['eifusoft.it','.eifusoft.it']
 
-FULL_URL = env('FULL_URL',cast=str,default="http://full-urlnotsetted.com")
+
+FULL_URL = env('FULL_URL',cast=str,default="http://full-urlnotsetted.com") ## TODO: può essere calcolato dalla request
+TRIAL_DOMAIN = env('TRIAL_DOMAIN',cast=str,default="trial.domain-notsetted.com")
+TRIAL_URL = "https://" + TRIAL_DOMAIN
 SITE_NAME = "EifuSoft"
 # Application definition
 
@@ -74,6 +81,8 @@ INSTALLED_APPS = [
     # Custom
     'app',
     'docdefunto',
+    'cutimages',
+    'anagrafiche',
     'customtest',
     # Signals
     # 'app.apps.MyAppConfig',
@@ -93,15 +102,18 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
-LOGIN_REDIRECT_URL = "index"   # Route defined in app/urls.py
-LOGOUT_REDIRECT_URL = "index"  # Route defined in app/urls.py
-
-TEMPLATE_DIR = os.path.join(CORE_DIR, "core/templates")  # ROOT dir for templates
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "defunti"
+INDEX_PAGE = "defunti"
+# LOGOUT_REDIRECT_URL = "logout"
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR,],
+        'DIRS': [
+            os.path.join(BASE_DIR, "core", "templates"),
+            os.path.join(BASE_DIR, "app", "templates"),
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,7 +149,7 @@ if DB_IS_SQLITE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(CORE_DIR, 'db.sqlite3'),
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
 else:
@@ -182,6 +194,15 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# CUT IMAGE SETTINGS #
+FOTO_ACTIVE = env("FOTO_ACTIVE", cast=bool, default=False)
+API4AI_BG_API_DEMO = env("API4AI_BG_API_DEMO", cast=bool, default=True)
+API4AI_BG_API_KEY = env("API4AI_BG_API_KEY", cast=str, default="")
+SENTISIGHT_BG_API_KEY = env("SENTISIGHT_BG_API_KEY", cast=str, default="")
+
+# ANAGRAFICHE SETTINGS #
+ANAGRAFICHE_ACTIVE = env("ANAGRAFICHE_ACTIVE", cast=bool, default=False)
+
 # EMAIL SETTINGS #
 
 # Send the emails in the DEFAULT_REPLY_TO_EMAIL box (for production environement
@@ -212,7 +233,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('STATIC_ROOT') # Dove i file statici vengono collezionati con collectstatic se DEBUG=False
 # Altre cartelle oltre a <nome applicazione>/STATIC_URL da cui vengono collezionati i file statici
 STATICFILES_DIRS = (
-    os.path.join(CORE_DIR, 'core/static'),
+    os.path.join(BASE_DIR, 'core/static'),
 )
 
 MEDIA_URL = '/media/'
@@ -276,6 +297,11 @@ if LOG_TYPE == "FILE":
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
+        "formatters": {
+            "simple": {
+                "format": "%(levelname)s %(asctime)s %(filename)s %(message)s"
+            },
+        },
         'handlers': {
             'file': {
                 'level': 'DEBUG',
@@ -292,13 +318,44 @@ if LOG_TYPE == "FILE":
         },
     }
 elif LOG_TYPE == "CONSOLE":
+    # LOGGING = {
+    #     "version": 1,
+    #     "disable_existing_loggers": False,
+    #     "handlers": {
+    #         "console": {
+    #             "class": "logging.StreamHandler",
+    #         },
+    #     },
+    #     "root": {
+    #         "handlers": ["console"],
+    #         "level": LOG_LEVEL,
+    #     },
+    # }
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
+        "formatters": {
+            "simple": {
+                "format": "%(levelname)s %(asctime)s %(filename)s %(message)s"
             },
+        },
+        "handlers": {
+            "null_handler": {
+                "class": "logging.NullHandler",
+            },
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+                "stream": "ext://sys.stdout",  # Default to standard output
+            },
+        },
+        "loggers": {
+            "fontTools": {
+                "level": "INFO",  # Suppress DEBUG and INFO for fontTools
+                "handlers": ["console"],
+                "propagate": False
+            }
         },
         "root": {
             "handlers": ["console"],

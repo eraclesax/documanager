@@ -9,11 +9,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   
   <title>
-    Archetti - {% block title %} Documanager {% endblock %}
+    {% block title %} 
+      {% if organization and organization.name %}
+        {{ organization.name }} - 
+      {% endif %}
+      EifuSoft
+    {% endblock %}
   </title>
+  
+  <!-- Favicon - loaded as media or static -->
+  {% if organization and organization.logo %}
+    <link href="{{ organization.logo.url }}" rel="icon" type="image/png">
+  {% else %}
+    <!-- <link href="{% static 'assets/img/brand/favicon.png' %}" rel="icon" type="image/png"> -->
+  {% endif %}
 
-  <!-- Favicon - loaded as static -->
-  <link href="{% static 'assets/img/brand/favicon.png' %}" rel="icon" type="image/png">
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
   <!-- Icons -->
@@ -28,6 +38,10 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
   <!-- Message bar style -->
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
     .toast-message {
       position: absolute;
       padding-right: 2%;
@@ -39,9 +53,6 @@
       /* display: inline-block; */
       z-index:2;
     }
-    .header {
-    }
-
     .text-darkgreen {
       color:#006400;
     }

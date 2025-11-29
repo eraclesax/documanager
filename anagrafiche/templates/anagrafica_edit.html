@@ -1,0 +1,117 @@
+{% extends BASE_TEMPLATE %}
+{% load static %}
+{% block stylesheets %}{% endblock stylesheets %}
+{% load crispy_forms_tags %}
+
+{% block title %}Scheda Defunto{% endblock title %}
+
+{% block content %}
+
+  <!-- Header -->
+  <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt--7">
+    <div class="row">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                {% if form.instance %}
+                  <h3>Modifica Scheda Defunto "{{form.instance}}"</h3>
+                  <p class="mb-0">I campi contrassegnati con <b>*</b> sono obbligatori</p>
+                {% else %}
+                  <h3 class="mb-0">Crea nuova Scheda Defunto</h3>
+                {% endif %}
+              </div>
+              <div class="col-4 text-right">
+                <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+
+
+            <input type="file" accept="image/*" capture="environment" id="cie-photo">
+            <button onclick="sendPhoto()">Leggi Carta</button>
+
+
+            <form id="data-form" name="data-form" method='post' enctype="multipart/form-data">
+              {% crispy form %}
+            </form>
+            <div class="row align-items-center">
+              <div class="col-8">
+              </div>
+              <div class="col-4 text-right">
+                <input form="data-form" type="submit" class="btn btn-md btn-primary" value="Salva">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<script>
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  async function sendPhoto() {
+      const fileInput = document.getElementById("cie-photo");
+      if (!fileInput.files.length) {
+          alert("Scatta prima una foto del retro della carta.");
+          return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", fileInput.files[0]);
+
+      const response = await fetch("{% url 'ajax_ocr_pic' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": csrftoken },
+          body: formData
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (data.error) {
+          alert("Errore lettura MRZ: " + data.error);
+          return;
+      } else {
+      // Riempio i campi del form
+      document.querySelector("#id_nome").value = data.given_names;
+      document.querySelector("#id_cognome").value = data.surname;
+      // document.querySelector("#id_data_nascita").value = data.birth_date;
+      }
+
+  }
+
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,27 @@
+<!-- Static assets -->
+{% load static %}
+
+<!-- Message bar, see https://getbootstrap.com/docs/4.0/components/alerts/ -->
+<div class="toast-message">
+    <div class="row">
+        <div class="col-xl-12">
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!-- End MEssage bar -->

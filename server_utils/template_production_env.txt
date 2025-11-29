@@ -15,7 +15,7 @@ LOG_TYPE=CONSOLE
 LOG_LEVEL=INFO
 LOG_FILE=/var/log/django/debug.log
 ## CUSTOM LOGS (ON DB)
-CLOG_LEVEL=WARNING
+CLOG_LEVEL=INFO
 ## DATABASE
 DB_IS_SQLITE=False
 DB_ENGINE=django.db.backends.postgresql_psycopg2
@@ -23,6 +23,13 @@ DB_NAME=eifuprod_db
 DB_USER=eifuprod_dbuser
 DB_PASSWORD=...
 DB_HOST=localhost
+## FOTO
+FOTO_ACTIVE=True
+API4AI_BG_API_DEMO=False
+API4AI_BG_API_KEY=...
+SENTISIGHT_BG_API_KEY=...
+## ANAGRAFICHE
+ANAGRAFICHE_ACTIVE=False
 ## EMAIL
 CONSOLE_EMAIL=True
 DEBUG_EMAIL=False
@@ -33,5 +40,7 @@ EMAIL_HOST_USER=AKIASTM3NABXFT4X62M3
 EMAIL_HOST_PASSWORD=...
 DEFAULT_FROM_EMAIL=info@eifusoft.it
 DEFAULT_REPLY_TO_EMAIL=eifusoft@gmail.com
+DEFAULT_BCC_EMAIL=eifusoft@gmail.com
 ## INFO
 FULL_URL=https://eifusoft.it
+TRIAL_DOMAIN=trial.eifusoft.it

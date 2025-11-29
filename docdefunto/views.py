@@ -1,18 +1,17 @@
-import io
+import io, traceback
 
-from django.shortcuts import render,redirect,get_object_or_404
+from django.shortcuts import render,get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
-from django.template.context_processors import csrf
 from django.views.generic import View, DeleteView
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.template import Template, Context
 from django.conf import settings
-from django.http import HttpResponse
-from .models import AnagraficaDefunto, Documento
+
 from logger.utils import add_log
+
+from .models import AnagraficaDefunto, Documento
 
 # from reportlab.pdfgen import canvas
 
@@ -34,7 +33,7 @@ class DefuntiListView(View):
     """
     template_name = 'defunti.html'
 
-    @method_decorator(login_required(login_url="/login/"))
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
 
@@ -47,7 +46,7 @@ class DefuntiListView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntiListView.GET_render"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class DefuntoView(View):
@@ -58,7 +57,7 @@ class DefuntoView(View):
     """
     template_name = 'defunto.html'
 
-    @method_decorator(login_required(login_url="/login/"))
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
 
@@ -87,7 +86,7 @@ class DefuntoView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntoView.GET_render"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class DefuntoEditView(View):
@@ -98,7 +97,7 @@ class DefuntoEditView(View):
     """
     template_name = 'defunto_edit.html'
 
-    @method_decorator(login_required(login_url="/login/"))
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
 
@@ -127,10 +126,10 @@ class DefuntoEditView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntoEditView.GET_render"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
-    @method_decorator(login_required(login_url="/login/"))
+    @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         try:
             from .forms import DefuntoEditForm
@@ -155,7 +154,7 @@ class DefuntoEditView(View):
                 messages.add_message(
                     request, 
                     messages.SUCCESS, 
-                    _('Anagrafica "%s" salvata con successo!'%(obj)))
+                    'Anagrafica "%s" salvata con successo!'%(obj))
                 return HttpResponseRedirect(reverse('defunti'))
             else:
                 kwargs["form"] = form
@@ -166,7 +165,7 @@ class DefuntoEditView(View):
                     messages.add_message(
                         request,
                         messages.ERROR,
-                        _('%s: %s' % (label, errors[0]))
+                        '%s: %s' % (label, errors[0])
                     )
 
                 for error in form.non_field_errors():
@@ -178,7 +177,7 @@ class DefuntoEditView(View):
                 return self.GET_render(request, *args, **kwargs)
         except Exception as e:
             msg = "Exception in DefuntoEditView.post"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class AnagraficaDefuntoDeleteView(DeleteView):
@@ -194,7 +193,7 @@ class DefuntoDocsView(View):
     """
     template_name = 'defunto_docs.html'
 
-    @method_decorator(login_required(login_url="/login/"))
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request,*args, **kwargs)
 
@@ -211,13 +210,13 @@ class DefuntoDocsView(View):
             })
         except Exception as e:
             msg = "Exception in DefuntoDocsView.post"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
 class GetDocView(View):
     template_name = 'defunto_docs.html'
 
-    @method_decorator(login_required(login_url="/login/"))
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return self.GET_render(request, *args, **kwargs)
 
@@ -301,7 +300,7 @@ class GetDocView(View):
             return response
         except Exception as e:
             msg = "Exception in GetDocView.post"
-            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=e)
+            add_log(level=4,user=request.user, custom_message=msg,request=request,exception=traceback.format_exc())
             raise(e)
 
     # def GET_render(self,request,*args, **kwargs):
@@ -340,7 +339,7 @@ class GetDocView(View):
 #     """
 #     template_name = 'defunto_docs.html'
 
-#     @method_decorator(login_required(login_url="/login/"))
+#     @method_decorator(login_required)
 #     def get(self, request, *args, **kwargs):
 #         return self.GET_render(request,*args, **kwargs)
 
@@ -355,7 +354,7 @@ class GetDocView(View):
 
 #         return render(request, "edit_doc_config.html", {"form": form, "documento": documento})
 
-#     @method_decorator(login_required(login_url="/login/"))
+#     @method_decorator(login_required)
 #     def post(self, request, *args, **kwargs):
 #         def_id = kwargs.get("def_id", None)
 #         doc_id = kwargs.get("doc_id", None)

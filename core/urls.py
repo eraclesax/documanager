@@ -18,22 +18,31 @@ from django.contrib import admin
 from django.urls import path, include  # add this
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import index
 
 admin.autodiscover()
 admin.site.enable_nav_sidebar = False
 
 urlpatterns = [
     path('admin/', admin.site.urls),          # Django admin route
-    path('', include("authentication.urls")), # Auth routes - login / register
-    path('', include('docdefunto.urls')),
-    path('', include("app.urls")),             # UI Kits Html files - must be last one
+    path('', index, name='index'),
+    path('accounts/', include("app.urls")),             # Auth routes - login / register
+    path('defunti/', include('docdefunto.urls')),
     path('mail/', include("mail.urls")),
 ]
+if settings.FOTO_ACTIVE:
+    urlpatterns.append(
+        path('foto/', include('cutimages.urls'))
+        )
 
+if settings.ANAGRAFICHE_ACTIVE:
+    urlpatterns.append(
+        path('anagrafiche/', include('anagrafiche.urls'))
+        )
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    
+
 # from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # # Serving the media files in development mode
 # if settings.DEBUG:
