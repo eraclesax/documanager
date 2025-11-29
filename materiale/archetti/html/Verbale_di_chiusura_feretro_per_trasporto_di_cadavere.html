@@ -340,7 +340,7 @@
     </div> 
     dal Comune di 
     <div class="fill fill--mid">
-      <span class="value">{{ defunto.comune_salma | default_if_none:"" }} {% if defunto.provincia_salma %}({{ defunto.provincia_salma | default_if_none:"" }}){% endif %}</span>
+      <span class="value">{{ defunto.comune_decesso | default_if_none:"" }} {% if defunto.provincia_decesso %}({{ defunto.provincia_decesso | default_if_none:"" }}){% endif %}</span>
     </div>
     al Cimitero / forno Crematorio di 
     <div class="fill fill--mid">
