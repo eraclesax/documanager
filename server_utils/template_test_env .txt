@@ -20,7 +20,7 @@ DB_IS_SQLITE=False
 DB_ENGINE=django.db.backends.postgresql_psycopg2
 DB_NAME=eifuprod_db
 DB_USER=eifuprod_dbuser
-DB_PASSWORD=UkVorS0E2@
+DB_PASSWORD=...
 DB_HOST=localhost
 ## REMOTE TEST SERVER 
 DEBUG_DOMAIN=archetti.eifusoft.it
